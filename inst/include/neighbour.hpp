@@ -22,7 +22,14 @@
  *
  *  Data layout:
  *      mat         : std::vector<std::vector<double>>
- *                    mat[row][dimension]
+ *
+ *                    byrow = true
+ *                       mat[row][dimension]
+ *                       Each row is an observation
+ *
+ *                    byrow = false
+ *                       mat[dimension][column]
+ *                       Each column is an observation
  *
  *      distmat     : std::vector<std::vector<double>>
  *                    distance matrix
@@ -66,15 +73,16 @@
 
 namespace NN
 {
+
     /***********************************************************
      * NN4Mat
      *
      * Returns:
-     *      neighbor index list for each row
+     *      neighbor index list for each observation
      *
      * Algorithm:
-     *      1. For each row i
-     *      2. Compute distances to all other rows
+     *      1. For each observation i
+     *      2. Compute distances to all other observations
      *      3. Exclude self unless include_self = true
      *      4. Partial sort to obtain k nearest
      *
@@ -83,111 +91,122 @@ namespace NN
         const std::vector<std::vector<double>>& mat,
         size_t k,
         std::string method = "euclidean",
-        bool include_self = false)
+        bool include_self = false,
+        bool byrow = true)
     {
-      const Dist::DistanceMethod dist_method = Dist::parseDistanceMethod(method);
-      if (dist_method == Dist::DistanceMethod::Invalid) {
-        throw std::invalid_argument("Unsupported distance method: " + method);
-      }
+        const Dist::DistanceMethod dist_method =
+            Dist::parseDistanceMethod(method);
 
-      const size_t n = mat.size();
-
-      // Initialize result with empty vectors
-      std::vector<std::vector<size_t>> result(n);
-
-      for (size_t i = 0; i < n; ++i) {
-        std::vector<std::pair<double, size_t>> candidates;
-        candidates.reserve(n);
-
-        for (size_t j = 0; j < n; ++j) 
+        if (dist_method == Dist::DistanceMethod::Invalid)
         {
+            throw std::invalid_argument(
+                "Unsupported distance method: " + method);
+        }
 
-          if (i == j) continue;
+        const size_t n_obs =
+            byrow ? mat.size() : mat[0].size();
 
-          double distv = 0.0;
-                    
-          double sum = 0.0;
-          double maxv = 0.0;
-          size_t n_valid = 0;
+        const size_t dim =
+            byrow ? mat[0].size() : mat.size();
 
-          for (size_t ei = 0; ei < mat[i].size(); ++ei)
-          {   
-            bool element_has_na = std::isnan(mat[i][ei]) || std::isnan(mat[j][ei]);
-            if (element_has_na) continue;
+        std::vector<std::vector<size_t>> result(n_obs);
 
-            double diff = mat[i][ei] - mat[j][ei];
+        for (size_t i = 0; i < n_obs; ++i)
+        {
+            std::vector<std::pair<double,size_t>> candidates;
+            candidates.reserve(n_obs);
 
-            switch (dist_method) {
-              case Dist::DistanceMethod::Euclidean:
-                sum += diff * diff;
-                break;
-              case Dist::DistanceMethod::Manhattan:
-                sum += std::abs(diff);
-                break;
-              case Dist::DistanceMethod::Maximum:
-              {
-                double ad = std::abs(diff);
-                if (ad > maxv) maxv = ad;
-              }
-                break;
-              default:
-                break; 
+            for (size_t j = 0; j < n_obs; ++j)
+            {
+                if (i == j) continue;
+
+                double sum = 0.0;
+                double maxv = 0.0;
+                size_t n_valid = 0;
+
+                for (size_t d = 0; d < dim; ++d)
+                {
+                    double xi = byrow ? mat[i][d] : mat[d][i];
+                    double xj = byrow ? mat[j][d] : mat[d][j];
+
+                    if (std::isnan(xi) || std::isnan(xj))
+                        continue;
+
+                    double diff = xi - xj;
+
+                    switch (dist_method)
+                    {
+                        case Dist::DistanceMethod::Euclidean:
+                            sum += diff * diff;
+                            break;
+
+                        case Dist::DistanceMethod::Manhattan:
+                            sum += std::abs(diff);
+                            break;
+
+                        case Dist::DistanceMethod::Maximum:
+                        {
+                            double ad = std::abs(diff);
+                            if (ad > maxv) maxv = ad;
+                        }
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    ++n_valid;
+                }
+
+                if (n_valid == 0) continue;
+
+                double distv;
+
+                if (dist_method == Dist::DistanceMethod::Euclidean)
+                    distv = std::sqrt(sum);
+                else if (dist_method == Dist::DistanceMethod::Manhattan)
+                    distv = sum;
+                else
+                    distv = maxv;
+
+                candidates.emplace_back(distv, j);
             }
 
-            ++n_valid;
-          }
+            std::vector<size_t> indices;
+            indices.reserve(k);
 
-          if (n_valid == 0) continue;
+            size_t effective_k = k;
 
-          if (dist_method == Dist::DistanceMethod::Euclidean)
-            distv = std::sqrt(sum);
-          else if (dist_method == Dist::DistanceMethod::Manhattan)
-            distv = sum;
-          else
-            distv = maxv;  // maximum
-
-          candidates.emplace_back(distv, j);
-        }
-
-        std::vector<size_t> indices;
-        indices.reserve(k);
-        size_t effective_k = k;
-
-        // Handle self inclusion
-        if (include_self) {
-          indices.push_back(i);
-          if (effective_k > 0) {
-            effective_k -= 1;
-          }
-        }
-
-        size_t num_neighbors = std::min(effective_k, candidates.size());
-
-        if (num_neighbors > 0) {
-
-          std::partial_sort(
-            candidates.begin(),
-            candidates.begin() + num_neighbors,
-            candidates.end(),
-            [](const std::pair<double, size_t>& a,
-              const std::pair<double, size_t>& b) {
-              if (!NumericUtils::doubleNearlyEqual(a.first, b.first)) {
-                return a.first < b.first;
-              } else {
-                return a.second < b.second;
-              }
+            if (include_self)
+            {
+                indices.push_back(i);
+                if (effective_k > 0) effective_k--;
             }
-          );
 
-          for (size_t m = 0; m < num_neighbors; ++m) {
-            indices.push_back(candidates[m].second);
-          }
+            size_t num_neighbors =
+                std::min(effective_k, candidates.size());
+
+            if (num_neighbors > 0)
+            {
+                std::partial_sort(
+                    candidates.begin(),
+                    candidates.begin() + num_neighbors,
+                    candidates.end(),
+                    [](const auto& a, const auto& b)
+                    {
+                        if (!NumericUtils::doubleNearlyEqual(a.first,b.first))
+                            return a.first < b.first;
+                        return a.second < b.second;
+                    });
+
+                for (size_t m = 0; m < num_neighbors; ++m)
+                    indices.push_back(candidates[m].second);
+            }
+
+            result[i] = std::move(indices);
         }
 
-        result[i] = std::move(indices);
-      }
-
-      return result;
+        return result;
     }
 
     /***********************************************************
@@ -204,120 +223,128 @@ namespace NN
         const std::vector<size_t>& pred,
         size_t k,
         std::string method = "euclidean",
-        bool include_self = false)
+        bool include_self = false,
+        bool byrow = true)
     {
-      const Dist::DistanceMethod dist_method = Dist::parseDistanceMethod(method);
-      if (dist_method == Dist::DistanceMethod::Invalid) {
-        throw std::invalid_argument("Unsupported distance method: " + method);
-      }
+        const Dist::DistanceMethod dist_method =
+            Dist::parseDistanceMethod(method);
 
-      // if (k > lib.size()) {
-      //   throw std::invalid_argument("Invalid argument: k exceeds library set capacity " + std::to_string(lib.size()));
-      // }
+        if (dist_method == Dist::DistanceMethod::Invalid)
+        {
+            throw std::invalid_argument(
+                "Unsupported distance method: " + method);
+        }
 
-      const size_t n = mat.size();
+        const size_t n_obs =
+            byrow ? mat.size() : mat[0].size();
 
-      // Initialize result with empty vectors
-      std::vector<std::vector<size_t>> result(n);
+        const size_t dim =
+            byrow ? mat[0].size() : mat.size();
 
-      // Build lib membership lookup
-      std::unordered_set<size_t> lib_set(lib.begin(), lib.end());
+        std::vector<std::vector<size_t>> result(n_obs);
 
-      for (size_t i : pred) {
-        std::vector<std::pair<double, size_t>> candidates;
-        candidates.reserve(lib.size());
+        std::unordered_set<size_t> lib_set(lib.begin(), lib.end());
 
-        bool self_in_lib = (lib_set.find(i) != lib_set.end());
-
-        for (size_t j : lib) 
+        for (size_t i : pred)
         {
 
-          if (i == j) continue;
+            std::vector<std::pair<double,size_t>> candidates;
+            candidates.reserve(lib.size());
 
-          double distv = 0.0;
-                    
-          double sum = 0.0;
-          double maxv = 0.0;
-          size_t n_valid = 0;
+            bool self_in_lib =
+                lib_set.find(i) != lib_set.end();
 
-          for (size_t ei = 0; ei < mat[i].size(); ++ei)
-          {   
-            bool element_has_na = std::isnan(mat[i][ei]) || std::isnan(mat[j][ei]);
-            if (element_has_na) continue;
+            for (size_t j : lib)
+            {
+                if (i == j) continue;
 
-            double diff = mat[i][ei] - mat[j][ei];
+                double sum = 0.0;
+                double maxv = 0.0;
+                size_t n_valid = 0;
 
-            switch (dist_method) {
-              case Dist::DistanceMethod::Euclidean:
-                sum += diff * diff;
-                break;
-              case Dist::DistanceMethod::Manhattan:
-                sum += std::abs(diff);
-                break;
-              case Dist::DistanceMethod::Maximum:
-              {
-                double ad = std::abs(diff);
-                if (ad > maxv) maxv = ad;
-              }
-                break;
-              default:
-                break; 
+                for (size_t d = 0; d < dim; ++d)
+                {
+                    double xi = byrow ? mat[i][d] : mat[d][i];
+                    double xj = byrow ? mat[j][d] : mat[d][j];
+
+                    if (std::isnan(xi) || std::isnan(xj))
+                        continue;
+
+                    double diff = xi - xj;
+
+                    switch (dist_method)
+                    {
+                        case Dist::DistanceMethod::Euclidean:
+                            sum += diff * diff;
+                            break;
+
+                        case Dist::DistanceMethod::Manhattan:
+                            sum += std::abs(diff);
+                            break;
+
+                        case Dist::DistanceMethod::Maximum:
+                        {
+                            double ad = std::abs(diff);
+                            if (ad > maxv) maxv = ad;
+                        }
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    ++n_valid;
+                }
+
+                if (n_valid == 0) continue;
+
+                double distv;
+
+                if (dist_method == Dist::DistanceMethod::Euclidean)
+                    distv = std::sqrt(sum);
+                else if (dist_method == Dist::DistanceMethod::Manhattan)
+                    distv = sum;
+                else
+                    distv = maxv;
+
+                candidates.emplace_back(distv, j);
             }
 
-            ++n_valid;
-          }
+            std::vector<size_t> indices;
+            indices.reserve(k);
 
-          if (n_valid == 0) continue;
+            size_t effective_k = k;
 
-          if (dist_method == Dist::DistanceMethod::Euclidean)
-            distv = std::sqrt(sum);
-          else if (dist_method == Dist::DistanceMethod::Manhattan)
-            distv = sum;
-          else
-            distv = maxv;  // maximum
-
-          candidates.emplace_back(distv, j);
-        }
-
-        std::vector<size_t> indices;
-        indices.reserve(k);
-        size_t effective_k = k;
-
-        // Handle self inclusion
-        if (include_self && self_in_lib) {
-          indices.push_back(i);
-          if (effective_k > 0) {
-            effective_k -= 1;
-          }
-        }
-
-        size_t num_neighbors = std::min(effective_k, candidates.size());
-
-        if (num_neighbors > 0) {
-
-          std::partial_sort(
-            candidates.begin(),
-            candidates.begin() + num_neighbors,
-            candidates.end(),
-            [](const std::pair<double, size_t>& a,
-              const std::pair<double, size_t>& b) {
-              if (!NumericUtils::doubleNearlyEqual(a.first, b.first)) {
-                return a.first < b.first;
-              } else {
-                return a.second < b.second;
-              }
+            if (include_self && self_in_lib)
+            {
+                indices.push_back(i);
+                if (effective_k > 0) effective_k--;
             }
-          );
 
-          for (size_t m = 0; m < num_neighbors; ++m) {
-            indices.push_back(candidates[m].second);
-          }
+            size_t num_neighbors =
+                std::min(effective_k, candidates.size());
+
+            if (num_neighbors > 0)
+            {
+                std::partial_sort(
+                    candidates.begin(),
+                    candidates.begin() + num_neighbors,
+                    candidates.end(),
+                    [](const auto& a, const auto& b)
+                    {
+                        if (!NumericUtils::doubleNearlyEqual(a.first,b.first))
+                            return a.first < b.first;
+                        return a.second < b.second;
+                    });
+
+                for (size_t m = 0; m < num_neighbors; ++m)
+                    indices.push_back(candidates[m].second);
+            }
+
+            result[i] = std::move(indices);
         }
 
-        result[i] = std::move(indices);
-      }
-
-      return result;
+        return result;
     }
 
     /***********************************************************
