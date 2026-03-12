@@ -95,7 +95,7 @@ namespace TE
         const size_t n_obs  = mat[0].size();
         const size_t n_cols = mat.size();
 
-        if (mat.empty() || lag_p > n_obs || lag_q > n_obs)
+        if (mat.empty() || n_obs <= lag_p + 1 || n_obs <= lag_q + 1)
             return std::numeric_limits<double>::quiet_NaN();
         if (lag_p == 0 || lag_q == 0)
             return 0.0;
@@ -127,33 +127,39 @@ namespace TE
             return std::numeric_limits<double>::quiet_NaN();
         
         // Construct joint state matrix
-        DiscMat pm(tg.size()*2 + ag.size(),std::vector<uint64_t>(n_obs,0));
+        size_t t0 = std::max(lag_p, lag_q);
+        size_t N  = n_obs - t0;
+        DiscMat pm(tg.size()*2 + ag.size(),
+                   std::vector<uint64_t>(N, 0));
         
         // Y_t
         for (size_t i = 0; i < tg.size(); ++i)
         {   
-            pm[i] = mat[tg[i]]; 
+            for (size_t t = t0; t < n_obs; ++t)
+            {
+                pm[i][t - t0] = mat[tg[i]][t];
+            }
         }
 
         // X_{t-lag}
         for (size_t i = 0; i < ag.size(); ++i)
         {   
-            for (size_t t = lag_q; t < n_obs; ++t)
+            for (size_t t = t0; t < n_obs; ++t)
             {
                 uint64_t v = mat[ag[i]][t - lag_q];
                 if (v != 0)
-                    pm[i + tg.size()][t] = v;
+                    pm[i + tg.size()][t - t0] = v;
             }
         }
 
         // Y_{t-lag}
         for (size_t i = 0; i < tg.size(); ++i)
         {   
-            for (size_t t = lag_p; t < n_obs; ++t)
+            for (size_t t = t0; t < n_obs; ++t)
             {
                 uint64_t v = mat[tg[i]][t - lag_p];
                 if (v != 0)
-                    pm[i + tg.size() + ag.size()][t] = v;
+                    pm[i + tg.size() + ag.size()][t - t0] = v;
             }
         }
 
@@ -188,7 +194,7 @@ namespace TE
         const size_t n_obs  = mat[0].size();
         const size_t n_cols = mat.size();
 
-        if (mat.empty() || lag_p > n_obs || lag_q > n_obs)
+        if (mat.empty() || n_obs <= lag_p + k + 1 || n_obs <= lag_q + k + 1)
             return std::numeric_limits<double>::quiet_NaN();
         if (lag_p == 0 || lag_q == 0)
             return 0.0;
@@ -220,33 +226,40 @@ namespace TE
             return std::numeric_limits<double>::quiet_NaN();
         
         // Construct joint state matrix
-        ContMat pm(tg.size()*2 + ag.size(),std::vector<double>(n_obs,std::numeric_limits<double>::quiet_NaN()));
+        size_t t0 = std::max(lag_p, lag_q);
+        size_t N  = n_obs - t0;
+        ContMat pm(tg.size()*2 + ag.size(),
+                std::vector<double>(N,
+                std::numeric_limits<double>::quiet_NaN()));
         
         // Y_t
         for (size_t i = 0; i < tg.size(); ++i)
         {   
-            pm[i] = mat[tg[i]];
+            for (size_t t = t0; t < n_obs; ++t)
+            {
+                pm[i][t - t0] = mat[tg[i]][t];
+            }
         }
 
         // X_{t-lag}
         for (size_t i = 0; i < ag.size(); ++i)
         {   
-            for (size_t t = lag_q; t < n_obs; ++t)
+            for (size_t t = t0; t < n_obs; ++t)
             {
                 double v = mat[ag[i]][t - lag_q];
                 if (!std::isnan(v))
-                    pm[i + tg.size()][t] = v;
+                    pm[i + tg.size()][t - t0] = v;
             }
         }
 
         // Y_{t-lag}
         for (size_t i = 0; i < tg.size(); ++i)
         {   
-            for (size_t t = lag_p; t < n_obs; ++t)
+            for (size_t t = t0; t < n_obs; ++t)
             {
                 double v = mat[tg[i]][t - lag_p];
                 if (!std::isnan(v))
-                    pm[i + tg.size() + ag.size()][t] = v;
+                    pm[i + tg.size() + ag.size()][t - t0] = v;
             }
         }
 
