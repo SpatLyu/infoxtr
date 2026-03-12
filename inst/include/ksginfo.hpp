@@ -120,16 +120,15 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg += std::log(eps);
+            avg += std::log(eps*2.0);
         }
 
         avg /= static_cast<double>(n);
 
         double H = NumericUtils::Digamma(n)
-                - NumericUtils::Digamma(k)
-                + avg
-                + std::log(2.0);
-
+                 - NumericUtils::Digamma(k)
+                 + avg;
+        
         if (alg == 1)
             H += 1.0 / k;
 
@@ -183,15 +182,14 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg += std::log(eps);
+            avg += std::log(eps*2.0);
         }
 
         avg /= static_cast<double>(n);
 
         double H = NumericUtils::Digamma(n)
-                - NumericUtils::Digamma(k)
-                + d * avg
-                + d * std::log(2.0);
+                 - NumericUtils::Digamma(k)
+                 + d * avg;
 
         if (alg == 1)
             H += 1.0 / k;
@@ -266,7 +264,7 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg_log_eps += std::log(eps);
+            avg_log_eps += std::log(eps*2.0);
 
             size_t nx = 0, ny = 0;
 
@@ -274,16 +272,24 @@ namespace KSGInfo
             {
                 if (i == j) continue;
 
-                if (!std::isnan(d_x[i][j]) && d_x[i][j] < eps) nx++;
-                if (!std::isnan(d_y[i][j]) && d_y[i][j] < eps) ny++;
+                if (alg == 0)
+                {
+                    if (!std::isnan(d_x[i][j]) && d_x[i][j] < eps) nx++;
+                    if (!std::isnan(d_y[i][j]) && d_y[i][j] < eps) ny++;
+                }
+                else 
+                {
+                    if (!std::isnan(d_x[i][j]) && d_x[i][j] <= eps) nx++;
+                    if (!std::isnan(d_y[i][j]) && d_y[i][j] <= eps) ny++;
+                } 
             }
 
             if (alg == 0)
                 sum += NumericUtils::Digamma(nx+1)
-                    + NumericUtils::Digamma(ny+1);
+                     + NumericUtils::Digamma(ny+1);
             else
                 sum += NumericUtils::Digamma(nx)
-                    + NumericUtils::Digamma(ny);
+                     + NumericUtils::Digamma(ny);
         }
 
         avg_log_eps /= n;
@@ -292,13 +298,13 @@ namespace KSGInfo
 
         if (alg == 0)
             mi = NumericUtils::Digamma(k)
-            + NumericUtils::Digamma(n)
-            - sum / n;
+               + NumericUtils::Digamma(n)
+               - sum / n;
         else
             mi = NumericUtils::Digamma(k)
-            - 1.0 / k
-            + NumericUtils::Digamma(n)
-            - sum / n;
+               - 1.0 / k
+               + NumericUtils::Digamma(n)
+               - sum / n;
 
         mi = std::max(0.0, mi);
 
@@ -311,9 +317,8 @@ namespace KSGInfo
         } 
 
         double hxy = NumericUtils::Digamma(n)
-                - NumericUtils::Digamma(k)
-                + d * avg_log_eps
-                + d * std::log(2.0);
+                   - NumericUtils::Digamma(k)
+                   + d * avg_log_eps;
         if (alg == 1) hxy += 1.0 / k;
 
         if (hxy <= 0) {
@@ -385,7 +390,7 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg_log_eps += std::log(eps);
+            avg_log_eps += std::log(eps*2.0);
 
             size_t nxz = 0, nyz = 0, nz = 0;
 
@@ -393,19 +398,28 @@ namespace KSGInfo
             {
                 if (i == j) continue;
 
-                if (!std::isnan(d_xz[i][j]) && d_xz[i][j] < eps) nxz++;
-                if (!std::isnan(d_yz[i][j]) && d_yz[i][j] < eps) nyz++;
-                if (!std::isnan(d_z[i][j])  && d_z[i][j]  < eps) nz++;
+                if (alg == 0)
+                {
+                    if (!std::isnan(d_xz[i][j]) && d_xz[i][j] < eps) nxz++;
+                    if (!std::isnan(d_yz[i][j]) && d_yz[i][j] < eps) nyz++;
+                    if (!std::isnan(d_z[i][j])  && d_z[i][j]  < eps) nz++;
+                }
+                else
+                {
+                    if (!std::isnan(d_xz[i][j]) && d_xz[i][j] <= eps) nxz++;
+                    if (!std::isnan(d_yz[i][j]) && d_yz[i][j] <= eps) nyz++;
+                    if (!std::isnan(d_z[i][j])  && d_z[i][j]  <= eps) nz++;    
+                } 
             }
 
             if (alg == 0)
                 sum += NumericUtils::Digamma(nxz+1)
-                    + NumericUtils::Digamma(nyz+1)
-                    - NumericUtils::Digamma(nz+1);
+                     + NumericUtils::Digamma(nyz+1)
+                     - NumericUtils::Digamma(nz+1);
             else
                 sum += NumericUtils::Digamma(nxz)
-                    + NumericUtils::Digamma(nyz)
-                    - NumericUtils::Digamma(nz);
+                     + NumericUtils::Digamma(nyz)
+                     - NumericUtils::Digamma(nz);
         }
 
         avg_log_eps /= n;
@@ -422,9 +436,8 @@ namespace KSGInfo
         } 
 
         double hxy_z = NumericUtils::Digamma(n)
-                    - NumericUtils::Digamma(k)
-                    + d * avg_log_eps
-                    + d * std::log(2.0);
+                     - NumericUtils::Digamma(k)
+                     + d * avg_log_eps;
         if (alg == 1) hxy_z += 1.0 / k;
 
         if (hxy_z <= 0)
