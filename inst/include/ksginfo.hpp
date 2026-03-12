@@ -61,8 +61,8 @@ namespace KSGInfo
     using Matrix = std::vector<std::vector<double>>;
 
     /***********************************************************
-    * Utility: subset matrix
-    ***********************************************************/
+     * Utility: subset matrix
+     ***********************************************************/
     inline Matrix subset(
         const Matrix& mat,
         const std::vector<size_t>& vars)
@@ -77,8 +77,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Entropy (Kozachenko–Leonenko)
-    ***********************************************************/
+     * Entropy (Kozachenko–Leonenko)
+     ***********************************************************/
     inline double Entropy(
         const Series& series,
         size_t k = 3,
@@ -119,8 +119,9 @@ namespace KSGInfo
 
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
-
-            avg += std::log(eps*2.0);
+            
+            avg += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+                    ? 0.0 : std::log(eps * 2.0);
         }
 
         avg /= static_cast<double>(n);
@@ -139,8 +140,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Joint Entropy
-    ***********************************************************/
+     * Joint Entropy
+     ***********************************************************/
     inline double JE(
         const Matrix& mat,
         const std::vector<size_t>& vars,
@@ -182,7 +183,8 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg += std::log(eps*2.0);
+            avg += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+                    ? 0.0 : std::log(eps * 2.0);
         }
 
         avg /= static_cast<double>(n);
@@ -201,8 +203,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Conditional Entropy
-    ***********************************************************/
+     * Conditional Entropy
+     ***********************************************************/
     inline double CE(
         const Matrix& mat,
         const std::vector<size_t>& target,
@@ -218,8 +220,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Mutual Information (KSG estimator)
-    ***********************************************************/
+     * Mutual Information (KSG estimator)
+     ***********************************************************/
     inline double MI(
         const Matrix& mat,
         const std::vector<size_t>& target,
@@ -264,7 +266,8 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg_log_eps += std::log(eps*2.0);
+            avg_log_eps += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+                            ? 0.0 : std::log(eps * 2.0);
 
             size_t nx = 0, ny = 0;
 
@@ -332,8 +335,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Conditional Mutual Information
-    ***********************************************************/
+     * Conditional Mutual Information
+     ***********************************************************/
     inline double CMI(
         const Matrix& mat,
         const std::vector<size_t>& target,
@@ -390,7 +393,8 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg_log_eps += std::log(eps*2.0);
+            avg_log_eps += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+                            ? 0.0 : std::log(eps * 2.0);
 
             size_t nxz = 0, nyz = 0, nz = 0;
 
