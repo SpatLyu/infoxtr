@@ -87,11 +87,7 @@ namespace KSGInfo
     {
         const size_t n = series.size();
 
-        Matrix vec;
-        vec.reserve(1);
-        vec.emplace_back(series);
-
-        auto dist = Dist::Dist(vec,"maximum",true,false);
+        auto dist = Dist::Dist(series);
 
         double avg = 0.0;
 
