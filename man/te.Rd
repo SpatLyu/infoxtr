@@ -13,7 +13,8 @@ te(
   base = exp(1),
   type = c("cont", "disc"),
   k = 3,
-  normalize = FALSE
+  normalize = FALSE,
+  lag_single = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ Defaults to \code{exp(1)} (nats). Use \code{2} for bits or \code{10} for dits.}
 Ignored when \code{type = "disc"}.}
 
 \item{normalize}{(optional) Logical; if \code{TRUE}, return normalized mutual information.}
+
+\item{lag_single}{(optional) Logical; if \code{FALSE}, use full lag embedding.}
 }
 \value{
 A numerical value.

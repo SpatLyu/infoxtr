@@ -197,8 +197,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppDiscTE
-double RcppDiscTE(SEXP mat, const Rcpp::IntegerVector& target, const Rcpp::IntegerVector& agent, int lag_p, int lag_q, double base, bool na_rm, bool normalize);
-RcppExport SEXP _infocaus_RcppDiscTE(SEXP matSEXP, SEXP targetSEXP, SEXP agentSEXP, SEXP lag_pSEXP, SEXP lag_qSEXP, SEXP baseSEXP, SEXP na_rmSEXP, SEXP normalizeSEXP) {
+double RcppDiscTE(SEXP mat, const Rcpp::IntegerVector& target, const Rcpp::IntegerVector& agent, int lag_p, int lag_q, double base, bool na_rm, bool normalize, bool lag_single);
+RcppExport SEXP _infocaus_RcppDiscTE(SEXP matSEXP, SEXP targetSEXP, SEXP agentSEXP, SEXP lag_pSEXP, SEXP lag_qSEXP, SEXP baseSEXP, SEXP na_rmSEXP, SEXP normalizeSEXP, SEXP lag_singleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< SEXP >::type mat(matSEXP);
@@ -209,13 +209,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDiscTE(mat, target, agent, lag_p, lag_q, base, na_rm, normalize));
+    Rcpp::traits::input_parameter< bool >::type lag_single(lag_singleSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDiscTE(mat, target, agent, lag_p, lag_q, base, na_rm, normalize, lag_single));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppContTE
-double RcppContTE(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target, const Rcpp::IntegerVector& agent, int lag_p, int lag_q, int k, int alg, double base, bool normalize);
-RcppExport SEXP _infocaus_RcppContTE(SEXP matSEXP, SEXP targetSEXP, SEXP agentSEXP, SEXP lag_pSEXP, SEXP lag_qSEXP, SEXP kSEXP, SEXP algSEXP, SEXP baseSEXP, SEXP normalizeSEXP) {
+double RcppContTE(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target, const Rcpp::IntegerVector& agent, int lag_p, int lag_q, int k, int alg, double base, bool normalize, bool lag_single);
+RcppExport SEXP _infocaus_RcppContTE(SEXP matSEXP, SEXP targetSEXP, SEXP agentSEXP, SEXP lag_pSEXP, SEXP lag_qSEXP, SEXP kSEXP, SEXP algSEXP, SEXP baseSEXP, SEXP normalizeSEXP, SEXP lag_singleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
@@ -227,7 +228,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type alg(algSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppContTE(mat, target, agent, lag_p, lag_q, k, alg, base, normalize));
+    Rcpp::traits::input_parameter< bool >::type lag_single(lag_singleSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppContTE(mat, target, agent, lag_p, lag_q, k, alg, base, normalize, lag_single));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -337,8 +339,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_infocaus_RcppContMI", (DL_FUNC) &_infocaus_RcppContMI, 7},
     {"_infocaus_RcppDiscCMI", (DL_FUNC) &_infocaus_RcppDiscCMI, 7},
     {"_infocaus_RcppContCMI", (DL_FUNC) &_infocaus_RcppContCMI, 8},
-    {"_infocaus_RcppDiscTE", (DL_FUNC) &_infocaus_RcppDiscTE, 8},
-    {"_infocaus_RcppContTE", (DL_FUNC) &_infocaus_RcppContTE, 9},
+    {"_infocaus_RcppDiscTE", (DL_FUNC) &_infocaus_RcppDiscTE, 9},
+    {"_infocaus_RcppContTE", (DL_FUNC) &_infocaus_RcppContTE, 10},
     {"_infocaus_RcppGenLatticeLag", (DL_FUNC) &_infocaus_RcppGenLatticeLag, 3},
     {"_infocaus_RcppGenGridLag", (DL_FUNC) &_infocaus_RcppGenGridLag, 3},
     {"_infocaus_RcppGenTSLag", (DL_FUNC) &_infocaus_RcppGenTSLag, 2},
