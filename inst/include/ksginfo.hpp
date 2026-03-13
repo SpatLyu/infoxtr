@@ -97,10 +97,8 @@ namespace KSGInfo
 
         for (size_t i = 0; i < n; ++i)
         {
-            std::vector<double> row = dist[i];
-
-            if (i < row.size())
-                row[i] = std::numeric_limits<double>::quiet_NaN();
+            auto& row = dist[i];
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
             row.erase(
                 std::remove_if(
@@ -159,11 +157,9 @@ namespace KSGInfo
         double avg = 0.0;
 
         for (size_t i = 0; i < n; ++i)
-        {
-            std::vector<double> row = dist[i];
-
-            if (i < row.size())
-                row[i] = std::numeric_limits<double>::quiet_NaN();
+        {   
+            auto& row = dist[i];
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
             row.erase(
                 std::remove_if(
@@ -245,11 +241,9 @@ namespace KSGInfo
         double avg_log_eps = 0.0;
 
         for (size_t i = 0; i < n; ++i)
-        {
-            std::vector<double> row = d_xy[i];
-
-            if (i < row.size())
-                row[i] = std::numeric_limits<double>::quiet_NaN();
+        {   
+            auto& row = d_xy[i];
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
             row.erase(
                 std::remove_if(
@@ -372,11 +366,9 @@ namespace KSGInfo
         double avg_log_eps = 0.0;
 
         for (size_t i = 0; i < n; ++i)
-        {
-            std::vector<double> row = d_xyz[i];
-
-            if (i < row.size())
-                row[i] = std::numeric_limits<double>::quiet_NaN();
+        {   
+            auto& row = d_xyz[i];
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
             row.erase(
                 std::remove_if(

@@ -18,5 +18,9 @@ Depends:
 LinkingTo: 
     Rcpp
 Imports: 
+    sdsfun,
     sf,
     terra
+Suggests: 
+    lmtest,
+    NlinTS
