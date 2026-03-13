@@ -54,7 +54,8 @@ namespace Disc
  * Utility helpers
  ***********************************************************/
 
-inline std::vector<double> remove_nan(const std::vector<double>& v, bool& has_nan)
+inline std::vector<double> remove_nan(const std::vector<double>& v, 
+                                      bool& has_nan)
 {
     std::vector<double> out;
     out.reserve(v.size());
@@ -103,7 +104,8 @@ inline double max_val(const std::vector<double>& v)
  ***********************************************************/
 inline std::vector<size_t> sdDisc(
     const std::vector<double>& vec,
-    size_t n)
+    size_t n,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -126,8 +128,14 @@ inline std::vector<size_t> sdDisc(
     for (size_t i = 0; i < vec.size(); ++i)
     {
         if (std::isnan(vec[i])) continue;
+        
+        double z = (vec[i] - m) / sd + n / 2.0;
 
-        long idx = std::floor((vec[i] - m) / sd + n / 2.0);
+        long idx;
+        if (right_closed)
+            idx = std::ceil(z);
+        else
+            idx = std::floor(z) + 1;
         idx = std::max<long>(1, std::min<long>(idx, n));
 
         res[i] = static_cast<size_t>(idx);
@@ -141,7 +149,8 @@ inline std::vector<size_t> sdDisc(
  ***********************************************************/
 inline std::vector<size_t> equalDisc(
     const std::vector<double>& vec,
-    size_t n)
+    size_t n,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -166,8 +175,14 @@ inline std::vector<size_t> equalDisc(
     for (size_t i = 0; i < vec.size(); ++i)
     {
         if (std::isnan(vec[i])) continue;
+        
+        double val = (vec[i] - minx) / interval;
 
-        long idx = std::ceil((vec[i] - minx) / interval);
+        long idx;
+        if (right_closed)
+            idx = std::ceil(val);
+        else
+            idx = std::floor(val) + 1;
         idx = std::max<long>(1, std::min<long>(idx, n));
 
         res[i] = static_cast<size_t>(idx);
@@ -181,7 +196,8 @@ inline std::vector<size_t> equalDisc(
  ***********************************************************/
 inline std::vector<size_t> geometricDisc(
     const std::vector<double>& vec,
-    size_t n)
+    size_t n,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -204,8 +220,11 @@ inline std::vector<size_t> geometricDisc(
     {
         if (std::isnan(vec[i])) continue;
 
-        long idx =
-            std::floor(std::log(vec[i] / minx) / std::log(factor)) + 1;
+        long idx;
+        if (right_closed)
+            idx = std::ceil(std::log(vec[i] / minx) / std::log(factor));
+        else
+            idx = std::floor(std::log(vec[i] / minx) / std::log(factor)) + 1;
 
         idx = std::max<long>(1, std::min<long>(idx, n));
 
@@ -220,7 +239,8 @@ inline std::vector<size_t> geometricDisc(
  ***********************************************************/
 inline std::vector<size_t> quantileDisc(
     const std::vector<double>& vec,
-    size_t n)
+    size_t n,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -248,14 +268,23 @@ inline std::vector<size_t> quantileDisc(
     {
         if (std::isnan(vec[i])) continue;
 
+        bool assigned = false;
+
         for (size_t j = 0; j < n; ++j)
-        {
-            if (vec[i] <= q[j + 1])
+        {   
+            bool in_bin = right_closed ? (vec[i] <= q[j + 1])
+                                       : (vec[i] < q[j + 1]);
+            if (in_bin)
             {
                 res[i] = j + 1;
+                assigned = true;
                 break;
             }
         }
+
+        if (!assigned)
+            res[i] = n;
+
     }
 
     return res;
@@ -266,7 +295,8 @@ inline std::vector<size_t> quantileDisc(
  ***********************************************************/
 inline std::vector<size_t> manualDisc(
     const std::vector<double>& vec,
-    const std::vector<double>& breakpoints)
+    const std::vector<double>& breakpoints,
+    bool right_closed = true)
 {
     if (breakpoints.empty())
         throw std::invalid_argument("[Discretize] manualDisc: breakpoints cannot be empty");
@@ -292,8 +322,10 @@ inline std::vector<size_t> manualDisc(
         bool assigned = false;
 
         for (size_t j = 0; j < bp.size(); ++j)
-        {
-            if (vec[i] < bp[j])
+        {   
+            bool classify_val = right_closed ? (vec[i] <= bp[j])
+                                             : (vec[i] < bp[j]);
+            if (classify_val)
             {
                 res[i] = j + 1;
                 assigned = true;
@@ -392,7 +424,8 @@ inline std::vector<size_t> naturalDisc(
     size_t n,
     size_t sample_begin = 3000,
     double sample_prob = 0.15,
-    uint64_t seed = 123456789)
+    uint64_t seed = 123456789,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -431,8 +464,10 @@ inline std::vector<size_t> naturalDisc(
         bool assigned = false;
 
         for (size_t j = 0; j < breaks.size(); ++j)
-        {
-            if (vec[i] < breaks[j])
+        {   
+            bool classify_val = right_closed ? (vec[i] <= breaks[j])
+                                             : (vec[i] < breaks[j]);
+            if (classify_val)
             {
                 res[i] = j + 1;
                 assigned = true;
@@ -453,7 +488,8 @@ inline std::vector<size_t> naturalDisc(
 inline std::vector<size_t> htDisc(
     const std::vector<double>& vec,
     double threshold = 0.4,
-    size_t iter_step = 100)
+    size_t iter_step = 100,
+    bool right_closed = true)
 {
     bool has_nan = false;
     std::vector<double> x = remove_nan(vec, has_nan);
@@ -494,7 +530,7 @@ inline std::vector<size_t> htDisc(
 
         head = new_head;
 
-        if (prop > threshold || head.size() <= 1) break;
+        if (prop >= threshold || head.size() <= 1) break;
     }
 
     breaks.push_back(max_val(x));
@@ -505,7 +541,8 @@ inline std::vector<size_t> htDisc(
         std::unique(breaks.begin(), breaks.end()),
         breaks.end());
 
-    if (breaks.size() < 2) {
+    if (breaks.size() < 2) 
+    {
         for (size_t i = 0; i < vec.size(); ++i)
             if (!std::isnan(vec[i])) result[i] = 1;
         return result;
@@ -515,23 +552,21 @@ inline std::vector<size_t> htDisc(
     {
         if (std::isnan(vec[i])) continue;
 
-        size_t label = 1;
+        bool assigned = false;
 
         for (size_t j = 0; j < breaks.size() - 1; ++j)
         {
-            if (vec[i] < breaks[j + 1])
+            if (right_closed ? vec[i] <= breaks[j + 1]
+                             : vec[i] < breaks[j + 1])
             {
-                label = j + 1;
+                result[i] = j + 1;
+                assigned = true;
                 break;
             }
         }
 
-        if (vec[i] >= breaks.back())
-        {
-            label = breaks.size() - 1;
-        }
-
-        result[i] = label;
+        if (!assigned)
+            result[i] = breaks.size() - 1;
     }
 
     return result;
@@ -549,28 +584,29 @@ inline std::vector<size_t> Disc(
     uint64_t seed = 123456789,
     double threshold = 0.4,
     size_t iter_step = 100,
-    const std::vector<double>& breakpoints = {})
+    const std::vector<double>& breakpoints = {},
+    bool right_closed = true)
 {
     if (method == "sd")
-        return sdDisc(vec, n);
+        return sdDisc(vec, n, right_closed);
 
     if (method == "equal")
-        return equalDisc(vec, n);
+        return equalDisc(vec, n, right_closed);
 
     if (method == "geometric")
-        return geometricDisc(vec, n);
+        return geometricDisc(vec, n, right_closed);
 
     if (method == "manual")
-        return manualDisc(vec, breakpoints);
+        return manualDisc(vec, breakpoints, right_closed);
 
     if (method == "quantile")
-        return quantileDisc(vec, n);
+        return quantileDisc(vec, n, right_closed);
 
     if (method == "natural")
-        return naturalDisc(vec, n, sample_begin, sample_prob, seed);
+        return naturalDisc(vec, n, sample_begin, sample_prob, seed, right_closed);
 
     if (method == "headtail")  
-        return htDisc(vec, threshold, iter_step);
+        return htDisc(vec, threshold, iter_step, right_closed);
 
     throw std::invalid_argument("Unknown discretization method");
 }
