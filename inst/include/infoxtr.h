@@ -21,6 +21,7 @@
 // ============================================================
 // Dependency Guard: Encourage best practices (non-blocking)
 // ============================================================
+
 #if defined(Rcpp_hpp) && !defined(COMPILING_INFOXTR)
     #warning "It is recommended to include <infoxtr.h> alone, as it already includes <Rcpp.h> and <RcppThread.h>."
 #endif
@@ -47,5 +48,11 @@
 #include "infoxtr/ksginfo.hpp"
 #include "infoxtr/transferentropy.hpp"
 #include "infoxtr/surd.hpp"
+
+// ============================================================
+// Convenience Converters (Inline helpers for R/C++ interop)
+// ============================================================
+
+#include "infoxtr/convert.hpp"
 
 #endif // INFOXTR_INFOXTR_H

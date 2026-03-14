@@ -5,7 +5,6 @@
 #include <numeric>
 #include <algorithm>
 #include "infoxtr.h"
-#include "DataTrans.h"
 
 // Wrapper function to compute the distance between two vectors
 // [[Rcpp::export(rng = false)]]
@@ -34,13 +33,13 @@ Rcpp::NumericVector RcppDist4Mat(
     bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-    std::vector<std::vector<double>> cppMat = mat_r2std(mat, true);
+    std::vector<std::vector<double>> cppMat = infoxtr::convert::mat_r2std(mat, true);
 
     // Call the distance function
     std::vector<std::vector<double>> distm = infoxtr::distance::distance(cppMat, method, na_rm, byrow);
 
     // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
-    return mat_std2r(distm, true);
+    return infoxtr::convert::mat_std2r(distm, true);
 }
 
 // Wrapper function to compute a row-wise distance matrix for an input matrix subset
@@ -54,7 +53,7 @@ Rcpp::NumericVector RcppDist4MatSub(
     bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-    std::vector<std::vector<double>> cppMat = mat_r2std(mat, true);
+    std::vector<std::vector<double>> cppMat = infoxtr::convert::mat_r2std(mat, true);
 
     const int n_obs = byrow ? mat.nrow() : mat.ncol(); 
 
@@ -82,5 +81,5 @@ Rcpp::NumericVector RcppDist4MatSub(
         cppMat, lib_std, pred_std, method, na_rm, byrow);
 
     // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
-    return mat_std2r(distm, true);
+    return infoxtr::convert::mat_std2r(distm, true);
 }

@@ -1,3 +1,24 @@
+/********************************************************************
+ *  File: convert.hpp
+ *
+ *  Data Structure Conversion Utilities for R and C++
+ *
+ *  This header provides a collection of lightweight helper
+ *  functions that convert data structures between the R
+ *  environment (via Rcpp) and standard C++ containers.
+ *
+ *  The goal is to provide efficient and predictable translation
+ *  between the two ecosystems so that computational routines
+ *  implemented in C++ can operate on native STL structures while
+ *  remaining fully compatible with R data objects.
+ *
+ *  Author: Wenbo Lyu (Github: @SpatLyu)
+ *  License: GPL-3
+ **********************************************************************/
+
+#ifndef INFOXTR_CONVERT_HPP
+#define INFOXTR_CONVERT_HPP
+
 #include <vector>
 #include <cstdint>
 #include <string>
@@ -6,6 +27,12 @@
 #include <algorithm>
 #include <unordered_map> 
 #include <Rcpp.h>
+
+namespace infoxtr
+{
+
+namespace convert
+{
 
 /********************************************************************
  *
@@ -55,7 +82,7 @@
  ********************************************************************/
 
 // Function to convert Rcpp::List to std::vector<std::vector<size_t>> (the `nb` object)
-std::vector<std::vector<size_t>> nb2std(const Rcpp::List& nb) {
+inline std::vector<std::vector<size_t>> nb2std(const Rcpp::List& nb) {
   // Get the number of elements in the nb object
   size_t n = static_cast<size_t>(nb.size());
   if (n <= 1) {
@@ -89,7 +116,7 @@ std::vector<std::vector<size_t>> nb2std(const Rcpp::List& nb) {
 }
 
 // Function to convert std::vector<std::vector<size_t>> (the `nb` object) to Rcpp::List
-Rcpp::List std2nb(const std::vector<std::vector<size_t>>& nb) {
+inline Rcpp::List std2nb(const std::vector<std::vector<size_t>>& nb) {
   size_t n = nb.size();
   Rcpp::List result(n);
 
@@ -162,7 +189,7 @@ Rcpp::List std2nb(const std::vector<std::vector<size_t>>& nb) {
  ********************************************************************/
 
 // Function to convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-std::vector<std::vector<double>> mat_r2std(
+inline std::vector<std::vector<double>> mat_r2std(
     const Rcpp::NumericMatrix& mat,
     bool byrow = true
 ) {
@@ -208,7 +235,7 @@ std::vector<std::vector<double>> mat_r2std(
 }
 
 // Function to convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-Rcpp::NumericMatrix mat_std2r(
+inline Rcpp::NumericMatrix mat_std2r(
     const std::vector<std::vector<double>>& mat,
     bool byrow = true
 ) {
@@ -315,7 +342,7 @@ Rcpp::NumericMatrix mat_std2r(
  *      NA encoded as {0}
  *
  ********************************************************************/
-std::vector<std::vector<uint64_t>> pat_r2std(SEXP x, bool byrow = true)
+inline std::vector<std::vector<uint64_t>> pat_r2std(SEXP x, bool byrow = true)
 {
     if (!Rf_isMatrix(x))
         Rcpp::stop("Input must be a matrix.");
@@ -585,3 +612,9 @@ std::vector<std::vector<uint64_t>> pat_r2std(SEXP x, bool byrow = true)
 
     return mat;
 }
+
+} // namespace convert
+
+}
+
+#endif // INFOXTR_CONVERT_HPP

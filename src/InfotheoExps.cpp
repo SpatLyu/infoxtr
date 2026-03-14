@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <unordered_map> 
 #include "infoxtr.h"
-#include "DataTrans.h"
 
 // Wrapper function to calculate Shannon entropy for discrete data
 // [[Rcpp::export(rng = false)]]
@@ -149,7 +148,7 @@ double RcppDiscJE(SEXP mat,
                   double base = 2.0,
                   bool na_rm = true)
 {
-    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = infoxtr::convert::pat_r2std(mat,false);
     std::vector<size_t> v = Rcpp::as<std::vector<size_t>>(vars);
 
     const size_t n_cols = m.size();
@@ -173,7 +172,7 @@ double RcppContJE(const Rcpp::NumericMatrix& mat,
                   int alg = 0,
                   double base = 2.0)
 {
-    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
     std::vector<size_t> v = Rcpp::as<std::vector<size_t>>(vars);
 
     const size_t n_cols = m.size();
@@ -199,7 +198,7 @@ double RcppDiscCE(SEXP mat,
                   double base = 2.0,
                   bool na_rm = true)
 {
-    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = infoxtr::convert::pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> c = Rcpp::as<std::vector<size_t>>(conds);
@@ -234,7 +233,7 @@ double RcppContCE(const Rcpp::NumericMatrix& mat,
                   int alg = 0,
                   double base = 2.0)
 {
-    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> c = Rcpp::as<std::vector<size_t>>(conds);
@@ -271,7 +270,7 @@ double RcppDiscMI(SEXP mat,
                   bool na_rm = true,
                   bool normalize = false)
 {
-    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = infoxtr::convert::pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -307,7 +306,7 @@ double RcppContMI(const Rcpp::NumericMatrix& mat,
                   double base = 2.0,
                   bool normalize = false)
 {
-    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -345,7 +344,7 @@ double RcppDiscCMI(SEXP mat,
                    bool na_rm = true,
                    bool normalize = false)
 {
-    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = infoxtr::convert::pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -391,7 +390,7 @@ double RcppContCMI(const Rcpp::NumericMatrix& mat,
                    double base = 2.0,
                    bool normalize = false)
 {
-    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -440,7 +439,7 @@ double RcppDiscTE(SEXP mat,
                   bool normalize = false,
                   bool lag_single = false)
 {
-    infoxtr::infotheo::Matrix m = pat_r2std(mat, false);
+    infoxtr::infotheo::Matrix m = infoxtr::convert::pat_r2std(mat, false);
 
     std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
@@ -482,7 +481,7 @@ double RcppContTE(const Rcpp::NumericMatrix& mat,
                   bool normalize = false,
                   bool lag_single = false)
 {
-    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
 
     std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
@@ -522,7 +521,7 @@ Rcpp::List RcppDiscSURD(SEXP mat,
                         double base = 2.0,
                         bool normalize = true)
 {
-    infoxtr::surd::DiscMat m = pat_r2std(mat, false);
+    infoxtr::surd::DiscMat m = infoxtr::convert::pat_r2std(mat, false);
 
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
         m, static_cast<size_t>(std::abs(max_order)),
@@ -598,7 +597,7 @@ Rcpp::List RcppContSURD(SEXP mat,
                         double base = 2.0,
                         bool normalize = true)
 {
-    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
 
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
         m, static_cast<size_t>(std::abs(max_order)),
