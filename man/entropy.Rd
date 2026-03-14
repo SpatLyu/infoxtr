@@ -27,7 +27,7 @@ Estimate the entropy of a vector using either category counts
 }
 \examples{
 set.seed(42)
-infocaus::entropy(stats::rnorm(100), type = "cont")
-infocaus::entropy(sample(letters[1:5], 100, TRUE), base = 2, type = "disc")
+infoxtr::entropy(stats::rnorm(100), type = "cont")
+infoxtr::entropy(sample(letters[1:5], 100, TRUE), base = 2, type = "disc")
 
 }

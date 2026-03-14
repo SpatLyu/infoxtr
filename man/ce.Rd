@@ -29,6 +29,6 @@ A numerical value.
 Estimate the conditional entropy of target variables given conditioning variables.
 }
 \examples{
-infocaus::ce(matrix(1:100,ncol=2),1,2)
+infoxtr::ce(matrix(1:100,ncol=2),1,2)
 
 }

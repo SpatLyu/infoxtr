@@ -16,8 +16,8 @@
 #'
 #' @examples
 #' set.seed(42)
-#' infocaus::entropy(stats::rnorm(100), type = "cont")
-#' infocaus::entropy(sample(letters[1:5], 100, TRUE), base = 2, type = "disc")
+#' infoxtr::entropy(stats::rnorm(100), type = "cont")
+#' infoxtr::entropy(sample(letters[1:5], 100, TRUE), base = 2, type = "disc")
 #'
 entropy = \(vec, base = exp(1), type = c("cont", "disc"), k = 3) {
   type = match.arg(type)
@@ -40,7 +40,7 @@ entropy = \(vec, base = exp(1), type = c("cont", "disc"), k = 3) {
 #' @export
 #'
 #' @examples
-#' infocaus::je(matrix(1:100,ncol=2),1:2)
+#' infoxtr::je(matrix(1:100,ncol=2),1:2)
 #'
 je = \(data, indices, base = exp(1), type = c("cont", "disc"), k = 3) {
   type = match.arg(type)
@@ -64,7 +64,7 @@ je = \(data, indices, base = exp(1), type = c("cont", "disc"), k = 3) {
 #' @export
 #'
 #' @examples
-#' infocaus::ce(matrix(1:100,ncol=2),1,2)
+#' infoxtr::ce(matrix(1:100,ncol=2),1,2)
 #'
 ce = \(data, target, conds, base = exp(1), type = c("cont", "disc"), k = 3) {
   type = match.arg(type)
@@ -88,7 +88,7 @@ ce = \(data, target, conds, base = exp(1), type = c("cont", "disc"), k = 3) {
 #' @export
 #'
 #' @examples
-#' infocaus::mi(matrix(1:100,ncol=2),1,2)
+#' infoxtr::mi(matrix(1:100,ncol=2),1,2)
 #'
 mi = \(data, target, interact, base = exp(1), type = c("cont", "disc"), k = 3, normalize = FALSE) {
   type = match.arg(type)
@@ -113,7 +113,7 @@ mi = \(data, target, interact, base = exp(1), type = c("cont", "disc"), k = 3, n
 #'
 #' @examples
 #' set.seed(42)
-#' infocaus::cmi(matrix(stats::rnorm(99,1,10),ncol=3),1,2,3)
+#' infoxtr::cmi(matrix(stats::rnorm(99,1,10),ncol=3),1,2,3)
 #'
 cmi = \(data, target, interact, conds, base = exp(1), type = c("cont", "disc"), k = 3, normalize = FALSE) {
   type = match.arg(type)

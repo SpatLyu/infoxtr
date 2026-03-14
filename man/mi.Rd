@@ -39,6 +39,6 @@ A numerical value.
 Estimate the mutual information between target and interacting variables.
 }
 \examples{
-infocaus::mi(matrix(1:100,ncol=2),1,2)
+infoxtr::mi(matrix(1:100,ncol=2),1,2)
 
 }
