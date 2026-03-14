@@ -70,15 +70,15 @@
  *
  *  Dependencies:
  *
- *      infotheo.hpp
- *      ksginfo.hpp
+ *      infoxtr/infotheo.hpp
+ *      infoxtr/ksginfo.hpp
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
  **********************************************************************/
 
-#ifndef TRANSFERENTROPY_HPP
-#define TRANSFERENTROPY_HPP
+#ifndef INFOXTR_TRANSFERENTROPY_HPP
+#define INFOXTR_TRANSFERENTROPY_HPP
 
 #include <vector>
 #include <cmath>
@@ -87,8 +87,11 @@
 #include <numeric>
 #include <algorithm>
 #include <stdexcept>
-#include "infotheo.hpp"
-#include "ksginfo.hpp"
+#include "infoxtr/infotheo.hpp"
+#include "infoxtr/ksginfo.hpp"
+
+namespace infoxtr
+{
 
 namespace transferentropy
 {   
@@ -211,7 +214,7 @@ namespace transferentropy
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return infotheo::cmi(pm, tg_idx, ag_idx, tgl_idx, base, na_rm, normalize);
+        return infoxtr::infotheo::cmi(pm, tg_idx, ag_idx, tgl_idx, base, na_rm, normalize);
     }
 
     /***********************************************************
@@ -331,9 +334,11 @@ namespace transferentropy
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
+        return infoxtr::ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
     }    
 
 } // namespace transferentropy
 
-#endif // TRANSFERENTROPY_HPP
+}
+
+#endif // INFOXTR_TRANSFERENTROPY_HPP

@@ -14,14 +14,18 @@
  *  License: GPL-3
  *************************************************************************/
 
-#ifndef COMBN_HPP
-#define COMBN_HPP
+#ifndef INFOXTR_COMBN_HPP
+#define INFOXTR_COMBN_HPP
 
 #include <vector>
 #include <functional>
 
+namespace infoxtr
+{
+
 namespace combn
 {
+    
     // ==============================
     // Combination generation
     // ==============================
@@ -105,4 +109,6 @@ namespace combn
 
 } // namespace combn
 
-#endif // COMBN_HPP
+}
+
+#endif // INFOXTR_COMBN_HPP

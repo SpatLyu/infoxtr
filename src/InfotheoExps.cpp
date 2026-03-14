@@ -6,9 +6,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <unordered_map> 
-#include "infotheo.hpp"
-#include "ksginfo.hpp"
-#include "transferentropy.hpp"
+#include "infoxtr.h"
 #include "DataTrans.h"
 
 // Wrapper function to calculate Shannon entropy for discrete data
@@ -127,7 +125,7 @@ double RcppDiscEntropy(SEXP series,
             Rcpp::stop("Input must be Integer, Numeric, or Character vector.");
     }
 
-    return infotheo::entropy(s, base, na_rm);
+    return infoxtr::infotheo::entropy(s, base, na_rm);
 }
 
 // Wrapper function to calculate Shannon entropy for continuous data
@@ -139,7 +137,7 @@ double RcppContEntropy(const Rcpp::NumericVector& vec,
 {
     std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
     
-    return ksginfo::entropy(
+    return infoxtr::ksginfo::entropy(
         vec_std, static_cast<size_t>(std::abs(k)), 
         static_cast<size_t>(std::abs(alg)), base);
 }
@@ -151,7 +149,7 @@ double RcppDiscJE(SEXP mat,
                   double base = 2.0,
                   bool na_rm = true)
 {
-    infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
     std::vector<size_t> v = Rcpp::as<std::vector<size_t>>(vars);
 
     const size_t n_cols = m.size();
@@ -164,7 +162,7 @@ double RcppDiscJE(SEXP mat,
         idx -= 1;  // to 0-based
     }
     
-    return infotheo::je(m, v, base, na_rm);
+    return infoxtr::infotheo::je(m, v, base, na_rm);
 }
 
 // Wrapper function to calculate joint entropy for continuous data
@@ -188,8 +186,9 @@ double RcppContJE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return ksginfo::je(m, v, static_cast<size_t>(std::abs(k)), 
-                       static_cast<size_t>(std::abs(alg)), base);
+    return infoxtr::ksginfo::je(
+                m, v, static_cast<size_t>(std::abs(k)), 
+                static_cast<size_t>(std::abs(alg)), base);
 }
 
 // Wrapper function to calculate conditional entropy for discrete data
@@ -200,7 +199,7 @@ double RcppDiscCE(SEXP mat,
                   double base = 2.0,
                   bool na_rm = true)
 {
-    infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> c = Rcpp::as<std::vector<size_t>>(conds);
@@ -223,7 +222,7 @@ double RcppDiscCE(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return infotheo::ce(m, t, c, base, na_rm);
+    return infoxtr::infotheo::ce(m, t, c, base, na_rm);
 }
 
 // Wrapper function to calculate conditional entropy for continuous data
@@ -258,8 +257,9 @@ double RcppContCE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return ksginfo::ce(m, t, c, static_cast<size_t>(std::abs(k)), 
-                       static_cast<size_t>(std::abs(alg)), base);
+    return infoxtr::ksginfo::ce(
+                m, t, c, static_cast<size_t>(std::abs(k)), 
+                static_cast<size_t>(std::abs(alg)), base);
 }
 
 // Wrapper function to calculate mutual information for discrete data
@@ -271,7 +271,7 @@ double RcppDiscMI(SEXP mat,
                   bool na_rm = true,
                   bool normalize = false)
 {
-    infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -294,7 +294,7 @@ double RcppDiscMI(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return infotheo::mi(m, t, i, base, na_rm, normalize);
+    return infoxtr::infotheo::mi(m, t, i, base, na_rm, normalize);
 }
 
 // Wrapper function to calculate mutual information for continuous data
@@ -330,8 +330,9 @@ double RcppContMI(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return ksginfo::mi(m, t, i, static_cast<size_t>(std::abs(k)), 
-                       static_cast<size_t>(std::abs(alg)), base, normalize);
+    return infoxtr::ksginfo::mi(
+                m, t, i, static_cast<size_t>(std::abs(k)), 
+                static_cast<size_t>(std::abs(alg)), base, normalize);
 }
 
 // Wrapper function to calculate conditional mutual information for discrete data
@@ -344,7 +345,7 @@ double RcppDiscCMI(SEXP mat,
                    bool na_rm = true,
                    bool normalize = false)
 {
-    infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -376,7 +377,7 @@ double RcppDiscCMI(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return infotheo::cmi(m, t, i, c, base, na_rm, normalize);
+    return infoxtr::infotheo::cmi(m, t, i, c, base, na_rm, normalize);
 }
 
 // Wrapper function to calculate conditional mutual information for continuous data
@@ -422,8 +423,9 @@ double RcppContCMI(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return ksginfo::cmi(m, t, i, c, static_cast<size_t>(std::abs(k)), 
-                        static_cast<size_t>(std::abs(alg)), base, normalize);
+    return infoxtr::ksginfo::cmi(
+                m, t, i, c, static_cast<size_t>(std::abs(k)), 
+                static_cast<size_t>(std::abs(alg)), base, normalize);
 }
 
 // Wrapper function to calculate transfer entropy for discrete time series data
@@ -438,7 +440,7 @@ double RcppDiscTE(SEXP mat,
                   bool normalize = false,
                   bool lag_single = false)
 {
-    infotheo::Matrix m = pat_r2std(mat,false);
+    infoxtr::infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
@@ -461,7 +463,7 @@ double RcppDiscTE(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return transferentropy::transferentropy(
+    return infoxtr::transferentropy::transferentropy(
                 m, tg, ag, static_cast<size_t>(std::abs(lag_p)), 
                 static_cast<size_t>(std::abs(lag_q)), base, 
                 na_rm, normalize, lag_single);
@@ -503,7 +505,7 @@ double RcppContTE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return transferentropy::transferentropy(
+    return infoxtr::transferentropy::transferentropy(
                 m, tg, ag, 
                 static_cast<size_t>(std::abs(lag_p)), 
                 static_cast<size_t>(std::abs(lag_q)), 

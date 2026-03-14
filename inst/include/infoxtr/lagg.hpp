@@ -15,8 +15,8 @@
  *  License: GPL-3
  *******************************************************************/
 
-#ifndef LAGG_HPP
-#define LAGG_HPP
+#ifndef INFOXTR_LAGG_HPP
+#define INFOXTR_LAGG_HPP
 
 #include <vector>
 #include <cmath>
@@ -25,6 +25,9 @@
 #include <unordered_set>
 #include <stdexcept>
 #include <cstddef>
+
+namespace infoxtr
+{
 
 namespace lagg
 {
@@ -225,4 +228,6 @@ namespace lagg
 
 } // namespace lagg
 
-#endif // LAGG_HPP
+}
+
+#endif // INFOXTR_LAGG_HPP

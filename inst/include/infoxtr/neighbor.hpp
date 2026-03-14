@@ -55,8 +55,8 @@
  *  License: GPL-3
  ********************************************************************/
 
-#ifndef NEIGHBOR_HPP
-#define NEIGHBOR_HPP
+#ifndef INFOXTR_NEIGHBOR_HPP
+#define INFOXTR_NEIGHBOR_HPP
 
 #include <vector>
 #include <cmath>
@@ -68,8 +68,11 @@
 #include <algorithm>
 #include <stdexcept>
 #include <unordered_set>
-#include "numericutils.hpp"
-#include "distance.hpp"
+#include "infoxtr/numericutils.hpp"
+#include "infoxtr/distance.hpp"
+
+namespace infoxtr
+{
 
 namespace neighbor
 {
@@ -93,10 +96,10 @@ namespace neighbor
         bool include_self = false,
         bool byrow = true)
     {
-        const distance::distanceMethod dist_method =
-            distance::parseDistanceMethod(method);
+        const infoxtr::distance::distanceMethod dist_method =
+            infoxtr::distance::parseDistanceMethod(method);
 
-        if (dist_method == distance::distanceMethod::Invalid)
+        if (dist_method == infoxtr::distance::distanceMethod::Invalid)
         {
             throw std::invalid_argument(
                 "Unsupported distance method: " + method);
@@ -135,15 +138,15 @@ namespace neighbor
 
                     switch (dist_method)
                     {
-                        case distance::distanceMethod::Euclidean:
+                        case infoxtr::distance::distanceMethod::Euclidean:
                             sum += diff * diff;
                             break;
 
-                        case distance::distanceMethod::Manhattan:
+                        case infoxtr::distance::distanceMethod::Manhattan:
                             sum += std::abs(diff);
                             break;
 
-                        case distance::distanceMethod::Maximum:
+                        case infoxtr::distance::distanceMethod::Maximum:
                         {
                             double ad = std::abs(diff);
                             if (ad > maxv) maxv = ad;
@@ -161,9 +164,9 @@ namespace neighbor
 
                 double distv;
 
-                if (dist_method == distance::distanceMethod::Euclidean)
+                if (dist_method == infoxtr::distance::distanceMethod::Euclidean)
                     distv = std::sqrt(sum);
-                else if (dist_method == distance::distanceMethod::Manhattan)
+                else if (dist_method == infoxtr::distance::distanceMethod::Manhattan)
                     distv = sum;
                 else
                     distv = maxv;
@@ -193,7 +196,7 @@ namespace neighbor
                     candidates.end(),
                     [](const auto& a, const auto& b)
                     {
-                        if (!numericutils::doubleNearlyEqual(a.first,b.first))
+                        if (!infoxtr::numericutils::doubleNearlyEqual(a.first,b.first))
                             return a.first < b.first;
                         return a.second < b.second;
                     });
@@ -224,10 +227,10 @@ namespace neighbor
         bool include_self = false,
         bool byrow = true)
     {
-        const distance::distanceMethod dist_method =
+        const infoxtr::distance::distanceMethod dist_method =
             distance::parseDistanceMethod(method);
 
-        if (dist_method == distance::distanceMethod::Invalid)
+        if (dist_method == infoxtr::distance::distanceMethod::Invalid)
         {
             throw std::invalid_argument(
                 "Unsupported distance method: " + method);
@@ -272,15 +275,15 @@ namespace neighbor
 
                     switch (dist_method)
                     {
-                        case distance::distanceMethod::Euclidean:
+                        case infoxtr::distance::distanceMethod::Euclidean:
                             sum += diff * diff;
                             break;
 
-                        case distance::distanceMethod::Manhattan:
+                        case infoxtr::distance::distanceMethod::Manhattan:
                             sum += std::abs(diff);
                             break;
 
-                        case distance::distanceMethod::Maximum:
+                        case infoxtr::distance::distanceMethod::Maximum:
                         {
                             double ad = std::abs(diff);
                             if (ad > maxv) maxv = ad;
@@ -298,9 +301,9 @@ namespace neighbor
 
                 double distv;
 
-                if (dist_method == distance::distanceMethod::Euclidean)
+                if (dist_method == infoxtr::distance::distanceMethod::Euclidean)
                     distv = std::sqrt(sum);
-                else if (dist_method == distance::distanceMethod::Manhattan)
+                else if (dist_method == infoxtr::distance::distanceMethod::Manhattan)
                     distv = sum;
                 else
                     distv = maxv;
@@ -330,7 +333,7 @@ namespace neighbor
                     candidates.end(),
                     [](const auto& a, const auto& b)
                     {
-                        if (!numericutils::doubleNearlyEqual(a.first,b.first))
+                        if (!infoxtr::numericutils::doubleNearlyEqual(a.first,b.first))
                             return a.first < b.first;
                         return a.second < b.second;
                     });
@@ -401,7 +404,7 @@ namespace neighbor
             candidates.end(),
             [](const std::pair<double, size_t>& a,
               const std::pair<double, size_t>& b) {
-              if (!numericutils::doubleNearlyEqual(a.first, b.first)) {
+              if (!infoxtr::numericutils::doubleNearlyEqual(a.first, b.first)) {
                 return a.first < b.first;
               } else {
                 return a.second < b.second;
@@ -492,7 +495,7 @@ namespace neighbor
             candidates.end(),
             [](const std::pair<double, size_t>& a,
               const std::pair<double, size_t>& b) {
-              if (!numericutils::doubleNearlyEqual(a.first, b.first)) {
+              if (!infoxtr::numericutils::doubleNearlyEqual(a.first, b.first)) {
                 return a.first < b.first;
               } else {
                 return a.second < b.second;
@@ -513,4 +516,6 @@ namespace neighbor
 
 } // namespace neighbor
 
-#endif // NEIGHBOR_HPP
+}
+
+#endif // INFOXTR_NEIGHBOR_HPP

@@ -29,8 +29,8 @@
  *  License: GPL-3
  *******************************************************************/
 
-#ifndef EMBED_HPP
-#define EMBED_HPP
+#ifndef INFOXTR_EMBED_HPP
+#define INFOXTR_EMBED_HPP
 
 #include <vector>
 #include <cmath>
@@ -42,6 +42,9 @@
 #include <stdexcept>
 #include <cstddef>
 #include <utility>
+
+namespace infoxtr 
+{
 
 namespace embed 
 {
@@ -638,9 +641,9 @@ namespace embed
         }
 
         if (validCols.empty()) {
-        throw std::invalid_argument(
-            "No valid embeddings can be generated."
-        );
+            throw std::invalid_argument(
+                "No valid embeddings can be generated."
+            );
         }
         if (validCols.size() == emb.front().size()) return emb;
 
@@ -727,20 +730,20 @@ namespace embed
 
     for (size_t t = 0; t < N; ++t) {
         for (size_t j = 0; j < E; ++j) {
-        size_t lag;
+            size_t lag;
 
-        if (tau == 0) {
-            lag = j; // Original behavior: 0, 1, ..., E-1
-        } else if (style == 0) {
-            lag = j * tau;         // 0, tau, 2*tau, ..., (E-1)*tau
-        } else { // style == 1;
-            lag = (j + 1) * tau;   // tau, 2*tau, ..., E*tau
-        }
+            if (tau == 0) {
+                lag = j; // Original behavior: 0, 1, ..., E-1
+            } else if (style == 0) {
+                lag = j * tau;         // 0, tau, 2*tau, ..., (E-1)*tau
+            } else { // style == 1;
+                lag = (j + 1) * tau;   // tau, 2*tau, ..., E*tau
+            }
 
-        if(t >= lag) {
-            emb[t][j] = vec[t - lag];
-            // else leave NaN
-        }
+            if(t >= lag) {
+                emb[t][j] = vec[t - lag];
+                // else leave NaN
+            }
         }
     }
 
@@ -749,10 +752,10 @@ namespace embed
     keep.reserve(E);
     for (size_t j = 0; j < E; ++j) {
         for (size_t i = 0; i < N; ++i) {
-        if (!std::isnan(emb[i][j])) {
-            keep.push_back(j);
-            break;
-        }
+            if (!std::isnan(emb[i][j])) {
+                keep.push_back(j);
+                break;
+            }
         }
     }
 
@@ -768,7 +771,7 @@ namespace embed
     for (size_t i = 0; i < N; ++i) {
         cleaned[i].reserve(keep.size());
         for (size_t j : keep) {
-        cleaned[i].push_back(emb[i][j]);
+            cleaned[i].push_back(emb[i][j]);
         }
     }
 
@@ -777,4 +780,6 @@ namespace embed
 
 } // namespace embed
 
-#endif // EMBED_HPP
+}
+
+#endif // INFOXTR_EMBED_HPP
