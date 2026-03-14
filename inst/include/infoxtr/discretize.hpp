@@ -405,7 +405,7 @@ namespace discretize
         const std::vector<double>& vec,
         size_t n,
         size_t sample_begin = 3000,
-        double sample_prob = 0.15,
+        double sample_prop = 0.15,
         uint64_t seed = 123456789,
         bool right_closed = true)
     {
@@ -416,7 +416,7 @@ namespace discretize
             std::mt19937_64 rng(seed);
 
             size_t sample_size =
-                std::round(x.size() * sample_prob);
+                std::round(x.size() * sample_prop);
 
             sample_size = std::max<size_t>(1, sample_size);
 
@@ -554,7 +554,7 @@ namespace discretize
         const std::string& method,
         size_t n = 5,
         size_t sample_begin = 3000,
-        double sample_prob = 0.15,
+        double sample_prop = 0.15,
         uint64_t seed = 123456789,
         double threshold = 0.4,
         size_t iter_step = 100,
@@ -572,7 +572,7 @@ namespace discretize
         else if (method == "quantile")
             return quantileDisc(vec, n, right_closed);
         else if (method == "natural" || method == "jenks")
-            return naturalDisc(vec, n, sample_begin, sample_prob, seed, right_closed);
+            return naturalDisc(vec, n, sample_begin, sample_prop, seed, right_closed);
         else if (method == "headtail"|| method == "headtails")  
             return htDisc(vec, threshold, iter_step, right_closed);
         else
