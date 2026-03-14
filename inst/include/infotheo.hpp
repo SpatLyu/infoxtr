@@ -13,11 +13,11 @@
  *      Ensure your discrete encoding reserves 0 for missing data
  *
  *  Functions:
- *      Entropy
- *      JE   Joint Entropy
- *      CE   Conditional Entropy
- *      MI   Mutual Information
- *      CMI  Conditional Mutual Information
+ *      entropy  Shannon Entropy
+ *      je       Joint Entropy
+ *      ce       Conditional Entropy
+ *      mi       Mutual Information
+ *      cmi      Conditional Mutual Information
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
@@ -36,7 +36,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace InfoTheo
+namespace infotheo
 {
 
     using Series = std::vector<uint64_t>;
@@ -58,7 +58,7 @@ namespace InfoTheo
     /***********************************************************
      * Entropy
      ***********************************************************/
-    inline double Entropy(
+    inline double entropy(
         const Series& series,
         double base = 2.0,
         bool na_rm = true)
@@ -96,7 +96,7 @@ namespace InfoTheo
     /***********************************************************
      * Joint Entropy
      ***********************************************************/
-    inline double JE(
+    inline double je(
         const Matrix& mat,
         const std::vector<size_t>& vars,
         double base = 2.0,
@@ -231,7 +231,7 @@ namespace InfoTheo
     /***********************************************************
      * Conditional Entropy
      ***********************************************************/
-    inline double CE(
+    inline double ce(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& conds,
@@ -247,14 +247,13 @@ namespace InfoTheo
         std::vector<size_t> tc = conds;
         tc.insert(tc.end(), target.begin(), target.end());
 
-        return JE(mat, tc, base, na_rm)
-            - JE(mat, conds, base, na_rm);
+        return je(mat, tc, base, na_rm) - je(mat, conds, base, na_rm);
     }
 
     /***********************************************************
      * Mutual Information
      ***********************************************************/
-    inline double MI(
+    inline double mi(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& interact,
@@ -271,22 +270,22 @@ namespace InfoTheo
         std::vector<size_t> ti = interact;
         ti.insert(ti.end(), target.begin(), target.end());
 
-        double ht = JE(mat, target, base, na_rm); 
-        double hi = JE(mat, interact, base, na_rm); 
-        double hti = JE(mat, ti, base, na_rm); 
+        double ht = je(mat, target, base, na_rm); 
+        double hi = je(mat, interact, base, na_rm); 
+        double hti = je(mat, ti, base, na_rm); 
         
-        double mi = ht + hi - hti; 
+        double mival = ht + hi - hti; 
         
-        if (!normalize) return mi; 
-        if (hti <= 0) return mi; 
+        if (!normalize) return mival; 
+        if (hti <= 0) return mival; 
 
-        return mi / hti;
+        return mival / hti;
     }
 
     /***********************************************************
      * Conditional Mutual Information
      ***********************************************************/
-    inline double CMI(
+    inline double cmi(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& interact,
@@ -310,24 +309,24 @@ namespace InfoTheo
         cti.insert(cti.end(), target.begin(), target.end());
         cti.insert(cti.end(), interact.begin(), interact.end());
 
-        double h_ct  = JE(mat, ct, base, na_rm);
-        double h_ci  = JE(mat, ci, base, na_rm);
-        double h_c   = JE(mat, conds, base, na_rm);
-        double h_cti = JE(mat, cti, base, na_rm);
+        double h_ct  = je(mat, ct, base, na_rm);
+        double h_ci  = je(mat, ci, base, na_rm);
+        double h_c   = je(mat, conds, base, na_rm);
+        double h_cti = je(mat, cti, base, na_rm);
 
-        double cmi = h_ct + h_ci - h_c - h_cti;
+        double cmival = h_ct + h_ci - h_c - h_cti;
 
-        if (!normalize) return cmi;
+        if (!normalize) return cmival;
 
         std::vector<size_t> ti = interact;
         ti.insert(ti.end(), target.begin(), target.end());
 
-        double h_ti_c = CE(mat, ti, conds, base, na_rm);
-        if (h_ti_c <= 0) return cmi;
+        double h_ti_c = ce(mat, ti, conds, base, na_rm);
+        if (h_ti_c <= 0) return cmival;
 
-        return cmi / h_ti_c;
+        return cmival / h_ti_c;
     }
 
-} // namespace InfoTheo
+} // namespace infotheo
 
 #endif // INFOTHEO_HPP

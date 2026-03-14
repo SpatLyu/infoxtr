@@ -1,4 +1,4 @@
-/***************************************************************
+/************************************************************************
  *  File: distance.hpp
  *
  *  High performance distance measurements
@@ -26,19 +26,19 @@
  *          Distance matrix is computed between columns.
  *
  *  Functions:
- *      Dist(scalar, scalar)
- *      Dist(vector, scalar)
- *      Dist(vector, vector)
- *      Dist(vector)                     -> full distance matrix
- *      Dist(matrix)                     -> full distance matrix
- *      Dist(matrix, lib, pred)          -> subset distance matrix
+ *      distance(scalar, scalar)
+ *      distance(vector, scalar)
+ *      distance(vector, vector)
+ *      distance(vector)                     -> full distance matrix
+ *      distance(matrix)                     -> full distance matrix
+ *      distance(matrix, lib, pred)          -> subset distance matrix
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
- ***************************************************************/
+ ************************************************************************/
 
-#ifndef DIST_HPP
-#define DIST_HPP
+#ifndef DISTANCE_HPP
+#define DISTANCE_HPP
 
 #include <vector>
 #include <cmath>
@@ -49,10 +49,10 @@
 #include <stdexcept>
 #include <algorithm>
 
-namespace Dist
+namespace distance
 {   
     /*
-     * @enum DistanceMethod
+     * @enum distanceMethod
      * @brief Enumerated type for supported distance metrics in state space projection.
      * 
      * This enum provides a type-safe, efficient way to specify distance calculation
@@ -72,7 +72,7 @@ namespace Dist
      * 
      * @note Stored as uint8_t for minimal memory footprint and optimal switch dispatch.
      */
-    enum class DistanceMethod : uint8_t {
+    enum class distanceMethod : uint8_t {
         Euclidean,
         Manhattan,
         Maximum,
@@ -80,7 +80,7 @@ namespace Dist
     };
 
     /*
-     * @brief Parses a distance method name string into the corresponding DistanceMethod enum.
+     * @brief Parses a distance method name string into the corresponding distanceMethod enum.
      * 
      * This helper function converts user-facing string identifiers (e.g., "euclidean")
      * into the internal enum representation. It is designed to be called exactly once
@@ -92,7 +92,7 @@ namespace Dist
      *               - "manhattan" : L1 distance
      *               - "maximum"   : Chebyshev / L-infinity distance
      * 
-     * @return The corresponding DistanceMethod enum value. Returns DistanceMethod::Invalid
+     * @return The corresponding distanceMethod enum value. Returns distanceMethod::Invalid
      *         if the input string does not match any supported method.
      * 
      * @note Case-sensitive matching. Whitespace or alternative spellings will result in Invalid.
@@ -100,21 +100,21 @@ namespace Dist
      * 
      * @example
      *   auto method = parseDistanceMethod("manhattan");
-     *   if (method == DistanceMethod::Invalid) {
+     *   if (method == distanceMethod::Invalid) {
      *       throw std::invalid_argument("Unknown distance metric");
      *   }
      */
-    inline DistanceMethod parseDistanceMethod(const std::string& method) {
-        if (method == "euclidean") return DistanceMethod::Euclidean;
-        if (method == "manhattan") return DistanceMethod::Manhattan;
-        if (method == "maximum")   return DistanceMethod::Maximum;
-        return DistanceMethod::Invalid;
+    inline distanceMethod parseDistanceMethod(const std::string& method) {
+        if (method == "euclidean") return distanceMethod::Euclidean;
+        if (method == "manhattan") return distanceMethod::Manhattan;
+        if (method == "maximum")   return distanceMethod::Maximum;
+        return distanceMethod::Invalid;
     }
 
     /***********************************************************
      * Scalar - Scalar
      ***********************************************************/
-    inline double Dist(
+    inline double distance(
         const double scalar1,
         const double scalar2)
     {
@@ -128,7 +128,7 @@ namespace Dist
      * Scalar - Vector
      * Result length equals vector length
      ***********************************************************/
-    inline std::vector<double> Dist(
+    inline std::vector<double> distance(
         const double scalar,
         const std::vector<double>& vec)
     {
@@ -148,11 +148,11 @@ namespace Dist
         return result;
     }
 
-    inline std::vector<double> Dist(
+    inline std::vector<double> distance(
         const std::vector<double>& vec,
         const double scalar)
     {
-        return Dist(scalar, vec);
+        return distance(scalar, vec);
     }
 
     /***********************************************************
@@ -160,7 +160,7 @@ namespace Dist
     * Scalar is internally expanded to vector length
     * Result is a single double distance value
     ***********************************************************/
-    inline double Dist(
+    inline double distance(
         const std::vector<double>& vec,
         const double scalar,
         std::string method = "euclidean",
@@ -169,8 +169,8 @@ namespace Dist
         if (vec.empty() || std::isnan(scalar))
             return std::numeric_limits<double>::quiet_NaN();
 
-        const DistanceMethod dist_method = parseDistanceMethod(method);
-        if (dist_method == DistanceMethod::Invalid) {
+        const distanceMethod dist_method = parseDistanceMethod(method);
+        if (dist_method == distanceMethod::Invalid) {
             throw std::invalid_argument("Unsupported distance method: " + method);
         }
 
@@ -189,13 +189,13 @@ namespace Dist
             double diff = vec[i] - scalar;
 
             switch (dist_method) {
-                case DistanceMethod::Euclidean:
+                case distanceMethod::Euclidean:
                     sum += diff * diff;
                     break;
-                case DistanceMethod::Manhattan:
+                case distanceMethod::Manhattan:
                     sum += std::abs(diff);
                     break;
-                case DistanceMethod::Maximum:
+                case distanceMethod::Maximum:
                     {
                         double ad = std::abs(diff);
                         if (ad > maxv) maxv = ad;
@@ -211,28 +211,28 @@ namespace Dist
         if (n_valid == 0)
             return std::numeric_limits<double>::quiet_NaN();
 
-        if (dist_method == DistanceMethod::Euclidean)
+        if (dist_method == distanceMethod::Euclidean)
             return std::sqrt(sum);
-        else if (dist_method == DistanceMethod::Manhattan)
+        else if (dist_method == distanceMethod::Manhattan)
             return sum;
         else
             return maxv;  // maximum
     }
 
-    inline double Dist(
+    inline double distance(
         const double scalar,
         const std::vector<double>& vec,
         std::string method = "euclidean",
         bool na_rm = true)
     {
-        return Dist(vec, scalar, method, na_rm);
+        return distance(vec, scalar, method, na_rm);
     }
 
     /***********************************************************
      * Vector - Vector
      * Element-wise distance
      ***********************************************************/
-    inline std::vector<double> Dist(
+    inline std::vector<double> distance(
         const std::vector<double>& vec1,
         const std::vector<double>& vec2)
     {
@@ -257,7 +257,7 @@ namespace Dist
      * Vector - Vector
      * Result is a single double distance value
      ***********************************************************/
-    inline double Dist(
+    inline double distance(
         const std::vector<double>& vec1,
         const std::vector<double>& vec2,
         std::string method = "euclidean",
@@ -266,8 +266,8 @@ namespace Dist
         if (vec1.empty() || vec2.empty() || vec1.size() != vec2.size())
             return std::numeric_limits<double>::quiet_NaN();
 
-        const DistanceMethod dist_method = parseDistanceMethod(method);
-        if (dist_method == DistanceMethod::Invalid) {
+        const distanceMethod dist_method = parseDistanceMethod(method);
+        if (dist_method == distanceMethod::Invalid) {
             throw std::invalid_argument("Unsupported distance method: " + method);
         }
 
@@ -288,13 +288,13 @@ namespace Dist
             double diff = vec1[i] - vec2[i];
 
             switch (dist_method) {
-                case DistanceMethod::Euclidean:
+                case distanceMethod::Euclidean:
                     sum += diff * diff;
                     break;
-                case DistanceMethod::Manhattan:
+                case distanceMethod::Manhattan:
                     sum += std::abs(diff);
                     break;
-                case DistanceMethod::Maximum:
+                case distanceMethod::Maximum:
                     {
                         double ad = std::abs(diff);
                         if (ad > maxv) maxv = ad;
@@ -310,9 +310,9 @@ namespace Dist
         if (n_valid == 0)
             return std::numeric_limits<double>::quiet_NaN();
 
-        if (dist_method == DistanceMethod::Euclidean)
+        if (dist_method == distanceMethod::Euclidean)
             return std::sqrt(sum);
-        else if (dist_method == DistanceMethod::Manhattan)
+        else if (dist_method == distanceMethod::Manhattan)
             return sum;
         else
             return maxv;  // maximum
@@ -322,7 +322,7 @@ namespace Dist
      * Vector Distance
      * Computes a full pairwise distance matrix from a numeric vector.
      ***************************************************************************/
-    inline std::vector<std::vector<double>> Dist(
+    inline std::vector<std::vector<double>> distance(
         const std::vector<double>& vec)
     {
         if (vec.empty()) return {};
@@ -378,7 +378,7 @@ namespace Dist
      *
      * @return Symmetric distance matrix
      ***************************************************************************/
-    inline std::vector<std::vector<double>> Dist(
+    inline std::vector<std::vector<double>> distance(
         const std::vector<std::vector<double>>& mat,
         std::string method = "euclidean",
         bool na_rm = true,
@@ -386,8 +386,8 @@ namespace Dist
     {
         if (mat.empty()) return {};
 
-        const DistanceMethod dist_method = parseDistanceMethod(method);
-        if (dist_method == DistanceMethod::Invalid) {
+        const distanceMethod dist_method = parseDistanceMethod(method);
+        if (dist_method == distanceMethod::Invalid) {
             throw std::invalid_argument("Unsupported distance method: " + method);
         }
 
@@ -432,15 +432,15 @@ namespace Dist
                     double diff = xi - xj;
 
                     switch (dist_method) {
-                        case DistanceMethod::Euclidean:
+                        case distanceMethod::Euclidean:
                             sum += diff * diff;
                             break;
 
-                        case DistanceMethod::Manhattan:
+                        case distanceMethod::Manhattan:
                             sum += std::abs(diff);
                             break;
 
-                        case DistanceMethod::Maximum:
+                        case distanceMethod::Maximum:
                         {
                             double ad = std::abs(diff);
                             if (ad > maxv) maxv = ad;
@@ -459,9 +459,9 @@ namespace Dist
 
                 double distv;
 
-                if (dist_method == DistanceMethod::Euclidean)
+                if (dist_method == distanceMethod::Euclidean)
                     distv = std::sqrt(sum);
-                else if (dist_method == DistanceMethod::Manhattan)
+                else if (dist_method == distanceMethod::Manhattan)
                     distv = sum;
                 else
                     distv = maxv;
@@ -482,7 +482,7 @@ namespace Dist
      *
      * Each element (pi, lj) equals
      *
-     *      dist(mat[pred[i]], mat[lib[j]])
+     *      distance(mat[pred[i]], mat[lib[j]])
      *
      * Behavior depends on byrow:
      *
@@ -503,7 +503,7 @@ namespace Dist
      *         with entries at [pred[i]][lib[j]] filled with computed distances.
      *         All other entries remain NaN.
      ***************************************************************************************/
-    inline std::vector<std::vector<double>> Dist(
+    inline std::vector<std::vector<double>> distance(
         const std::vector<std::vector<double>>& mat,
         const std::vector<size_t>& lib,
         const std::vector<size_t>& pred,
@@ -513,8 +513,8 @@ namespace Dist
     {
         if (mat.empty()) return {};
 
-        const DistanceMethod dist_method = parseDistanceMethod(method);
-        if (dist_method == DistanceMethod::Invalid) {
+        const distanceMethod dist_method = parseDistanceMethod(method);
+        if (dist_method == distanceMethod::Invalid) {
             throw std::invalid_argument("Unsupported distance method: " + method);
         }
 
@@ -567,15 +567,15 @@ namespace Dist
                     double diff = xi - xj;
 
                     switch (dist_method) {
-                        case DistanceMethod::Euclidean:
+                        case distanceMethod::Euclidean:
                             sum += diff * diff;
                             break;
 
-                        case DistanceMethod::Manhattan:
+                        case distanceMethod::Manhattan:
                             sum += std::abs(diff);
                             break;
 
-                        case DistanceMethod::Maximum:
+                        case distanceMethod::Maximum:
                         {
                             double ad = std::abs(diff);
                             if (ad > maxv) maxv = ad;
@@ -594,9 +594,9 @@ namespace Dist
 
                 double distv;
 
-                if (dist_method == DistanceMethod::Euclidean)
+                if (dist_method == distanceMethod::Euclidean)
                     distv = std::sqrt(sum);
-                else if (dist_method == DistanceMethod::Manhattan)
+                else if (dist_method == distanceMethod::Manhattan)
                     distv = sum;
                 else
                     distv = maxv;
@@ -608,6 +608,6 @@ namespace Dist
         return distm;
     }
 
-} // namespace Dist
+} // namespace distance
 
-#endif // DIST_HPP
+#endif // DISTANCE_HPP

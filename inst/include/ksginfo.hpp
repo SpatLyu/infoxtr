@@ -33,10 +33,10 @@
  *            Kraskov–Stögbauer–Grassberger estimator II (KSG2)
  *
  *  Distance backend:
- *      Dist::Dist (Chebyshev metric)
+ *      distance::distance (Chebyshev metric)
  *
  *  Special functions:
- *      NumericUtils::Digamma
+ *      numericutils::digamma
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
@@ -54,7 +54,7 @@
 #include "distance.hpp"
 #include "numericutils.hpp"
 
-namespace KSGInfo
+namespace ksginfo
 {
 
     using Series = std::vector<double>;
@@ -79,7 +79,7 @@ namespace KSGInfo
     /***********************************************************
      * Entropy (Kozachenko–Leonenko)
      ***********************************************************/
-    inline double Entropy(
+    inline double entropy(
         const Series& series,
         size_t k = 3,
         size_t alg = 0,
@@ -87,7 +87,7 @@ namespace KSGInfo
     {
         const size_t n = series.size();
 
-        auto dist = Dist::Dist(series);
+        auto dist = distance::distance(series);
 
         double avg = 0.0;
 
@@ -104,7 +104,7 @@ namespace KSGInfo
                 row.end());
 
             if (row.size() < k)
-                throw std::runtime_error("k larger than valid neighbour count");
+                throw std::runtime_error("k larger than valid neighbor count");
 
             std::nth_element(
                 row.begin(),
@@ -114,20 +114,20 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
             
-            avg += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+            avg += (numericutils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
                     ? 0.0 : std::log(eps * 2.0);
         }
 
         avg /= static_cast<double>(n);
 
-        double H = NumericUtils::Digamma(n)
-                 - NumericUtils::Digamma(k)
+        double H = numericutils::digamma(n)
+                 - numericutils::digamma(k)
                  + avg;
         
         if (alg == 1)
             H += 1.0 / k;
 
-        if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
+        if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
             H /= std::log(base);
 
         return H;
@@ -136,7 +136,7 @@ namespace KSGInfo
     /***********************************************************
      * Joint Entropy
      ***********************************************************/
-    inline double JE(
+    inline double je(
         const Matrix& mat,
         const std::vector<size_t>& vars,
         size_t k = 3,
@@ -148,7 +148,7 @@ namespace KSGInfo
         const size_t d = sub.size();
         const size_t n = sub[0].size();
 
-        auto dist = Dist::Dist(sub,"maximum",true,false);
+        auto dist = distance::distance(sub,"maximum",true,false);
 
         double avg = 0.0;
 
@@ -165,7 +165,7 @@ namespace KSGInfo
                 row.end());
 
             if (row.size() < k)
-                throw std::runtime_error("k larger than valid neighbour count");
+                throw std::runtime_error("k larger than valid neighbor count");
 
             std::nth_element(
                 row.begin(),
@@ -175,20 +175,20 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+            avg += (numericutils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
                     ? 0.0 : std::log(eps * 2.0);
         }
 
         avg /= static_cast<double>(n);
 
-        double H = NumericUtils::Digamma(n)
-                 - NumericUtils::Digamma(k)
+        double H = numericutils::digamma(n)
+                 - numericutils::digamma(k)
                  + d * avg;
 
         if (alg == 1)
             H += 1.0 / k;
 
-        if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
+        if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
             H /= std::log(base);
 
         return H;
@@ -197,7 +197,7 @@ namespace KSGInfo
     /***********************************************************
      * Conditional Entropy
      ***********************************************************/
-    inline double CE(
+    inline double ce(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& cond,
@@ -208,13 +208,13 @@ namespace KSGInfo
         std::vector<size_t> tc = cond;
         tc.insert(tc.end(),target.begin(),target.end());
 
-        return JE(mat,tc,k,alg,base) - JE(mat,cond,k,alg,base);
+        return je(mat,tc,k,alg,base) - je(mat,cond,k,alg,base);
     }
 
     /***********************************************************
      * Mutual Information (KSG estimator)
      ***********************************************************/
-    inline double MI(
+    inline double mi(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& interact,
@@ -226,9 +226,9 @@ namespace KSGInfo
         std::vector<size_t> xy = target;
         xy.insert(xy.end(), interact.begin(), interact.end());
 
-        auto d_xy = Dist::Dist(subset(mat,xy),"maximum",true,false);
-        auto d_x  = Dist::Dist(subset(mat,target),"maximum",true,false);
-        auto d_y  = Dist::Dist(subset(mat,interact),"maximum",true,false);
+        auto d_xy = distance::distance(subset(mat,xy),"maximum",true,false);
+        auto d_x  = distance::distance(subset(mat,target),"maximum",true,false);
+        auto d_y  = distance::distance(subset(mat,interact),"maximum",true,false);
 
         const size_t n = d_xy.size();
         const size_t d = xy.size();
@@ -249,14 +249,14 @@ namespace KSGInfo
                 row.end());
 
             if (row.size() < k)
-                throw std::runtime_error("k larger than valid neighbour count");
+                throw std::runtime_error("k larger than valid neighbor count");
 
             std::nth_element(row.begin(),row.begin()+k-1,row.end());
             
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg_log_eps += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+            avg_log_eps += (numericutils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
                             ? 0.0 : std::log(eps * 2.0);
 
             size_t nx = 0, ny = 0;
@@ -278,56 +278,50 @@ namespace KSGInfo
             }
 
             if (alg == 0)
-                sum += NumericUtils::Digamma(nx+1)
-                     + NumericUtils::Digamma(ny+1);
+                sum += numericutils::digamma(nx+1)
+                     + numericutils::digamma(ny+1);
             else
-                sum += NumericUtils::Digamma(nx)
-                     + NumericUtils::Digamma(ny);
+                sum += numericutils::digamma(nx)
+                     + numericutils::digamma(ny);
         }
 
         avg_log_eps /= n;
 
-        double mi;
+        double mival = numericutils::digamma(k)
+                     + numericutils::digamma(n)
+                     - sum / n;
 
-        if (alg == 0)
-            mi = NumericUtils::Digamma(k)
-               + NumericUtils::Digamma(n)
-               - sum / n;
-        else
-            mi = NumericUtils::Digamma(k)
-               - 1.0 / k
-               + NumericUtils::Digamma(n)
-               - sum / n;
+        if (alg == 1) mival -= 1.0 / k;
 
-        mi = std::max(0.0, mi);
+        mival = std::max(0.0, mival);
 
         if (!normalize) 
         {
-            if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
-                mi /= std::log(base);
+            if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
+                mival /= std::log(base);
 
-            return mi;
+            return mival;
         } 
 
-        double hxy = NumericUtils::Digamma(n)
-                   - NumericUtils::Digamma(k)
+        double hxy = numericutils::digamma(n)
+                   - numericutils::digamma(k)
                    + d * avg_log_eps;
         if (alg == 1) hxy += 1.0 / k;
 
         if (hxy <= 0) {
-            if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
-                mi /= std::log(base);
+            if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
+                mival /= std::log(base);
 
-            return mi;
+            return mival;
         } 
 
-        return mi / hxy;
+        return mival / hxy;
     }
 
     /***********************************************************
      * Conditional Mutual Information
      ***********************************************************/
-    inline double CMI(
+    inline double cmi(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& interact,
@@ -350,10 +344,10 @@ namespace KSGInfo
         std::vector<size_t> yz = conds;
         yz.insert(yz.end(), interact.begin(), interact.end());
 
-        auto d_xyz = Dist::Dist(subset(mat,xyz),"maximum",true,false);
-        auto d_xz  = Dist::Dist(subset(mat,xz),"maximum",true,false);
-        auto d_yz  = Dist::Dist(subset(mat,yz),"maximum",true,false);
-        auto d_z   = Dist::Dist(subset(mat,conds),"maximum",true,false);
+        auto d_xyz = distance::distance(subset(mat,xyz),"maximum",true,false);
+        auto d_xz  = distance::distance(subset(mat,xz),"maximum",true,false);
+        auto d_yz  = distance::distance(subset(mat,yz),"maximum",true,false);
+        auto d_z   = distance::distance(subset(mat,conds),"maximum",true,false);
 
         const size_t n = d_xyz.size();
         const size_t d = xy.size();
@@ -374,14 +368,14 @@ namespace KSGInfo
                 row.end());
 
             if (row.size() < k)
-                throw std::runtime_error("k larger than valid neighbour count");
+                throw std::runtime_error("k larger than valid neighbor count");
 
             std::nth_element(row.begin(),row.begin()+k-1,row.end());
 
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg_log_eps += (NumericUtils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+            avg_log_eps += (numericutils::doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
                             ? 0.0 : std::log(eps * 2.0);
 
             size_t nxz = 0, nyz = 0, nz = 0;
@@ -405,44 +399,44 @@ namespace KSGInfo
             }
 
             if (alg == 0)
-                sum += NumericUtils::Digamma(nxz+1)
-                     + NumericUtils::Digamma(nyz+1)
-                     - NumericUtils::Digamma(nz+1);
+                sum += numericutils::digamma(nxz+1)
+                     + numericutils::digamma(nyz+1)
+                     - numericutils::digamma(nz+1);
             else
-                sum += NumericUtils::Digamma(nxz)
-                     + NumericUtils::Digamma(nyz)
-                     - NumericUtils::Digamma(nz);
+                sum += numericutils::digamma(nxz)
+                     + numericutils::digamma(nyz)
+                     - numericutils::digamma(nz);
         }
 
         avg_log_eps /= n;
 
-        double cmi = NumericUtils::Digamma(k) - sum / n;
-        if (alg == 1) cmi -= 1.0 / k;
+        double cmival = numericutils::digamma(k) - sum / n;
+        if (alg == 1) cmival -= 1.0 / k;
 
         if (!normalize)
         {
-            if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
-                cmi /= std::log(base);
+            if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
+                cmival /= std::log(base);
 
-            return cmi;
+            return cmival;
         } 
 
-        double hxy_z = NumericUtils::Digamma(n)
-                     - NumericUtils::Digamma(k)
+        double hxy_z = numericutils::digamma(n)
+                     - numericutils::digamma(k)
                      + d * avg_log_eps;
         if (alg == 1) hxy_z += 1.0 / k;
 
         if (hxy_z <= 0)
         {
-            if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
-                cmi /= std::log(base);
+            if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
+                cmival /= std::log(base);
 
-            return cmi;
+            return cmival;
         } 
 
-        return cmi / hxy_z;
+        return cmival / hxy_z;
     }
 
-} // namespace KSGInfo
+} // namespace ksginfo
 
 #endif // KSGINFO_HPP

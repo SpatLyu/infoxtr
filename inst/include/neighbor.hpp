@@ -1,5 +1,5 @@
 /********************************************************************
- *  File: neighbour.hpp
+ *  File: neighbor.hpp
  *
  *  High performance nearest neighbor search utilities
  *  for matrix based state space and distance matrix data.
@@ -55,8 +55,8 @@
  *  License: GPL-3
  ********************************************************************/
 
-#ifndef NEIGHBOUR_HPP
-#define NEIGHBOUR_HPP
+#ifndef NEIGHBOR_HPP
+#define NEIGHBOR_HPP
 
 #include <vector>
 #include <cmath>
@@ -71,7 +71,7 @@
 #include "numericutils.hpp"
 #include "distance.hpp"
 
-namespace NN
+namespace neighbor
 {
 
     /***********************************************************
@@ -85,7 +85,6 @@ namespace NN
      *      2. Compute distances to all other observations
      *      3. Exclude self unless include_self = true
      *      4. Partial sort to obtain k nearest
-     *
      ***********************************************************/
     inline std::vector<std::vector<size_t>> NN4Mat(
         const std::vector<std::vector<double>>& mat,
@@ -94,10 +93,10 @@ namespace NN
         bool include_self = false,
         bool byrow = true)
     {
-        const Dist::DistanceMethod dist_method =
-            Dist::parseDistanceMethod(method);
+        const distance::distanceMethod dist_method =
+            distance::parseDistanceMethod(method);
 
-        if (dist_method == Dist::DistanceMethod::Invalid)
+        if (dist_method == distance::distanceMethod::Invalid)
         {
             throw std::invalid_argument(
                 "Unsupported distance method: " + method);
@@ -136,15 +135,15 @@ namespace NN
 
                     switch (dist_method)
                     {
-                        case Dist::DistanceMethod::Euclidean:
+                        case distance::distanceMethod::Euclidean:
                             sum += diff * diff;
                             break;
 
-                        case Dist::DistanceMethod::Manhattan:
+                        case distance::distanceMethod::Manhattan:
                             sum += std::abs(diff);
                             break;
 
-                        case Dist::DistanceMethod::Maximum:
+                        case distance::distanceMethod::Maximum:
                         {
                             double ad = std::abs(diff);
                             if (ad > maxv) maxv = ad;
@@ -162,9 +161,9 @@ namespace NN
 
                 double distv;
 
-                if (dist_method == Dist::DistanceMethod::Euclidean)
+                if (dist_method == distance::distanceMethod::Euclidean)
                     distv = std::sqrt(sum);
-                else if (dist_method == Dist::DistanceMethod::Manhattan)
+                else if (dist_method == distance::distanceMethod::Manhattan)
                     distv = sum;
                 else
                     distv = maxv;
@@ -194,7 +193,7 @@ namespace NN
                     candidates.end(),
                     [](const auto& a, const auto& b)
                     {
-                        if (!NumericUtils::doubleNearlyEqual(a.first,b.first))
+                        if (!numericutils::doubleNearlyEqual(a.first,b.first))
                             return a.first < b.first;
                         return a.second < b.second;
                     });
@@ -215,7 +214,6 @@ namespace NN
      * Returns:
      *      neighbor index list aligned to full matrix size,
      *      only pred position has values
-     *
      ***********************************************************/
     inline std::vector<std::vector<size_t>> NN4Mat(
         const std::vector<std::vector<double>>& mat,
@@ -226,10 +224,10 @@ namespace NN
         bool include_self = false,
         bool byrow = true)
     {
-        const Dist::DistanceMethod dist_method =
-            Dist::parseDistanceMethod(method);
+        const distance::distanceMethod dist_method =
+            distance::parseDistanceMethod(method);
 
-        if (dist_method == Dist::DistanceMethod::Invalid)
+        if (dist_method == distance::distanceMethod::Invalid)
         {
             throw std::invalid_argument(
                 "Unsupported distance method: " + method);
@@ -274,15 +272,15 @@ namespace NN
 
                     switch (dist_method)
                     {
-                        case Dist::DistanceMethod::Euclidean:
+                        case distance::distanceMethod::Euclidean:
                             sum += diff * diff;
                             break;
 
-                        case Dist::DistanceMethod::Manhattan:
+                        case distance::distanceMethod::Manhattan:
                             sum += std::abs(diff);
                             break;
 
-                        case Dist::DistanceMethod::Maximum:
+                        case distance::distanceMethod::Maximum:
                         {
                             double ad = std::abs(diff);
                             if (ad > maxv) maxv = ad;
@@ -300,9 +298,9 @@ namespace NN
 
                 double distv;
 
-                if (dist_method == Dist::DistanceMethod::Euclidean)
+                if (dist_method == distance::distanceMethod::Euclidean)
                     distv = std::sqrt(sum);
-                else if (dist_method == Dist::DistanceMethod::Manhattan)
+                else if (dist_method == distance::distanceMethod::Manhattan)
                     distv = sum;
                 else
                     distv = maxv;
@@ -332,7 +330,7 @@ namespace NN
                     candidates.end(),
                     [](const auto& a, const auto& b)
                     {
-                        if (!NumericUtils::doubleNearlyEqual(a.first,b.first))
+                        if (!numericutils::doubleNearlyEqual(a.first,b.first))
                             return a.first < b.first;
                         return a.second < b.second;
                     });
@@ -352,7 +350,6 @@ namespace NN
      *
      * Returns:
      *      neighbor index list
-     *
      ***********************************************************/
     inline std::vector<std::vector<size_t>> NN4DistMat(
         const std::vector<std::vector<double>>& distmat,
@@ -404,7 +401,7 @@ namespace NN
             candidates.end(),
             [](const std::pair<double, size_t>& a,
               const std::pair<double, size_t>& b) {
-              if (!NumericUtils::doubleNearlyEqual(a.first, b.first)) {
+              if (!numericutils::doubleNearlyEqual(a.first, b.first)) {
                 return a.first < b.first;
               } else {
                 return a.second < b.second;
@@ -429,7 +426,6 @@ namespace NN
      * Returns:
      *      neighbor index list aligned to full matrix size,
      *      only pred position has values
-     *
      ***********************************************************/
     inline std::vector<std::vector<size_t>> NN4DistMat(
         const std::vector<std::vector<double>>& distmat,
@@ -496,7 +492,7 @@ namespace NN
             candidates.end(),
             [](const std::pair<double, size_t>& a,
               const std::pair<double, size_t>& b) {
-              if (!NumericUtils::doubleNearlyEqual(a.first, b.first)) {
+              if (!numericutils::doubleNearlyEqual(a.first, b.first)) {
                 return a.first < b.first;
               } else {
                 return a.second < b.second;
@@ -515,6 +511,6 @@ namespace NN
       return result;
     }
 
-} // namespace NN
+} // namespace neighbor
 
-#endif // NEIGHBOUR_HPP
+#endif // NEIGHBOR_HPP

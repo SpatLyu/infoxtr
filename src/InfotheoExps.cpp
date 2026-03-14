@@ -127,7 +127,7 @@ double RcppDiscEntropy(SEXP series,
             Rcpp::stop("Input must be Integer, Numeric, or Character vector.");
     }
 
-    return InfoTheo::Entropy(s, base, na_rm);
+    return infotheo::entropy(s, base, na_rm);
 }
 
 // Wrapper function to calculate Shannon entropy for continuous data
@@ -139,7 +139,7 @@ double RcppContEntropy(const Rcpp::NumericVector& vec,
 {
     std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
     
-    return KSGInfo::Entropy(
+    return ksginfo::entropy(
         vec_std, static_cast<size_t>(std::abs(k)), 
         static_cast<size_t>(std::abs(alg)), base);
 }
@@ -151,7 +151,7 @@ double RcppDiscJE(SEXP mat,
                   double base = 2.0,
                   bool na_rm = true)
 {
-    InfoTheo::Matrix m = pat_r2std(mat,false);
+    infotheo::Matrix m = pat_r2std(mat,false);
     std::vector<size_t> v = Rcpp::as<std::vector<size_t>>(vars);
 
     const size_t n_cols = m.size();
@@ -164,7 +164,7 @@ double RcppDiscJE(SEXP mat,
         idx -= 1;  // to 0-based
     }
     
-    return InfoTheo::JE(m, v, base, na_rm);
+    return infotheo::je(m, v, base, na_rm);
 }
 
 // Wrapper function to calculate joint entropy for continuous data
@@ -188,7 +188,7 @@ double RcppContJE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return KSGInfo::JE(m, v, static_cast<size_t>(std::abs(k)), 
+    return ksginfo::je(m, v, static_cast<size_t>(std::abs(k)), 
                        static_cast<size_t>(std::abs(alg)), base);
 }
 
@@ -200,7 +200,7 @@ double RcppDiscCE(SEXP mat,
                   double base = 2.0,
                   bool na_rm = true)
 {
-    InfoTheo::Matrix m = pat_r2std(mat,false);
+    infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> c = Rcpp::as<std::vector<size_t>>(conds);
@@ -223,7 +223,7 @@ double RcppDiscCE(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return InfoTheo::CE(m, t, c, base, na_rm);
+    return infotheo::ce(m, t, c, base, na_rm);
 }
 
 // Wrapper function to calculate conditional entropy for continuous data
@@ -258,7 +258,7 @@ double RcppContCE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return KSGInfo::CE(m, t, c, static_cast<size_t>(std::abs(k)), 
+    return ksginfo::ce(m, t, c, static_cast<size_t>(std::abs(k)), 
                        static_cast<size_t>(std::abs(alg)), base);
 }
 
@@ -271,7 +271,7 @@ double RcppDiscMI(SEXP mat,
                   bool na_rm = true,
                   bool normalize = false)
 {
-    InfoTheo::Matrix m = pat_r2std(mat,false);
+    infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -294,7 +294,7 @@ double RcppDiscMI(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return InfoTheo::MI(m, t, i, base, na_rm, normalize);
+    return infotheo::mi(m, t, i, base, na_rm, normalize);
 }
 
 // Wrapper function to calculate mutual information for continuous data
@@ -330,7 +330,7 @@ double RcppContMI(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return KSGInfo::MI(m, t, i, static_cast<size_t>(std::abs(k)), 
+    return ksginfo::mi(m, t, i, static_cast<size_t>(std::abs(k)), 
                        static_cast<size_t>(std::abs(alg)), base, normalize);
 }
 
@@ -344,7 +344,7 @@ double RcppDiscCMI(SEXP mat,
                    bool na_rm = true,
                    bool normalize = false)
 {
-    InfoTheo::Matrix m = pat_r2std(mat,false);
+    infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
@@ -376,7 +376,7 @@ double RcppDiscCMI(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return InfoTheo::CMI(m, t, i, c, base, na_rm, normalize);
+    return infotheo::cmi(m, t, i, c, base, na_rm, normalize);
 }
 
 // Wrapper function to calculate conditional mutual information for continuous data
@@ -422,8 +422,8 @@ double RcppContCMI(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return KSGInfo::CMI(m, t, i, c, static_cast<size_t>(std::abs(k)), 
-                       static_cast<size_t>(std::abs(alg)), base, normalize);
+    return ksginfo::cmi(m, t, i, c, static_cast<size_t>(std::abs(k)), 
+                        static_cast<size_t>(std::abs(alg)), base, normalize);
 }
 
 // Wrapper function to calculate transfer entropy for discrete time series data
@@ -438,7 +438,7 @@ double RcppDiscTE(SEXP mat,
                   bool normalize = false,
                   bool lag_single = false)
 {
-    InfoTheo::Matrix m = pat_r2std(mat,false);
+    infotheo::Matrix m = pat_r2std(mat,false);
 
     std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
@@ -461,9 +461,10 @@ double RcppDiscTE(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return TE::TE4Disc(m, tg, ag, static_cast<size_t>(std::abs(lag_p)), 
-                       static_cast<size_t>(std::abs(lag_q)), base, 
-                       na_rm, normalize, lag_single);
+    return transferentropy::transferentropy(
+                m, tg, ag, static_cast<size_t>(std::abs(lag_p)), 
+                static_cast<size_t>(std::abs(lag_q)), base, 
+                na_rm, normalize, lag_single);
 }
 
 // Wrapper function to calculate transfer entropy for continuous time series data
@@ -502,10 +503,11 @@ double RcppContTE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return TE::TE4Cont(m, tg, ag, 
-                       static_cast<size_t>(std::abs(lag_p)), 
-                       static_cast<size_t>(std::abs(lag_q)), 
-                       static_cast<size_t>(std::abs(k)), 
-                       static_cast<size_t>(std::abs(alg)), 
-                       base, normalize, lag_single);
+    return transferentropy::transferentropy(
+                m, tg, ag, 
+                static_cast<size_t>(std::abs(lag_p)), 
+                static_cast<size_t>(std::abs(lag_q)), 
+                static_cast<size_t>(std::abs(k)), 
+                static_cast<size_t>(std::abs(alg)), 
+                base, normalize, lag_single);
 }

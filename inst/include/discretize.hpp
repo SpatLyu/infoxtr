@@ -48,12 +48,12 @@
 #include <stdexcept>
 #include "numericutils.hpp"
 
-namespace Disc
+namespace discretize
 {
 
     /***********************************************************
-    * Utility helpers
-    ***********************************************************/
+     * Utility helpers
+     ***********************************************************/
 
     inline std::vector<double> remove_nan(const std::vector<double>& v)
     {
@@ -103,8 +103,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Standard deviation discretization
-    ***********************************************************/
+     * Standard deviation discretization
+     ***********************************************************/
     inline std::vector<uint64_t> sdDisc(
         const std::vector<double>& vec,
         size_t n,
@@ -116,7 +116,7 @@ namespace Disc
 
         std::vector<uint64_t> res(vec.size(), 0);
 
-        if (NumericUtils::doubleNearlyEqual(sd, 0.0)) 
+        if (numericutils::doubleNearlyEqual(sd, 0.0)) 
         {
             for (size_t i = 0; i < vec.size(); ++i)
                 if (!std::isnan(vec[i])) res[i] = 1;
@@ -143,8 +143,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Equal interval discretization
-    ***********************************************************/
+     * Equal interval discretization
+     ***********************************************************/
     inline std::vector<uint64_t> equalDisc(
         const std::vector<double>& vec,
         size_t n,
@@ -158,7 +158,7 @@ namespace Disc
 
         std::vector<uint64_t> res(vec.size(), 0);
 
-        if (NumericUtils::doubleNearlyEqual(interval, 0.0)) 
+        if (numericutils::doubleNearlyEqual(interval, 0.0)) 
         {
             for (size_t i = 0; i < vec.size(); ++i)
                 if (!std::isnan(vec[i])) res[i] = 1;
@@ -185,8 +185,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Geometric discretization
-    ***********************************************************/
+     * Geometric discretization
+     ***********************************************************/
     inline std::vector<uint64_t> geometricDisc(
         const std::vector<double>& vec,
         size_t n,
@@ -223,8 +223,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Quantile discretization
-    ***********************************************************/
+     * Quantile discretization
+     ***********************************************************/
     inline std::vector<uint64_t> quantileDisc(
         const std::vector<double>& vec,
         size_t n,
@@ -275,8 +275,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Manual breakpoints discretization
-    ***********************************************************/
+     * Manual breakpoints discretization
+     ***********************************************************/
     inline std::vector<uint64_t> manualDisc(
         const std::vector<double>& vec,
         const std::vector<double>& breakpoints,
@@ -321,8 +321,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Jenks natural breaks (core algorithm)
-    ***********************************************************/
+     * Jenks natural breaks (core algorithm)
+     ***********************************************************/
     inline std::vector<double> jenksBreaks(
         std::vector<double> data,
         size_t n_classes)
@@ -397,8 +397,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Natural breaks discretization
-    ***********************************************************/
+     * Natural breaks discretization
+     ***********************************************************/
     inline std::vector<uint64_t> naturalDisc(
         const std::vector<double>& vec,
         size_t n,
@@ -459,8 +459,8 @@ namespace Disc
     }
 
     /***********************************************************
-    * Head / Tail breaks discretization
-    ***********************************************************/
+     * Head / Tail breaks discretization
+     ***********************************************************/
     inline std::vector<uint64_t> htDisc(
         const std::vector<double>& vec,
         double threshold = 0.4,
@@ -545,9 +545,9 @@ namespace Disc
     }
 
     /***********************************************************
-    * Unified interface
-    ***********************************************************/
-    inline std::vector<uint64_t> Disc(
+     * Unified interface
+     ***********************************************************/
+    inline std::vector<uint64_t> discretize(
         const std::vector<double>& vec,
         const std::string& method,
         size_t n = 5,
@@ -577,6 +577,6 @@ namespace Disc
             throw std::invalid_argument("Unknown discretization method");
     }
 
-} // namespace Disc
+} // namespace discretize
 
 #endif // DISCRETIZE_HPP

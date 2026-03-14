@@ -27,15 +27,10 @@
  *      Discrete Transfer Entropy
  *      -------------------------
  *      Uses discrete information theoretic estimators
- *      implemented in:
- *
- *          InfoTheo::CMI
  *
  *      Continuous Transfer Entropy
  *      ---------------------------
- *      Uses k-nearest neighbour estimators implemented in:
- *
- *          KSGInfo::CMI
+ *      Uses k-nearest neighbor estimators
  *
  *      Based on:
  *
@@ -50,7 +45,7 @@
  *          Agent history length.
  *
  *      k
- *          k-nearest neighbours for KSG estimator.
+ *          k-nearest neighbors for KSG estimator.
  *
  *      alg
  *          Estimator variant for continuous TE:
@@ -95,7 +90,7 @@
 #include "infotheo.hpp"
 #include "ksginfo.hpp"
 
-namespace TE
+namespace transferentropy
 {   
     using DiscMat = std::vector<std::vector<uint64_t>>;
     using ContMat = std::vector<std::vector<double>>;
@@ -103,7 +98,7 @@ namespace TE
     /***********************************************************
      * Transfer Entropy for Discrete Data
      ***********************************************************/
-    inline double TE4Disc(
+    inline double transferentropy(
         const DiscMat& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& agent,
@@ -216,13 +211,13 @@ namespace TE
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return InfoTheo::CMI(pm, tg_idx, ag_idx, tgl_idx, base, na_rm, normalize);
+        return infotheo::cmi(pm, tg_idx, ag_idx, tgl_idx, base, na_rm, normalize);
     }
 
     /***********************************************************
      * Transfer Entropy for Continuous Data
      ***********************************************************/
-    inline double TE4Cont(
+    inline double transferentropy(
         const ContMat& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& agent,
@@ -336,9 +331,9 @@ namespace TE
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return KSGInfo::CMI(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
+        return ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
     }    
 
-} // namespace TE
+} // namespace transferentropy
 
 #endif // TRANSFERENTROPY_HPP

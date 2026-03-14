@@ -1,5 +1,5 @@
 /*******************************************************************
- *  File: lag.hpp
+ *  File: lagg.hpp
  *
  *  Lag utilities for matrices.
  *
@@ -15,8 +15,8 @@
  *  License: GPL-3
  *******************************************************************/
 
-#ifndef LAG_HPP
-#define LAG_HPP
+#ifndef LAGG_HPP
+#define LAGG_HPP
 
 #include <vector>
 #include <cmath>
@@ -26,7 +26,7 @@
 #include <stdexcept>
 #include <cstddef>
 
-namespace Lag
+namespace lagg
 {
 
     using Index        = std::size_t;
@@ -37,16 +37,16 @@ namespace Lag
 
     static constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 
-    inline size_t GridIndex(size_t r, size_t c, size_t ncol)
+    inline size_t gridIndex(size_t r, size_t c, size_t ncol)
     {
         return r * ncol + c;
     }
 
     /* ============================================================
-    LATTICE LAG
-    ============================================================ */
+     * LATTICE LAG
+     * ============================================================ */
 
-    inline Matrix GenLatticeLag(
+    inline Matrix lagg(
         const Matrix& mat,
         const NeighborMat& nb,
         size_t lag
@@ -119,10 +119,10 @@ namespace Lag
     }
 
     /* ============================================================
-    GRID LAG
-    ============================================================ */
+     *  GRID LAG
+     * ============================================================ */
 
-    inline Matrix GenGridLag(
+    inline Matrix lagg(
         const Matrix& mat,
         size_t nrows,
         size_t lag
@@ -158,7 +158,7 @@ namespace Lag
         {
             for (size_t c = 0; c < ncols; ++c)
             {
-                const size_t id = GridIndex(r, c, ncols);
+                const size_t id = gridIndex(r, c, ncols);
 
                 for (size_t j = 0; j < p; ++j)
                 {
@@ -173,7 +173,7 @@ namespace Lag
                         if (nr >= 0 && nr < (int)nrows &&
                             nc >= 0 && nc < (int)ncols)
                         {
-                            size_t nid = GridIndex(nr, nc, ncols);
+                            size_t nid = gridIndex(nr, nc, ncols);
                             double v = mat[nid][j];
 
                             if (!std::isnan(v))
@@ -194,10 +194,10 @@ namespace Lag
     }
 
     /* ============================================================
-    TIME SERIES LAG
-    ============================================================ */
+     *  TIME SERIES LAG
+     * ============================================================ */
 
-    inline Matrix GenTSLag(
+    inline Matrix lagg(
         const Matrix& mat,
         size_t lag
     )
@@ -223,6 +223,6 @@ namespace Lag
         return out;
     }
 
-} // namespace Lag
+} // namespace lagg
 
-#endif // LAG_HPP
+#endif // LAGG_HPP
