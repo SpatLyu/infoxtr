@@ -23,6 +23,7 @@
 
 namespace NumericUtils
 {
+    
     // ==============================
     // Common numeric constants
     // ==============================
