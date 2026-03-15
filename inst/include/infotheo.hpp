@@ -19,7 +19,7 @@
  *      MI   Mutual Information
  *      CMI  Conditional Mutual Information
  *
- *  Author: Wenbo Lyu
+ *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
  **********************************************************************/
 
