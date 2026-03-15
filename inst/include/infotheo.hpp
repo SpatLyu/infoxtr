@@ -127,28 +127,25 @@ inline double JE(
     states.reserve(n_obs * k);
 
     size_t n_valid = 0;
-
     for (size_t i = 0; i < n_obs; ++i)
     {
+        // Phase 1: Check for NA first (read-only)
         bool skip = false;
-
         for (size_t j = 0; j < k; ++j)
         {
-            uint64_t val = mat[clean_vars[j]][i];
-
-            if (na_rm && val == 0)
+            if (na_rm && mat[clean_vars[j]][i] == 0)
             {
                 skip = true;
                 break;
             }
-
-            states.push_back(val);
         }
-
-        if (!skip)
-            ++n_valid;
-        else
-            states.resize(states.size() - (states.size() % k));
+        if (skip) continue;
+        
+        // Phase 2: Push valid values (guaranteed complete)
+        for (size_t j = 0; j < k; ++j)
+            states.push_back(mat[clean_vars[j]][i]);
+        
+        ++n_valid;
     }
 
     if (n_valid == 0)
