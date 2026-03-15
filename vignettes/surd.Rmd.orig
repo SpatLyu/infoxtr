@@ -1,0 +1,216 @@
+---
+title: "Synergistic-Unique-Redundant Decomposition of Causality (SURD)"
+author: "Wenbo Lyu"
+date: |
+  | Last update: 2026-03-15
+  | Last run: `r Sys.Date()`
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{surd}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  message = FALSE,
+  comment = "##",
+  fig.path = "man/figures/surd/"
+)
+```
+
+# Introduction
+
+Understanding how causal influences combine and interact is essential for both temporal and spatial systems. The **Synergistic–Unique–Redundant Decomposition (SURD)** framework provides a principled way to break down total information flow between variables into:
+
+* **Unique** contributions — information uniquely provided by one driver;
+* **Redundant** contributions — information shared by multiple drivers;
+* **Synergistic** contributions — information only revealed when drivers are considered together.
+
+This vignette demonstrates how to perform SURD analysis using the `infoxtr` package. We will explore both temporal and spatial cases, showing how `infoxtr` unifies **time-series** and **spatial cross-sectional** causal analysis via consistent interfaces to `data.frame`, `sf`, and `SpatRaster` objects.
+
+# Utility Functions
+
+To simplify post-processing and visualization, two helper functions are provided below.
+
+`utils_process_surd_result()` converts a list object (as returned by an SURD computation routine) into a tidy `tibble` for plotting and further analysis.
+
+```{r}
+utils_process_surd_result = \(surd_list,threshold = 0){
+  I_unique = surd_list$unique
+  I_synergistic = surd_list$synergistic
+  I_redundant = surd_list$redundant
+  info_leak = surd_list$info_leak
+
+  df = tibble::tibble(
+    label = c(
+      paste0("U[", names(I_unique), "]"),
+      paste0("S[", names(I_synergistic), "]"),
+      paste0("R[", names(I_redundant), "]")
+    ),
+    value = c(as.numeric(I_unique),
+              as.numeric(I_synergistic),
+              as.numeric(I_redundant)),
+    type = c(rep("unique", length(I_unique)),
+             rep("synergistic", length(I_synergistic)),
+             rep("redundant", length(I_redundant)))
+  )
+
+  df$value = df$value / sum(df$value)
+  if(threshold > 0){
+    df = dplyr::filter(df, value > threshold)
+  }
+  return(dplyr::bind_rows(df,tibble::tribble(~label,~value,~type,
+                                             "Info Leak", info_leak, "info leak")))
+}
+```
+
+`utils_plot_surd()` produces a SURD decomposition plot — a grouped bar chart of **unique (U)**, **synergistic (S)**, and **redundant (R)** components, along with a side panel showing the **information leak**.
+
+```{r}
+utils_plot_surd = \(surd_list,threshold = 0,style = "shallow"){
+  I_unique = surd_list$unique
+  I_synergistic = surd_list$synergistic
+  I_redundant = surd_list$redundant
+
+  df = tibble::tibble(
+    label = c(
+      paste0("U[", names(I_unique), "]"),
+      paste0("S[", names(I_synergistic), "]"),
+      paste0("R[", names(I_redundant), "]")
+    ),
+    value = c(as.numeric(I_unique),
+              as.numeric(I_synergistic),
+              as.numeric(I_redundant)),
+    type = c(rep("unique", length(I_unique)),
+             rep("synergistic", length(I_synergistic)),
+             rep("redundant", length(I_redundant)))
+  )
+
+  df$value = df$value / sum(df$value)
+  if(threshold > 0){
+    df = dplyr::filter(df, value > threshold)
+  }
+  df$label = factor(df$label, levels = df$label)
+
+  if (style == "shallow") {
+    colors = c(unique = "#ec9e9e", synergistic = "#fac58c", redundant = "#668392", infoleak = "#7f7f7f")
+  } else {
+    colors = c(unique = "#d62828", synergistic = "#f77f00", redundant = "#003049", infoleak = "gray")
+  }
+
+  p1 = ggplot2::ggplot(df, ggplot2::aes(x = label, y = value, fill = type)) +
+    ggplot2::geom_col(color = "black", linewidth = 0.15, show.legend = FALSE) +
+    ggplot2::scale_fill_manual(name = NULL, values = colors) +
+    ggplot2::scale_x_discrete(name = NULL, labels = function(x) parse(text = x)) +
+    ggplot2::scale_y_continuous(name = NULL, limits = c(0, 1), expand = c(0, 0),
+                                breaks = c(0, 0.25, 0.5, 0.75, 1),
+                                labels = c("0", "0.25", "0.5", "0.75", "1") ) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      axis.ticks.x = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+      panel.grid = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(color = "black", linewidth = 2)
+    )
+
+  df_leak = tibble::tibble(label = "Info Leak", value = surd_list$info_leak)
+  p2 = ggplot2::ggplot(df_leak, ggplot2::aes(x = label, y = value)) +
+    ggplot2::geom_col(fill = colors[4], color = "black", linewidth = 0.15) +
+    ggplot2::scale_x_discrete(name = NULL, expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(name = NULL, limits = c(0, 1), expand = c(0, 0),
+                                breaks = c(0,1), labels = c(0,1) ) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      axis.ticks.x = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(color = "black", linewidth = 2)
+    )
+
+  patchwork::wrap_plots(p1, p2, ncol = 2, widths = c(10,1))
+}
+```
+
+# Example Cases
+
+The following sections demonstrate SURD decomposition in different contexts, illustrating its flexibility across temporal and spatial causal analyses.
+
+## Air Pollution and Cardiovascular Health in Hong Kong
+
+```{r load_cvd_data}
+cvd = readr::read_csv(system.file("case/cvd.csv",package = "tEDM"))
+head(cvd)
+```
+
+```{r fig_cvds_ts,fig.width=6.5,fig.height=3.75,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. Time series of air pollutants and confirmed CVD cases in Hong Kong from March 1995 to November 1997.")}
+cvd_long = cvd |>
+  tibble::rowid_to_column("id") |>
+  tidyr::pivot_longer(cols = -id,
+                      names_to = "variable", values_to = "value")
+
+fig_cvds_ts = ggplot2::ggplot(cvd_long, ggplot2::aes(x = id, y = value, color = variable)) +
+  ggplot2::geom_line(linewidth = 0.5) +
+  ggplot2::labs(x = "Days (from 1995-3 to 1997-11)", y = "Concentrations or \nNO. of CVD admissions", color = "") +
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.direction = "horizontal",
+                 legend.position = "inside",
+                 legend.justification = c("center","top"),
+                 legend.background = ggplot2::element_rect(fill = "transparent", color = NA))
+fig_cvds_ts
+```
+
+To investigate the causal influences of air pollutants on the incidence of cardiovascular diseases, we performed SURD analysis using a time lag step `3` and `10` discretization bins.
+
+```{r surd_cvds}
+res_cvds = infoxtr::surd(cvd, 1, 2:5,
+                         lag = 15, bin = 10, threads = 6)
+```
+
+The SURD results are shown in the figure below:
+
+```{r fig_surd_cvds,fig.width=10,fig.height=3,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. SURD decomposition results between different air pollutants and cardiovascular diseases.")}
+utils_plot_surd(res_cvds)
+```
+
+## Population Density and Its Drivers in Mainland China
+
+```{r load_popd_data}
+popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
+popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+popd_sf = sf::st_as_sf(popd, coords = c("lon","lat"), crs = 4326)
+popd_sf
+```
+
+```{r surd_popd}
+res_popd = infoxtr::surd(popd_sf, 1, 2:5,
+                         lag = 3, bin = 10, nb = popd_nb, threads = 6)
+```
+
+```{r fig_surd_popd,fig.width=10,fig.height=3,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. SURD decomposition results between population density and its Drivers.")}
+utils_plot_surd(res_popd)
+```
+
+## Influence of Climatic and Topographic Factors on Net Primary Productivity (NPP) in Mainland China
+
+```{r load_npp_data}
+npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
+npp
+```
+
+```{r surd_npp}
+res_npp = infoxtr::surd(npp,1, 2:5,
+                        lag = 2, bin = 10, threads = 6)
+```
+
+```{r fig_surd_npp,fig.width=10,fig.height=3,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 4**. SURD decomposition results between climatic and topographic factors and npp.")}
+utils_plot_surd(res_npp)
+```
+
+---
+
+🧩 *See also*:
+
+* [`?infoxtr::surd()`](https://stscl.github.io/infoxtr/reference/surd.html) for function details.
+* [`spEDM`](https://cran.r-project.org/package=spEDM) package for spatial empirical dynamic modeling.
+* [`tEDM`](https://cran.r-project.org/package=tEDM) package for temporal empirical dynamic modeling.

@@ -1,0 +1,22 @@
+---
+title: "Synergistic-Unique-Redundant Decomposition of Causality (SURD)"
+author: "Wenbo Lyu"
+date: |
+  | Last update: 2026-03-15
+  | Last run: `r Sys.Date()`
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{surd}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+# Introduction
+
+Understanding how causal influences combine and interact is essential for both temporal and spatial systems. The **Synergistic–Unique–Redundant Decomposition (SURD)** framework provides a principled way to break down total information flow between variables into:
+
+* **Unique** contributions — information uniquely provided by one driver;
+* **Redundant** contributions — information shared by multiple drivers;
+* **Synergistic** contributions — information only revealed when drivers are considered together.

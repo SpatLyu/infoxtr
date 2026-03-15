@@ -14,7 +14,7 @@
   lag = 1,
   bin = 5,
   method = "equal",
-  max.combs = 3,
+  max.combs = 10,
   threads = 1,
   base = 2,
   normalize = TRUE
@@ -27,7 +27,7 @@
   lag = 1,
   bin = 5,
   method = "equal",
-  max.combs = 3,
+  max.combs = 10,
   threads = 1,
   base = 2,
   normalize = TRUE,
@@ -41,7 +41,7 @@
   lag = 1,
   bin = 5,
   method = "equal",
-  max.combs = 3,
+  max.combs = 10,
   threads = 1,
   base = 2,
   normalize = TRUE
@@ -82,7 +82,7 @@ A list.
 }
 }
 \description{
-Synergistic-Unique-Redundant Decomposition of causality
+Synergistic-Unique-Redundant decomposition of causality
 }
 \note{
 SURD only support numeric data.
