@@ -109,28 +109,12 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
         pm, static_cast<size_t>(std::abs(max_order)),
         static_cast<size_t>(std::abs(threads)), base, normalize);
 
-    const size_t k = res.size();
+    std::vector<std::string> names;
+    std::vector<std::string> types;
+    std::vector<double> values;
 
-    Rcpp::NumericVector values(k);
-    Rcpp::CharacterVector types(k);
-    Rcpp::CharacterVector names(k);
-
-    for (size_t i = 0; i < k; ++i)
+    auto make_name = [](const std::vector<size_t>& vars)
     {
-        values[i] = res.values[i];
-
-        // variable name
-        if (res.types[i] == 3)
-        {
-            // InfoLeak uses all sources
-            std::string nm = "InfoLeak";
-            names[i] = nm;
-            types[i] = "InfoLeak";
-            continue;
-        }
-
-        const auto& vars = res.var_indices[i];
-
         std::string nm;
 
         for (size_t j = 0; j < vars.size(); ++j)
@@ -142,29 +126,57 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
             nm += std::to_string(vars[j]);
         }
 
-        names[i] = nm;
+        return nm;
+    };
 
-        switch (res.types[i])
-        {
-            case 0:
-                types[i] = "R";
-                break;
-            case 1:
-                types[i] = "U";
-                break;
-            case 2:
-                types[i] = "S";
-                break;
-            default:
-                types[i] = "Unknown";
-        }
+    /**************************************************
+     * Unique
+     **************************************************/
+
+    for (size_t i = 0; i < res.unique_vals.size(); ++i)
+    {
+        names.push_back(make_name(res.unique_vars[i]));
+        types.push_back("U");
+        values.push_back(res.unique_vals[i]);
     }
 
-    // values.attr("names") = names;
+    /**************************************************
+     * Redundant
+     **************************************************/
+
+    for (size_t i = 0; i < res.redundant_vals.size(); ++i)
+    {
+        names.push_back(make_name(res.redundant_vars[i]));
+        types.push_back("R");
+        values.push_back(res.redundant_vals[i]);
+    }
+
+    /**************************************************
+     * Synergy
+     **************************************************/
+
+    for (size_t i = 0; i < res.synergy_vals.size(); ++i)
+    {
+        names.push_back(make_name(res.synergy_vars[i]));
+        types.push_back("S");
+        values.push_back(res.synergy_vals[i]);
+    }
+
+    /**************************************************
+     * InfoLeak
+     **************************************************/
+
+    names.push_back("InfoLeak");
+    types.push_back("InfoLeak");
+    values.push_back(res.info_leak);
+
+    Rcpp::CharacterVector names_r(names.begin(), names.end());
+    Rcpp::CharacterVector types_r(types.begin(), types.end());
+    Rcpp::NumericVector values_r(values.begin(), values.end());
 
     return Rcpp::List::create(
-        Rcpp::Named("vars")  = names,
-        Rcpp::Named("types")  = types,
-        Rcpp::Named("values") = values
+        Rcpp::Named("vars")  = names_r,
+        Rcpp::Named("types")  = types_r,
+        Rcpp::Named("values") = values_r
     );
 }
