@@ -50,50 +50,6 @@ inline double convert_log_base(double x, double base)
 }
 
 /***********************************************************
- * Strong 64bit mix
- ***********************************************************/
-static inline uint64_t mix64(uint64_t x)
-{
-    x += 0x9e3779b97f4a7c15ULL;
-    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9ULL;
-    x = (x ^ (x >> 27)) * 0x94d049bb133111ebULL;
-    return x ^ (x >> 31);
-}
-
-/***********************************************************
- * Combine multiple states into one hash
- ***********************************************************/
-inline uint64_t hash_combine(uint64_t h, uint64_t v)
-{
-    return h ^ (mix64(v) + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2));
-}
-
-/***********************************************************
- * Hash combination optimized for multiple variables
- * 
- * This specialized version is optimized for combining multiple
- * variables into a single hash value with minimal collisions.
- ***********************************************************/
-inline uint64_t multi_var_hash(uint64_t seed, uint64_t value) {
-    // Using MumurHash3's 64-bit finalizer constants which have
-    // excellent statistical properties
-    const uint64_t m1 = 0xff51afd7ed558ccdULL;
-    const uint64_t m2 = 0xc4ceb9fe1a85ec53ULL;
-    const uint64_t m3 = 0x9e3779b97f4a7c15ULL;
-    
-    value = value ^ (value >> 33);
-    value *= m1;
-    value = value ^ (value >> 33);
-    value *= m2;
-    value = value ^ (value >> 33);
-    
-    // Combine with seed using a modified version of Boost's combine
-    seed ^= value + m3 + (seed << 6) + (seed >> 2);
-    
-    return seed;
-}
-
-/***********************************************************
  * Entropy
  ***********************************************************/
 inline double Entropy(
