@@ -218,4 +218,4 @@ inline Matrix GenTSLag(
 
 } // namespace Lag
 
-#endif
+#endif // LAG_HPP
