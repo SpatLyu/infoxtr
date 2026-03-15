@@ -11,7 +11,7 @@
  *
  *  Each column of the input matrix is treated as a variable.
  *
- *  Author: Wenbo Lyu
+ *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
  *******************************************************************/
 
