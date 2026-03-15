@@ -78,7 +78,6 @@ inline double Entropy(
         return std::numeric_limits<double>::quiet_NaN();
 
     double H = 0.0;
-
     for (const auto& kv : freq)
     {
         double p = static_cast<double>(kv.second) / n_valid;
