@@ -69,6 +69,31 @@ inline uint64_t hash_combine(uint64_t h, uint64_t v)
 }
 
 /***********************************************************
+ * Hash combination optimized for multiple variables
+ * 
+ * This specialized version is optimized for combining multiple
+ * variables into a single hash value with minimal collisions.
+ ***********************************************************/
+inline uint64_t multi_var_hash(uint64_t seed, uint64_t value) {
+    // Using MumurHash3's 64-bit finalizer constants which have
+    // excellent statistical properties
+    const uint64_t m1 = 0xff51afd7ed558ccdULL;
+    const uint64_t m2 = 0xc4ceb9fe1a85ec53ULL;
+    const uint64_t m3 = 0x9e3779b97f4a7c15ULL;
+    
+    value = value ^ (value >> 33);
+    value *= m1;
+    value = value ^ (value >> 33);
+    value *= m2;
+    value = value ^ (value >> 33);
+    
+    // Combine with seed using a modified version of Boost's combine
+    seed ^= value + m3 + (seed << 6) + (seed >> 2);
+    
+    return seed;
+}
+
+/***********************************************************
  * Entropy
  ***********************************************************/
 inline double Entropy(
