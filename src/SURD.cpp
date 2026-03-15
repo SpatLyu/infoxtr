@@ -71,11 +71,9 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     );
     for (size_t j = 0; j < ag.size(); ++j)
     {   
-        size_t col_id = ag[j];
-
         for (size_t r = 0; r < n_obs; ++r)
         {
-            cppMat[r][col_id] = mat(r, col_id);
+            cppMat[r][j] = mat(r, ag[j]);
         }
     }
 
