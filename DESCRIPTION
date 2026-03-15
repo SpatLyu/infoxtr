@@ -1,5 +1,5 @@
 Package: infocaus
-Title: What the Package Does (One Line, Title Case)
+Title: Information-Theoretic Measures for Causal Discovery
 Version: 0.0.0.9000
 Authors@R: 
     person("Wenbo", "Lyu", , "lyu.geosocial@gmail.com", role = c("aut", "cre"),
