@@ -161,8 +161,51 @@ Rcpp::List std2nb(const std::vector<std::vector<size_t>>& nb) {
  *
  ********************************************************************/
 
-std::vector<std::vector<double>> mat_r2std(const Rcpp::NumericMatrix& mat,
-                                           bool byrow = true)
+// Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+std::vector<std::vector<double>> mat_r2std(
+    const Rcpp::NumericMatrix& mat,
+    bool byrow = true
+) {
+
+  size_t nrow = static_cast<size_t>(mat.nrow());
+  size_t ncol = static_cast<size_t>(mat.ncol());
+
+  if (nrow == 0 || ncol == 0) {
+    Rcpp::stop("Input matrix must have positive dimensions.");
+  }
+
+  std::vector<std::vector<double>> result;
+
+  if (byrow) {
+
+    // Each row becomes one vector
+    result.resize(nrow);
+
+    for (size_t i = 0; i < nrow; ++i) {
+      result[i].reserve(ncol);
+
+      for (size_t j = 0; j < ncol; ++j) {
+        result[i].push_back(mat(i, j));
+      }
+    }
+
+  } else {
+
+    // Each column becomes one vector
+    result.resize(ncol);
+
+    for (size_t j = 0; j < ncol; ++j) {
+      result[j].reserve(nrow);
+
+      for (size_t i = 0; i < nrow; ++i) {
+        result[j].push_back(mat(i, j));
+      }
+    }
+
+  }
+
+  return result;
+}
 
 Rcpp::NumericMatrix mat_std2r(const std::vector<std::vector<double>>& mat,
                               bool byrow = true)
