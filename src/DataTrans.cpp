@@ -104,3 +104,9 @@ Rcpp::List std2nb(const std::vector<std::vector<size_t>>& nb) {
 
   return result;
 }
+
+std::vector<std::vector<double>> mat_r2std(const Rcpp::NumericMatrix& mat,
+                                           bool byrow = true)
+
+Rcpp::NumericMatrix mat_std2r(const std::vector<std::vector<double>>& mat,
+                              bool byrow = true)
