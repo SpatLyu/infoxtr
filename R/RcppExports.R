@@ -69,6 +69,10 @@ RcppDiscSURD <- function(mat, max_order = 3L, threads = 1L, base = 2.0, normaliz
     .Call(`_infoxtr_RcppDiscSURD`, mat, max_order, threads, base, normalize)
 }
 
+RcppKOCMI <- function(mat, target, agent, conds, knockoff, null_knockoff = NULL, type = "cont", nboots = 10000L, k = 3L, alg = 0L, threads = 1L, seed = 123456789L, base = 2.0, method = "equal", contain_null = TRUE) {
+    .Call(`_infoxtr_RcppKOCMI`, mat, target, agent, conds, knockoff, null_knockoff, type, nboots, k, alg, threads, seed, base, method, contain_null)
+}
+
 RcppGenLatticeLag <- function(mat, nb, lag = 1L) {
     .Call(`_infoxtr_RcppGenLatticeLag`, mat, nb, lag)
 }
