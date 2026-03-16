@@ -15,7 +15,7 @@ kocmi(
   nboots = 10000,
   k = 3,
   threads = 1,
-  seed = 123456789,
+  seed = 42,
   base = exp(1),
   method = "equal",
   contain_null = TRUE
