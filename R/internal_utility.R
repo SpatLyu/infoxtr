@@ -1,14 +1,19 @@
-.check_vec1d = \(vec, type = "cont") {
+.check_vec1d = \(vec, type = "cont", contain_type = TRUE) {
   if (type == "cont") {
     if (!is.numeric(vec)) {
-      stop("The input vector must be numeric for continuous variables (`type = \"cont\"`). ")
+      type_suffix = if (contain_type) " when `type = \"cont\"`." else "."
+      msg = paste0(
+        "The input vector must be numeric for continuous variables",
+        type_suffix
+      )
+      stop(msg, call. = FALSE)
     }
   }
   
   return(vec)
 }
 
-.convert2mat = \(data, type = "cont") {
+.convert2mat = \(data, type = "cont", contain_type = TRUE) {
   if (inherits(data, "sf")) {
     mat = as.matrix(sf::st_drop_geometry(data))
   } else if (inherits(data, "SpatRaster")) {
@@ -18,11 +23,15 @@
   }
 
   if (type == "cont" && !(typeof(mat) %in% c("integer", "double"))) {
-    stop(
-      "Non-numeric values detected in input data. When `type = \"cont\"`, ",
-      "all variables must be numeric. Please remove columns such as dates, ",
-      "characters, or factors."
+    type_suffix = if (contain_type) 
+                     "When `type = \"cont\"`, all variables must be numeric. " 
+                  else ""
+    msg = paste0(
+      "Non-numeric values detected in input data. ",
+      type_suffix,
+      "Please remove columns such as dates, characters, or factors."
     )
+    stop(msg, call. = FALSE)
   }
 
   return(mat)
