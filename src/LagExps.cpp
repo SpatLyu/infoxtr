@@ -39,3 +39,17 @@ Rcpp::NumericMatrix RcppGenGridLag(const Rcpp::NumericMatrix& mat,
 
   return mat_std2r(lagged_values, true);
 }
+
+// Wrapper function to calculate temporal lag value for time series data
+// [[Rcpp::export(rng = false)]]
+Rcpp::NumericMatrix RcppGenTSLag(const Rcpp::NumericMatrix& mat,
+                                 int lag = 1) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> cppMat = mat_r2std(mat, true);
+
+  // Calculate lagged values
+  std::vector<std::vector<double>> lagged_values =
+    Lag::GenTSLag(cppMat, static_cast<size_t>(std::abs(lag)));
+
+  return mat_std2r(lagged_values, true);
+}
