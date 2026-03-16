@@ -125,15 +125,15 @@ Rcpp::List std2nb(const std::vector<std::vector<size_t>>& nb) {
  *      R matrix rows correspond to elements of the outer vector.
  *
  *      R:
- *          [ r11 ] [ r12 ]
- *          [ r21 ] [ r22 ]
- *          [ r31 ] [ r32 ]
+ *          [ r11, r12 ]
+ *          [ r21, r22 ]
+ *          [ r31, r32 ]
  *
  *      C++:
  *          {
- *              {r1},
- *              {r2},
- *              {r3}
+ *              {r11, r12},
+ *              {r21, r22},
+ *              {r31, r32}
  *          }
  *
  *
