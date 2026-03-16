@@ -82,7 +82,7 @@ A list.
 }
 }
 \description{
-Synergistic-Unique-Redundant decomposition of causality
+Synergistic-Unique-Redundant Decomposition
 }
 \note{
 SURD only support numeric data.
