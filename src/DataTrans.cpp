@@ -207,5 +207,58 @@ std::vector<std::vector<double>> mat_r2std(
   return result;
 }
 
-Rcpp::NumericMatrix mat_std2r(const std::vector<std::vector<double>>& mat,
-                              bool byrow = true)
+// Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+Rcpp::NumericMatrix mat_std2r(
+    const std::vector<std::vector<double>>& mat,
+    bool byrow = true
+) {
+
+  size_t outer = mat.size();
+
+  if (outer == 0) {
+    Rcpp::stop("Input matrix container is empty.");
+  }
+
+  size_t inner = mat[0].size();
+
+  if (inner == 0) {
+    Rcpp::stop("Matrix rows/columns must contain elements.");
+  }
+
+  if (byrow) {
+
+    // std rows -> R rows
+    Rcpp::NumericMatrix result(outer, inner);
+
+    for (size_t i = 0; i < outer; ++i) {
+
+      if (mat[i].size() != inner) {
+        Rcpp::stop("Inconsistent row length in input matrix.");
+      }
+
+      for (size_t j = 0; j < inner; ++j) {
+        result(i, j) = mat[i][j];
+      }
+    }
+
+    return result;
+
+  } else {
+
+    // std rows -> R columns
+    Rcpp::NumericMatrix result(inner, outer);
+
+    for (size_t j = 0; j < outer; ++j) {
+
+    //   if (mat[j].size() != inner) {
+    //     Rcpp::stop("Inconsistent column length in input matrix.");
+    //   }
+
+      for (size_t i = 0; i < inner; ++i) {
+        result(i, j) = mat[j][i];
+      }
+    }
+
+    return result;
+  }
+}
