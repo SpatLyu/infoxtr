@@ -484,7 +484,10 @@ namespace surd
             std::sort(nodes.begin(), nodes.end(),
             [](const Node & a, const Node & b)
             {
-                return a.val < b.val;
+                if (!infoxtr::numericutils::doubleNearlyEqual(a.val, b.val))
+                        return a.val < b.val;
+
+                    return a.idx < b.idx;
             });
 
             // find max subset length 
