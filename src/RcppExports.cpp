@@ -22,9 +22,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppGenGridLag
+Rcpp::NumericMatrix RcppGenGridLag(const Rcpp::NumericMatrix& mat, int nrows, int lag);
+RcppExport SEXP _infocaus_RcppGenGridLag(SEXP matSEXP, SEXP nrowsSEXP, SEXP lagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type lag(lagSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGenGridLag(mat, nrows, lag));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_infocaus_RcppGenLatticeLag", (DL_FUNC) &_infocaus_RcppGenLatticeLag, 3},
+    {"_infocaus_RcppGenGridLag", (DL_FUNC) &_infocaus_RcppGenGridLag, 3},
     {NULL, NULL, 0}
 };
 

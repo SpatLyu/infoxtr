@@ -5,3 +5,7 @@ RcppGenLatticeLag <- function(mat, nb, lag = 1L) {
     .Call(`_infocaus_RcppGenLatticeLag`, mat, nb, lag)
 }
 
+RcppGenGridLag <- function(mat, nrows, lag = 1L) {
+    .Call(`_infocaus_RcppGenGridLag`, mat, nrows, lag)
+}
+
