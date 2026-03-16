@@ -130,3 +130,5 @@ Rcpp::NumericMatrix mat_std2r(
     const std::vector<std::vector<double>>& mat,
     bool byrow = true
 );
+
+#endif // DataTrans_H
