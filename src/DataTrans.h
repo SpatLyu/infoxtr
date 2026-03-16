@@ -124,3 +124,9 @@ std::vector<std::vector<double>> mat_r2std(
     const Rcpp::NumericMatrix& mat,
     bool byrow = true
 );
+
+// Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+Rcpp::NumericMatrix mat_std2r(
+    const std::vector<std::vector<double>>& mat,
+    bool byrow = true
+);
