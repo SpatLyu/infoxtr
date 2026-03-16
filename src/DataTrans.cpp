@@ -142,16 +142,14 @@ Rcpp::List std2nb(const std::vector<std::vector<size_t>>& nb) {
  *      R matrix columns correspond to elements of the outer vector.
  *
  *      R:
- *            c1  c2  c3
- *        r1
- *        r2
- *        r3
+ *          [ r11, r12 ]
+ *          [ r21, r22 ]
+ *          [ r31, r32 ]
  *
  *      C++:
  *          {
- *              {c1},
- *              {c2},
- *              {c3}
+ *              {r11, r21, r31},
+ *              {r12, r22, r32}
  *          }
  *
  *
