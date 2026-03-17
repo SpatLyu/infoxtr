@@ -183,6 +183,14 @@ namespace kocmi
             return result;
         }
         
+        // Skip parallelization for lightweight permutation tasks.
+        // Threshold: n × nboots < 1e8 operations (~0.1s serial time).
+        // Rationale: Parallel overhead (thread spawn, sync, cache contention) 
+        // exceeds computation time for small workloads, causing slowdown.
+        if (n * nboots < 1e8) {
+            threads = 1;
+        }
+        
         // Compute observed statistic
         const double observed_mean = sum / static_cast<double>(n);
         const double observed_stat = std::abs(observed_mean);
@@ -234,13 +242,13 @@ namespace kocmi
             rng_pool[b] = std::mt19937_64(seq);
         }
 
-        std::uniform_int_distribution<int> sign_dist(0, 1);
-
         std::vector<size_t> perm_flags(nboots, 0);
 
         // Perform permutation
         if (threads <= 1)
-        {
+        {   
+            std::uniform_int_distribution<int> sign_dist(0, 1);
+
             for (size_t b = 0; b < nboots; ++b) 
             {
                 double perm_sum = 0.0;
@@ -263,6 +271,8 @@ namespace kocmi
 
                 double perm_sum = 0.0;
                 std::mt19937_64& rng = rng_pool[b];
+
+                std::uniform_int_distribution<int> sign_dist(0, 1);
 
                 for (size_t i = 0; i < n; ++i) 
                 {
