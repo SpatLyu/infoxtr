@@ -30,13 +30,14 @@ double RcppDist4Vec(
 Rcpp::NumericVector RcppDist4Mat(
     const Rcpp::NumericMatrix& mat,
     std::string method = "euclidean",
-    bool na_rm = true
+    bool na_rm = truebool na_rm = true,
+    bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
     std::vector<std::vector<double>> cppMat = mat_r2std(mat, true);
 
     // Call the distance function
-    std::vector<std::vector<double>> distm = Dist::Dist(cppMat, method, na_rm);
+    std::vector<std::vector<double>> distm = Dist::Dist(cppMat, method, na_rm, byrow);
 
     // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
     return mat_std2r(distm, true);
