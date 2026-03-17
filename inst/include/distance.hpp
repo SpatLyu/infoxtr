@@ -489,11 +489,6 @@ namespace Dist
             std::vector<double>(n,
                 std::numeric_limits<double>::quiet_NaN()));
 
-        std::vector<std::vector<double>> distm(
-            n_rows,
-            std::vector<double>(n_rows,
-                std::numeric_limits<double>::quiet_NaN()));
-
         for (size_t i = 0; i < pred.size(); ++i)
         {
             const size_t pi = pred[i];
