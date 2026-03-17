@@ -77,11 +77,11 @@ namespace NN
      * NN4Mat
      *
      * Returns:
-     *      neighbor index list for each row
+     *      neighbor index list for each observation
      *
      * Algorithm:
-     *      1. For each row i
-     *      2. Compute distances to all other rows
+     *      1. For each observation i
+     *      2. Compute distances to all other observations
      *      3. Exclude self unless include_self = true
      *      4. Partial sort to obtain k nearest
      *
