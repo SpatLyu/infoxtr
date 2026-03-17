@@ -109,7 +109,7 @@ namespace NumericUtils
             return std::numeric_limits<double>::quiet_NaN();
 
         // Pole at zero
-        if (x == 0.0)
+        if (doubleNearlyEqual(x, 0.0))
             return std::numeric_limits<double>::infinity();
 
         // Reflection formula for negative arguments
