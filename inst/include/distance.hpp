@@ -482,6 +482,13 @@ namespace Dist
         const size_t n_rows = mat.size();
         const size_t n_cols = mat[0].size();
 
+        const size_t n = byrow ? n_rows : n_cols;
+
+        std::vector<std::vector<double>> distm(
+            n,
+            std::vector<double>(n,
+                std::numeric_limits<double>::quiet_NaN()));
+
         std::vector<std::vector<double>> distm(
             n_rows,
             std::vector<double>(n_rows,
