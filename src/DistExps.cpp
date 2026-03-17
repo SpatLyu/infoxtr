@@ -52,15 +52,7 @@ Rcpp::NumericVector RcppDist4MatSub(
     bool na_rm = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-    int numRows = mat.nrow();
-    int numCols = mat.ncol();
-    std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
-
-    for (int r = 0; r < numRows; ++r) {
-        for (int c = 0; c < numCols; ++c) {
-            cppMat[r][c] = mat(r, c);
-        }
-    }
+    std::vector<std::vector<double>> cppMat = mat_r2std(mat, true);
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
     std::vector<size_t> lib_std;
@@ -85,15 +77,6 @@ Rcpp::NumericVector RcppDist4MatSub(
     std::vector<std::vector<double>> distm = Dist::Dist(
         cppMat, lib_std, pred_std, method, na_rm);
 
-    // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-    int rows = distm.size();
-    int cols = distm[0].size();
-    Rcpp::NumericMatrix result(rows, cols);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            result(i, j) = distm[i][j];
-        }
-    }
-
-    return result;
+    // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
+    return mat_std2r(distm, true);
 }
