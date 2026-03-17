@@ -22,7 +22,14 @@
  *
  *  Data layout:
  *      mat         : std::vector<std::vector<double>>
- *                    mat[row][dimension]
+ *
+ *                    byrow = true
+ *                       mat[row][dimension]
+ *                       Each row is an observation
+ *
+ *                    byrow = false
+ *                       mat[dimension][column]
+ *                       Each column is an observation
  *
  *      distmat     : std::vector<std::vector<double>>
  *                    distance matrix
