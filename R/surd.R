@@ -24,7 +24,7 @@
 #' 
 #' Synergistic-Unique-Redundant Decomposition
 #' 
-#' @note SURD only support numeric data.
+#' @note `surd` only support numeric data.
 #'
 #' @inheritParams te
 #' @param lag (optional) Lag of the agent variables.
