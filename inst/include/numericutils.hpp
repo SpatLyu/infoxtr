@@ -108,7 +108,7 @@ namespace NumericUtils
         if (std::isnan(x))
             return std::numeric_limits<double>::quiet_NaN();
 
-        // Pole at non-positive
+        // Pole at non-positive integer
         if (std::floor(x) == x && x <= 0)
             return std::numeric_limits<double>::infinity();
 
