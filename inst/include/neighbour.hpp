@@ -90,6 +90,128 @@ namespace NN
         const std::vector<std::vector<double>>& mat,
         size_t k,
         std::string method = "euclidean",
+        bool include_self = false,
+        bool byrow = true)
+    {
+        const Dist::DistanceMethod dist_method =
+            Dist::parseDistanceMethod(method);
+
+        if (dist_method == Dist::DistanceMethod::Invalid)
+        {
+            throw std::invalid_argument(
+                "Unsupported distance method: " + method);
+        }
+
+        const size_t n_obs =
+            byrow ? mat.size() : mat[0].size();
+
+        const size_t dim =
+            byrow ? mat[0].size() : mat.size();
+
+        std::vector<std::vector<size_t>> result(n_obs);
+
+        for (size_t i = 0; i < n_obs; ++i)
+        {
+            std::vector<std::pair<double,size_t>> candidates;
+            candidates.reserve(n_obs);
+
+            for (size_t j = 0; j < n_obs; ++j)
+            {
+                if (i == j) continue;
+
+                double sum = 0.0;
+                double maxv = 0.0;
+                size_t n_valid = 0;
+
+                for (size_t d = 0; d < dim; ++d)
+                {
+                    double xi = byrow ? mat[i][d] : mat[d][i];
+                    double xj = byrow ? mat[j][d] : mat[d][j];
+
+                    if (std::isnan(xi) || std::isnan(xj))
+                        continue;
+
+                    double diff = xi - xj;
+
+                    switch (dist_method)
+                    {
+                        case Dist::DistanceMethod::Euclidean:
+                            sum += diff * diff;
+                            break;
+
+                        case Dist::DistanceMethod::Manhattan:
+                            sum += std::abs(diff);
+                            break;
+
+                        case Dist::DistanceMethod::Maximum:
+                        {
+                            double ad = std::abs(diff);
+                            if (ad > maxv) maxv = ad;
+                        }
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    ++n_valid;
+                }
+
+                if (n_valid == 0) continue;
+
+                double distv;
+
+                if (dist_method == Dist::DistanceMethod::Euclidean)
+                    distv = std::sqrt(sum);
+                else if (dist_method == Dist::DistanceMethod::Manhattan)
+                    distv = sum;
+                else
+                    distv = maxv;
+
+                candidates.emplace_back(distv, j);
+            }
+
+            std::vector<size_t> indices;
+            indices.reserve(k);
+
+            size_t effective_k = k;
+
+            if (include_self)
+            {
+                indices.push_back(i);
+                if (effective_k > 0) effective_k--;
+            }
+
+            size_t num_neighbors =
+                std::min(effective_k, candidates.size());
+
+            if (num_neighbors > 0)
+            {
+                std::partial_sort(
+                    candidates.begin(),
+                    candidates.begin() + num_neighbors,
+                    candidates.end(),
+                    [](const auto& a, const auto& b)
+                    {
+                        if (!NumericUtils::doubleNearlyEqual(a.first,b.first))
+                            return a.first < b.first;
+                        return a.second < b.second;
+                    });
+
+                for (size_t m = 0; m < num_neighbors; ++m)
+                    indices.push_back(candidates[m].second);
+            }
+
+            result[i] = std::move(indices);
+        }
+
+        return result;
+    }
+
+    inline std::vector<std::vector<size_t>> NN4Mat(
+        const std::vector<std::vector<double>>& mat,
+        size_t k,
+        std::string method = "euclidean",
         bool include_self = false)
     {
       const Dist::DistanceMethod dist_method = Dist::parseDistanceMethod(method);
