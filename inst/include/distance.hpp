@@ -344,6 +344,102 @@ namespace Dist
     inline std::vector<std::vector<double>> Dist(
         const std::vector<std::vector<double>>& mat,
         std::string method = "euclidean",
+        bool na_rm = true,
+        bool byrow = true)
+    {
+        if (mat.empty()) return {};
+
+        const DistanceMethod dist_method = parseDistanceMethod(method);
+        if (dist_method == DistanceMethod::Invalid) {
+            throw std::invalid_argument("Unsupported distance method: " + method);
+        }
+
+        const size_t n_rows = mat.size();
+        const size_t n_cols = mat[0].size();
+
+        const size_t n = byrow ? n_rows : n_cols;
+
+        std::vector<std::vector<double>> distm(
+            n,
+            std::vector<double>(n,
+                std::numeric_limits<double>::quiet_NaN()));
+
+        for (size_t i = 0; i < n; ++i)
+        {
+            distm[i][i] = 0.0;
+
+            for (size_t j = i + 1; j < n; ++j)
+            {
+                double sum = 0.0;
+                double maxv = 0.0;
+                size_t n_valid = 0;
+                bool has_na = false;
+
+                const size_t dim = byrow ? n_cols : n_rows;
+
+                for (size_t k = 0; k < dim; ++k)
+                {
+                    double xi = byrow ? mat[i][k] : mat[k][i];
+                    double xj = byrow ? mat[j][k] : mat[k][j];
+
+                    bool element_has_na = std::isnan(xi) || std::isnan(xj);
+
+                    if (element_has_na && na_rm) continue;
+
+                    if (element_has_na && !na_rm)
+                    {
+                        has_na = true;
+                        break;
+                    }
+
+                    double diff = xi - xj;
+
+                    switch (dist_method) {
+                        case DistanceMethod::Euclidean:
+                            sum += diff * diff;
+                            break;
+
+                        case DistanceMethod::Manhattan:
+                            sum += std::abs(diff);
+                            break;
+
+                        case DistanceMethod::Maximum:
+                        {
+                            double ad = std::abs(diff);
+                            if (ad > maxv) maxv = ad;
+                            break;
+                        }
+
+                        default:
+                            break;
+                    }
+
+                    ++n_valid;
+                }
+
+                if (has_na || n_valid == 0)
+                    continue;
+
+                double distv;
+
+                if (dist_method == DistanceMethod::Euclidean)
+                    distv = std::sqrt(sum);
+                else if (dist_method == DistanceMethod::Manhattan)
+                    distv = sum;
+                else
+                    distv = maxv;
+
+                distm[i][j] = distv;
+                distm[j][i] = distv;
+            }
+        }
+
+        return distm;
+    }
+    
+    inline std::vector<std::vector<double>> Dist(
+        const std::vector<std::vector<double>>& mat,
+        std::string method = "euclidean",
         bool na_rm = true)
     {   
         if (mat.empty()) return {};
