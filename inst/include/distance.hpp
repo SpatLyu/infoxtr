@@ -317,10 +317,30 @@ namespace Dist
             return maxv;  // maximum
     }
 
-    /***********************************************************
-     * Matrix
-     * Row-wise distance matrix
-     ***********************************************************/
+    /****************************************************************************
+     * Matrix Distance
+     *
+     * Computes a full pairwise distance matrix from a numeric matrix.
+     *
+     * Behavior depends on the byrow parameter:
+     *
+     * byrow = true  (default)
+     *      Each row is treated as an observation vector.
+     *      Distances are computed between rows.
+     *      Result size: n_rows × n_rows
+     *
+     * byrow = false
+     *      Each column is treated as an observation vector.
+     *      Distances are computed between columns.
+     *      Result size: n_cols × n_cols
+     *
+     * @param mat    Input numeric matrix stored as vector of rows
+     * @param method Distance metric ("euclidean", "manhattan", "maximum")
+     * @param na_rm  Remove NaN values pairwise if true
+     * @param byrow  If true compute row distances, otherwise column distances
+     *
+     * @return Symmetric distance matrix
+     ***************************************************************************/
     inline std::vector<std::vector<double>> Dist(
         const std::vector<std::vector<double>>& mat,
         std::string method = "euclidean",
