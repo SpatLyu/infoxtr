@@ -64,40 +64,56 @@ inline double Entropy(
     const Series& series,
     size_t k,
     double base = 2.0)
-{   
+{
     const size_t n = series.size();
-    
+
     Matrix vec;
     vec.reserve(1);
     vec.emplace_back(series);
+
     auto dist = Dist::Dist(vec,"maximum",true,false);
 
     double avg = 0.0;
 
     for (size_t i = 0; i < n; ++i)
     {
-        std::vector<double> row;
+        std::vector<double> row = dist[i];
 
-        for (size_t j = 0; j < n; ++j)
-        {
-            if (i == j) continue;
-            row.push_back(dist[i][j]);
-        }
+        /* remove self-distance */
+        if (i < row.size())
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
-        std::nth_element(row.begin(),row.begin()+k-1,row.end());
+        /* remove NaN */
+        row.erase(
+            std::remove_if(
+                row.begin(),
+                row.end(),
+                [](double v){ return std::isnan(v); }),
+            row.end());
 
-        double eps = row[k-1];
+        if (row.size() < k)
+            throw std::runtime_error("k larger than valid neighbour count");
+
+        std::nth_element(
+            row.begin(),
+            row.begin() + (k - 1),
+            row.end());
+
+        double eps = row[k - 1];
 
         avg += std::log(eps);
     }
 
-    avg /= n;
+    avg /= static_cast<double>(n);
 
     double H =
         NumericUtils::Digamma(n)
-        - NumericUtils::Digamma(k)
-        + avg
-        + std::log(2.0);
+      - NumericUtils::Digamma(k)
+      + avg
+      + std::log(2.0);
+
+    if (base != std::exp(1.0))
+        H /= std::log(base);
 
     return H;
 }
