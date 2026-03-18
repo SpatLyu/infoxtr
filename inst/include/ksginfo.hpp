@@ -41,12 +41,6 @@ namespace KSGInfo
 using Series = std::vector<double>;
 using Matrix = std::vector<std::vector<double>>;
 
-enum class KSGAlgorithm
-{
-    Alg1 = 1,
-    Alg2 = 2
-};
-
 /***********************************************************
  * Utility: subset matrix
  ***********************************************************/
@@ -125,7 +119,7 @@ inline double JE(
 
     double avg = 0.0;
 
-    for (size_t i=0;i<n;++i)
+    for (size_t i = 0; i < n; ++i)
     {
         std::vector<double> row;
 
@@ -178,7 +172,7 @@ inline double MI(
     const std::vector<size_t>& xvars,
     const std::vector<size_t>& yvars,
     size_t k = 3,
-    KSGAlgorithm alg = KSGAlgorithm::Alg1,
+    size_t alg = 0,
     bool normalize = false)
 {
     std::vector<size_t> ti = target;
@@ -216,7 +210,7 @@ inline double MI(
             if (d_y[i][j] <= eps) ny++;
         }
 
-        if (alg == KSGAlgorithm::Alg1)
+        if (alg == 0)
         {
             sum +=
                 NumericUtils::Digamma(nx+1)
@@ -232,7 +226,7 @@ inline double MI(
 
     double mi;
 
-    if (alg == KSGAlgorithm::Alg1)
+    if (alg == 0)
         mi = NumericUtils::Digamma(k)
            + NumericUtils::Digamma(n)
            - sum / n;
