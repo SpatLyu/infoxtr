@@ -13,7 +13,8 @@ Rcpp::List RcppNN4Mat(
     const Rcpp::NumericMatrix& mat,
     int k,
     std::string method = "euclidean",
-    bool include_self = false
+    bool include_self = false,
+    bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
     int numRows = mat.nrow();
@@ -42,7 +43,8 @@ Rcpp::List RcppNN4MatSub(
     const Rcpp::IntegerVector& pred,
     int k,
     std::string method = "euclidean",
-    bool include_self = false
+    bool include_self = false,
+    bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
     int numRows = mat.nrow();
