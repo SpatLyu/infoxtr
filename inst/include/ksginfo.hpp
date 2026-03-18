@@ -103,8 +103,8 @@ inline double Entropy(
 }
 
 /***********************************************************
-Joint Entropy
-***********************************************************/
+ *Joint Entropy
+ ***********************************************************/
 inline double JE(
     const Matrix& mat,
     const std::vector<size_t>& vars,
