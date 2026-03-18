@@ -5,7 +5,7 @@ RcppDist4Vec <- function(v1, v2, method = "euclidean", na_rm = TRUE) {
     .Call(`_infocaus_RcppDist4Vec`, v1, v2, method, na_rm)
 }
 
-RcppDist4Mat <- function(mat, method = "euclidean", na_rm, byrow = TRUE) {
+RcppDist4Mat <- function(mat, method = "euclidean", na_rm = TRUE, byrow = TRUE) {
     .Call(`_infocaus_RcppDist4Mat`, mat, method, na_rm, byrow)
 }
 
