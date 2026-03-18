@@ -23,8 +23,8 @@
  *  License: GPL-3
  **********************************************************************/
 
-#ifndef KSG_INFOTHEO_HPP
-#define KSG_INFOTHEO_HPP
+#ifndef KSGINFO_HPP
+#define KSGINFO_HPP
 
 #include <vector>
 #include <cmath>
@@ -297,4 +297,4 @@ inline double CMI(
 
 }
 
-#endif
+#endif // KSGINFO_HPP
