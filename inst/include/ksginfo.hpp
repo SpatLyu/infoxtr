@@ -1,5 +1,5 @@
 /**********************************************************************
- *  File: ksg_infotheo.hpp
+ *  File: ksginfo.hpp
  *
  *  Continuous information theoretic measurements
  *  using k-nearest neighbor estimators.
@@ -10,19 +10,16 @@
  *      Kraskov–Stögbauer–Grassberger MI estimator
  *
  *  Data layout:
- *
- *      Matrix = std::vector<std::vector<double>>
- *      mat[var][obs]
+ *      Series = std::vector<double>
+ *      Matrix = std::vector<std::vector<double>> // mat[var][obs]
  *
  *  Distance backend:
- *
  *      Dist::Dist (Chebyshev metric)
  *
  *  Special functions:
- *
  *      NumericUtils::Digamma
  *
- *  Author: Wenbo Lyu
+ *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
  **********************************************************************/
 
