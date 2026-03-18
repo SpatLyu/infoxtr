@@ -112,21 +112,15 @@ Rcpp::List RcppNN4DistMatSub(
     bool include_self = false
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-    int numRows = distmat.nrow();
-    int numCols = distmat.ncol();
-    std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+    std::vector<std::vector<double>> cppMat = mat_r2std(distmat, true);
 
-    for (int r = 0; r < numRows; ++r) {
-        for (int c = 0; c < numCols; ++c) {
-            cppMat[r][c] = distmat(r, c);
-        }
-    }
+    const int n_obs = distmat.nrow(); 
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
-        if (lib[i] < 1 || lib[i] > numRows) {
+        if (lib[i] < 1 || lib[i] > n_obs) {
             Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
         }
         lib_std.push_back(static_cast<size_t>(lib[i] - 1));
@@ -135,7 +129,7 @@ Rcpp::List RcppNN4DistMatSub(
     std::vector<size_t> pred_std;
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
-        if (pred[i] < 1 || pred[i] > numRows) {
+        if (pred[i] < 1 || pred[i] > n_obs) {
             Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
         }
         pred_std.push_back(static_cast<size_t>(pred[i] - 1));
