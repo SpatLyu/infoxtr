@@ -43,8 +43,8 @@ namespace InfoTheo
     using Matrix = std::vector<std::vector<uint64_t>>;
 
     /***********************************************************
-    * Utilities
-    ***********************************************************/
+     * Utilities
+     ***********************************************************/
     inline double convert_log_base(double x, double base)
     {
         if (x <= 0.0) return 0.0;
@@ -56,8 +56,8 @@ namespace InfoTheo
     }
 
     /***********************************************************
-    * Entropy
-    ***********************************************************/
+     * Entropy
+     ***********************************************************/
     inline double Entropy(
         const Series& series,
         double base = 2.0,
@@ -94,8 +94,8 @@ namespace InfoTheo
     }
 
     /***********************************************************
-    * Joint Entropy
-    ***********************************************************/
+     * Joint Entropy
+     ***********************************************************/
     inline double JE(
         const Matrix& mat,
         const std::vector<size_t>& vars,
@@ -109,8 +109,8 @@ namespace InfoTheo
         const size_t n_cols = mat.size();
 
         /*------------------------------------------------------
-        * Validate, sort, and deduplicate variable indices
-        *-----------------------------------------------------*/
+         * Validate, sort, and deduplicate variable indices
+         *-----------------------------------------------------*/
         std::vector<size_t> clean_vars;
         clean_vars.reserve(vars.size());
 
@@ -131,10 +131,10 @@ namespace InfoTheo
         const size_t k = clean_vars.size();
 
         /*------------------------------------------------------
-        * Construct joint state table
-        * Layout:
-        *   states[i*k + j]
-        *-----------------------------------------------------*/
+         * Construct joint state table
+         * Layout:
+         *   states[i*k + j]
+         *-----------------------------------------------------*/
         std::vector<uint64_t> states;
         states.reserve(n_obs * k);
 
@@ -164,15 +164,15 @@ namespace InfoTheo
             return std::numeric_limits<double>::quiet_NaN();
 
         /*------------------------------------------------------
-        * Create index array for sorting
-        *-----------------------------------------------------*/
+         * Create index array for sorting
+         *-----------------------------------------------------*/
         std::vector<size_t> order(n_valid);
         for (size_t i = 0; i < n_valid; ++i)
             order[i] = i;
 
         /*------------------------------------------------------
-        * Sort joint states lexicographically
-        *-----------------------------------------------------*/
+         * Sort joint states lexicographically
+         *-----------------------------------------------------*/
         std::sort(order.begin(), order.end(),
             [&](size_t a, size_t b)
             {
@@ -191,8 +191,8 @@ namespace InfoTheo
             });
 
         /*------------------------------------------------------
-        * Run-length frequency counting
-        *-----------------------------------------------------*/
+         * Run-length frequency counting
+         *-----------------------------------------------------*/
         double H = 0.0;
         size_t run = 1;
 
@@ -229,8 +229,8 @@ namespace InfoTheo
     }
 
     /***********************************************************
-    * Conditional Entropy
-    ***********************************************************/
+     * Conditional Entropy
+     ***********************************************************/
     inline double CE(
         const Matrix& mat,
         const std::vector<size_t>& target,
@@ -252,8 +252,8 @@ namespace InfoTheo
     }
 
     /***********************************************************
-    * Mutual Information
-    ***********************************************************/
+     * Mutual Information
+     ***********************************************************/
     inline double MI(
         const Matrix& mat,
         const std::vector<size_t>& target,
@@ -276,8 +276,8 @@ namespace InfoTheo
     }
 
     /***********************************************************
-    * Conditional Mutual Information
-    ***********************************************************/
+     * Conditional Mutual Information
+     ***********************************************************/
     inline double CMI(
         const Matrix& mat,
         const std::vector<size_t>& target,
