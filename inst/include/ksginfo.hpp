@@ -330,6 +330,6 @@ inline double CMI(
     return cmi / ce_xy_z;
 }
 
-}
+} // namespace KSGInfo
 
 #endif // KSGINFO_HPP
