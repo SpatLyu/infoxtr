@@ -38,6 +38,7 @@
 namespace KSGInfo
 {
 
+using Series = std::vector<double>;
 using Matrix = std::vector<std::vector<double>>;
 
 enum class KSGAlgorithm
