@@ -48,8 +48,8 @@ enum class KSGAlgorithm
 };
 
 /***********************************************************
-Utility: subset matrix
-***********************************************************/
+ *Utility: subset matrix
+ ***********************************************************/
 inline Matrix subset(
     const Matrix& mat,
     const std::vector<size_t>& vars)
