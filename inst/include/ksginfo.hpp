@@ -108,7 +108,7 @@ inline double Entropy(
       + avg
       + std::log(2.0);
 
-    if (base != std::exp(1.0))
+    if (NumericUtils::doubleNearlyEqual(base,std::exp(1.0))) 
         H /= std::log(base);
 
     return H;
