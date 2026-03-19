@@ -280,6 +280,9 @@ inline double CMI(
     xyz.insert(xyz.end(), target.begin(), target.end());
     xyz.insert(xyz.end(), interact.begin(), interact.end());
 
+    std::vector<size_t> xy = target;
+    xy.insert(xy.end(), interact.begin(), interact.end());
+
     std::vector<size_t> xz = conds;
     xz.insert(xz.end(), target.begin(), target.end());
 
@@ -289,7 +292,7 @@ inline double CMI(
     auto d_xyz = Dist::Dist(subset(mat,xyz),"maximum",true,false);
     auto d_xz  = Dist::Dist(subset(mat,xz),"maximum",true,false);
     auto d_yz  = Dist::Dist(subset(mat,yz),"maximum",true,false);
-    auto d_z   = Dist::Dist(subset(mat,zvars),"maximum",true,false);
+    auto d_z   = Dist::Dist(subset(mat,conds),"maximum",true,false);
 
     const size_t n = d_xyz.size();
 
@@ -333,7 +336,7 @@ inline double CMI(
     if (!normalize)
         return cmi;
 
-    double ce_xy_z = CE(mat,xvars,yvars,k);
+    double ce_xy_z = CE(mat,xy,conds,k);
 
     if (ce_xy_z <= 0)
         return cmi;
