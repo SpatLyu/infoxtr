@@ -305,7 +305,8 @@ inline double MI(
                - NumericUtils::Digamma(k)
                + d * avg_log_eps
                + d * std::log(2.0);
-
+    
+    if (alg == 1) hxy += 1.0 / k;
     if (hxy <= 0) return mi;
 
     return mi / hxy;
@@ -396,7 +397,8 @@ inline double CMI(
                  - NumericUtils::Digamma(k)
                  + d * avg_log_eps
                  + d * std::log(2.0);
-
+    
+    if (alg == 1) hxy_z += 1.0 / k;
     if (hxy_z <= 0) return cmi;
 
     return cmi / hxy_z;
