@@ -79,11 +79,7 @@ inline double Entropy(
     {
         std::vector<double> row = dist[i];
 
-        /* remove self-distance */
-        if (i < row.size())
-            row[i] = std::numeric_limits<double>::quiet_NaN();
-
-        /* remove NaN */
+        // remove NaN
         row.erase(
             std::remove_if(
                 row.begin(),
