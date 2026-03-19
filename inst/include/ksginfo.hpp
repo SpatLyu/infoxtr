@@ -207,12 +207,14 @@ inline double CE(
     const Matrix& mat,
     const std::vector<size_t>& target,
     const std::vector<size_t>& cond,
-    size_t k = 3)
+    size_t k = 3,
+    double base = 2.0,
+    size_t alg = 0)
 {
     std::vector<size_t> tc = cond;
     tc.insert(tc.end(),target.begin(),target.end());
 
-    return JE(mat,tc,k) - JE(mat,cond,k);
+    return JE(mat,tc,k,alg,base) - JE(mat,cond,k,alg,base);
 }
 
 /***********************************************************
