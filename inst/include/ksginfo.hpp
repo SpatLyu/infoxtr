@@ -208,10 +208,6 @@ inline double MI(
     {
         std::vector<double> row = d_xy[i];
 
-        /* remove self distance */
-        if (i < row.size())
-            row[i] = std::numeric_limits<double>::quiet_NaN();
-
         // remove NaN
         row.erase(
             std::remove_if(row.begin(),row.end(),
