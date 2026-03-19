@@ -131,16 +131,11 @@ inline double JE(
     auto dist = Dist::Dist(sub,"maximum",true,false);
 
     double avg = 0.0;
-
     for (size_t i = 0; i < n; ++i)
     {
         std::vector<double> row = dist[i];
 
-        /* remove self-distance */
-        if (i < row.size())
-            row[i] = std::numeric_limits<double>::quiet_NaN();
-
-        /* remove NaN */
+        // remove NaN
         row.erase(
             std::remove_if(
                 row.begin(),
@@ -160,16 +155,14 @@ inline double JE(
 
         avg += std::log(eps);
     }
-
     avg /= static_cast<double>(n);
 
-    double H =
-        NumericUtils::Digamma(n)
-      - NumericUtils::Digamma(k)
-      + d * avg
-      + d * std::log(2.0);
+    double H = NumericUtils::Digamma(n)
+               - NumericUtils::Digamma(k)
+               + d * avg
+               + d * std::log(2.0);
 
-    if (base != std::exp(1.0))
+    if (NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
         H /= std::log(base);
 
     return H;
