@@ -308,39 +308,49 @@ inline double CMI(
     auto d_z   = Dist::Dist(subset(mat,conds),"maximum",true,false);
 
     const size_t n = d_xyz.size();
+    const size_t d = xy.size();
 
     double sum = 0.0;
+    double avg_log_eps = 0.0;
 
     for (size_t i = 0; i < n; ++i)
     {
-        std::vector<double> row;
+        std::vector<double> row = d_xyz[i];
 
-        for (size_t j=0;j<n;++j)
-        {
-            if (i==j) continue;
-            row.push_back(d_xyz[i][j]);
-        }
+        if (i < row.size())
+            row[i] = std::numeric_limits<double>::quiet_NaN();
+
+        row.erase(
+            std::remove_if(row.begin(),row.end(),
+                [](double v){ return std::isnan(v); }),
+            row.end());
+
+        if (row.size() < k)
+            throw std::runtime_error("k larger than valid neighbour count");
 
         std::nth_element(row.begin(),row.begin()+k-1,row.end());
 
         double eps = row[k-1];
 
-        size_t nxz=0, nyz=0, nz=0;
+        avg_log_eps += std::log(eps);
 
-        for (size_t j=0;j<n;++j)
+        size_t nxz = 0, nyz = 0, nz = 0;
+
+        for (size_t j = 0; j < n; ++j)
         {
-            if (i==j) continue;
+            if (i == j) continue;
 
-            if (d_xz[i][j] <= eps) nxz++;
-            if (d_yz[i][j] <= eps) nyz++;
-            if (d_z[i][j]  <= eps) nz++;
+            if (!std::isnan(d_xz[i][j]) && d_xz[i][j] <= eps) nxz++;
+            if (!std::isnan(d_yz[i][j]) && d_yz[i][j] <= eps) nyz++;
+            if (!std::isnan(d_z[i][j])  && d_z[i][j]  <= eps) nz++;
         }
 
-        sum +=
-            NumericUtils::Digamma(nxz+1)
-          + NumericUtils::Digamma(nyz+1)
-          - NumericUtils::Digamma(nz+1);
+        sum += NumericUtils::Digamma(nxz+1)
+             + NumericUtils::Digamma(nyz+1)
+             - NumericUtils::Digamma(nz+1);
     }
+
+    avg_log_eps /= n;
 
     double cmi =
         NumericUtils::Digamma(k)
@@ -349,12 +359,18 @@ inline double CMI(
     if (!normalize)
         return cmi;
 
-    double ce_xy_z = CE(mat,xy,conds,k);
+    /* compute H(X,Y | Z) */
 
-    if (ce_xy_z <= 0)
+    double hxy_z =
+        NumericUtils::Digamma(n)
+      - NumericUtils::Digamma(k)
+      + d * avg_log_eps
+      + d * std::log(2.0);
+
+    if (hxy_z <= 0)
         return cmi;
 
-    return cmi / ce_xy_z;
+    return cmi / hxy_z;
 }
 
 } // namespace KSGInfo
