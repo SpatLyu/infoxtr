@@ -225,6 +225,7 @@ inline double MI(
     const std::vector<size_t>& target,
     const std::vector<size_t>& interact,
     size_t k = 3,
+    double base = 2.0,
     size_t alg = 0,
     bool normalize = false)
 {
@@ -298,8 +299,12 @@ inline double MI(
 
     mi = std::max(0.0, mi);
 
-    if (!normalize)
+    if (!normalize) {
+        if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
+            mi /= std::log(base);
+
         return mi;
+    }
 
     double hxy = NumericUtils::Digamma(n)
                - NumericUtils::Digamma(k)
