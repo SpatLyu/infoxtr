@@ -82,7 +82,8 @@ inline Matrix subset(
 inline double Entropy(
     const Series& series,
     size_t k = 3,
-    double base = 2.0)
+    double base = 2.0,
+    size_t alg = 0)
 {
     const size_t n = series.size();
 
@@ -93,13 +94,14 @@ inline double Entropy(
     auto dist = Dist::Dist(vec,"maximum",true,false);
 
     double avg = 0.0;
+
     for (size_t i = 0; i < n; ++i)
     {
         std::vector<double> row = dist[i];
 
-        if (i < row.size()) row[i] = std::numeric_limits<double>::quiet_NaN();
+        if (i < row.size())
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
-        // remove NaN
         row.erase(
             std::remove_if(
                 row.begin(),
@@ -119,6 +121,7 @@ inline double Entropy(
 
         avg += std::log(eps);
     }
+
     avg /= static_cast<double>(n);
 
     double H = NumericUtils::Digamma(n)
@@ -126,7 +129,10 @@ inline double Entropy(
                + avg
                + std::log(2.0);
 
-    if (NumericUtils::doubleNearlyEqual(base,std::exp(1.0))) 
+    if (alg == 1)
+        H += 1.0 / k;
+
+    if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
         H /= std::log(base);
 
     return H;
