@@ -82,8 +82,8 @@ inline Matrix subset(
 inline double Entropy(
     const Series& series,
     size_t k = 3,
-    double base = 2.0,
-    size_t alg = 0)
+    size_t alg = 0,
+    double base = 2.0)
 {
     const size_t n = series.size();
 
@@ -145,8 +145,8 @@ inline double JE(
     const Matrix& mat,
     const std::vector<size_t>& vars,
     size_t k = 3,
-    double base = 2.0,
-    size_t alg = 0)
+    size_t alg = 0,
+    double base = 2.0)
 {
     Matrix sub = subset(mat,vars);
 
@@ -208,8 +208,8 @@ inline double CE(
     const std::vector<size_t>& target,
     const std::vector<size_t>& cond,
     size_t k = 3,
-    double base = 2.0,
-    size_t alg = 0)
+    size_t alg = 0,
+    double base = 2.0)
 {
     std::vector<size_t> tc = cond;
     tc.insert(tc.end(),target.begin(),target.end());
@@ -225,8 +225,8 @@ inline double MI(
     const std::vector<size_t>& target,
     const std::vector<size_t>& interact,
     size_t k = 3,
-    double base = 2.0,
     size_t alg = 0,
+    double base = 2.0,
     bool normalize = false)
 {
     std::vector<size_t> xy = target;
@@ -325,6 +325,7 @@ inline double CMI(
     const std::vector<size_t>& conds,
     size_t k = 3,
     size_t alg = 0,
+    double base = 2.0,
     bool normalize = false)
 {
     std::vector<size_t> xyz = conds;
