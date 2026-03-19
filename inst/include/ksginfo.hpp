@@ -351,10 +351,13 @@ inline double CMI(
     {
         std::vector<double> row = d_xyz[i];
 
-        if (i < row.size()) row[i] = std::numeric_limits<double>::quiet_NaN();
+        if (i < row.size())
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
         row.erase(
-            std::remove_if(row.begin(),row.end(),
+            std::remove_if(
+                row.begin(),
+                row.end(),
                 [](double v){ return std::isnan(v); }),
             row.end());
 
@@ -389,15 +392,12 @@ inline double CMI(
 
     if (!normalize) return cmi;
 
-    // compute H(X,Y | Z)
-
     double hxy_z = NumericUtils::Digamma(n)
-                   - NumericUtils::Digamma(k)
-                   + d * avg_log_eps
-                   + d * std::log(2.0);
+                 - NumericUtils::Digamma(k)
+                 + d * avg_log_eps
+                 + d * std::log(2.0);
 
-    if (hxy_z <= 0)
-        return cmi;
+    if (hxy_z <= 0) return cmi;
 
     return cmi / hxy_z;
 }
