@@ -1,22 +1,22 @@
 .surd_ts = \(data, target, agent, lag = 1, bin = 5, method = "equal",
-             max.combs = 10, threads = 1, base = 2.0, normalize = TRUE) {
+             max.order = 10, threads = 1, base = 2.0, normalize = TRUE) {
   mat = .convert2mat(data, contain_type = FALSE)
-  return(RcppSURD(mat, target, agent, lag, bin, max.combs, 
+  return(RcppSURD(mat, target, agent, lag, bin, max.order, 
                   threads, base, normalize, method))
 }
 
 .surd_lattice = \(data, target, agent, lag = 1, bin = 5, method = "equal", 
-                  max.combs = 10, threads = 1, base = 2.0, normalize = TRUE, nb = NULL) {
+                  max.order = 10, threads = 1, base = 2.0, normalize = TRUE, nb = NULL) {
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   mat = .convert2mat(data, contain_type = FALSE)
-  return(RcppSURD(mat, target, agent, lag, bin, max.combs, 
+  return(RcppSURD(mat, target, agent, lag, bin, max.order, 
                   threads, base, normalize, method, nb))
 }
 
 .surd_grid = \(data, target, agent, lag = 1, bin = 5, method = "equal",
-               max.combs = 10, threads = 1, base = 2.0, normalize = TRUE) {
+               max.order = 10, threads = 1, base = 2.0, normalize = TRUE) {
   mat = .convert2mat(data, contain_type = FALSE)
-  return(RcppSURD(mat, target, agent, lag, bin, max.combs, 
+  return(RcppSURD(mat, target, agent, lag, bin, max.order, 
                   threads, base, normalize, method, NULL, terra::nrow(data[[1]])))
 }
 
@@ -32,7 +32,7 @@
 #' @param method (optional) Discretization method. One of
 #'   `"sd"`, `"equal"`, `"geometric"`, `"quantile"`,
 #'   `"natural("jenks")"`, or `"headtail"("headtails")`.
-#' @param max.combs (optional) Maximum combination order.
+#' @param max.order (optional) Maximum combination order.
 #' @param threads (optional) Number of threads used.
 #' @param nb (optional) Neighbours list.
 #'
