@@ -271,8 +271,8 @@ inline double MI(
         {
             if (i == j) continue;
 
-            if (!std::isnan(d_x[i][j]) && d_x[i][j] <= eps) nx++;
-            if (!std::isnan(d_y[i][j]) && d_y[i][j] <= eps) ny++;
+            if (!std::isnan(d_x[i][j]) && d_x[i][j] < eps) nx++;
+            if (!std::isnan(d_y[i][j]) && d_y[i][j] < eps) ny++;
         }
 
         if (alg == 0)
@@ -389,9 +389,9 @@ inline double CMI(
         {
             if (i == j) continue;
 
-            if (!std::isnan(d_xz[i][j]) && d_xz[i][j] <= eps) nxz++;
-            if (!std::isnan(d_yz[i][j]) && d_yz[i][j] <= eps) nyz++;
-            if (!std::isnan(d_z[i][j])  && d_z[i][j]  <= eps) nz++;
+            if (!std::isnan(d_xz[i][j]) && d_xz[i][j] < eps) nxz++;
+            if (!std::isnan(d_yz[i][j]) && d_yz[i][j] < eps) nyz++;
+            if (!std::isnan(d_z[i][j])  && d_z[i][j]  < eps) nz++;
         }
 
         if (alg == 0)
