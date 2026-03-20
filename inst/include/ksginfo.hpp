@@ -409,18 +409,27 @@ inline double CMI(
     double cmi = NumericUtils::Digamma(k) - sum / n;
     if (alg == 1) cmi -= 1.0 / k;
 
-    if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
-        cmi /= std::log(base);
+    if (!normalize)
+    {
+        if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
+            cmi /= std::log(base);
 
-    if (!normalize) return cmi;
+        return cmi;
+    } 
 
     double hxy_z = NumericUtils::Digamma(n)
                  - NumericUtils::Digamma(k)
                  + d * avg_log_eps
                  + d * std::log(2.0);
-    
     if (alg == 1) hxy_z += 1.0 / k;
-    if (hxy_z <= 0) return cmi;
+
+    if (hxy_z <= 0)
+    {
+        if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
+            cmi /= std::log(base);
+
+        return cmi;
+    } 
 
     return cmi / hxy_z;
 }
