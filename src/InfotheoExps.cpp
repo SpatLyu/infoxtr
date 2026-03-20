@@ -204,7 +204,7 @@ double RcppDiscMI(SEXP mat,
 
     const size_t n_cols = m.size();
     for (auto& idx : t) {
-        if (idx < 1 || idx > n_obs) {
+        if (idx < 1 || idx > n_cols) {
             Rcpp::stop("Target index %d out of bounds [1, %d]", 
                        static_cast<int>(idx), 
                        static_cast<int>(n_cols));
