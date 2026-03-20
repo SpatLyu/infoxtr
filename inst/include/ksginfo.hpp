@@ -399,7 +399,7 @@ inline double CMI(
     avg_log_eps /= n;
 
     double cmi = NumericUtils::Digamma(k) - sum / n;
-    if (alg == 1) cmi += 1.0 / k;
+    if (alg == 1) cmi -= 1.0 / k;
 
     if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
         cmi /= std::log(base);
