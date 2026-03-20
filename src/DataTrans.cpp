@@ -271,12 +271,40 @@ Rcpp::NumericMatrix mat_std2r(
  *
  *  Structure:
  *
- *      R matrix:
- *          n rows  = observations
- *          p cols  = variables
+ *  The orientation of the conversion is controlled by the
+ *  `byrow` argument.
+ *
+ *  When byrow = true
+ *
+ *      R matrix rows correspond to elements of the outer vector.
+ *
+ *      R:
+ *          [ r11, r12 ]
+ *          [ r21, r22 ]
+ *          [ r31, r32 ]
  *
  *      C++:
- *          Matrix[var][obs]
+ *          {
+ *              {r11, r12},
+ *              {r21, r22},
+ *              {r31, r32}
+ *          }
+ *
+ *
+ *  When byrow = false
+ *
+ *      R matrix columns correspond to elements of the outer vector.
+ *
+ *      R:
+ *          [ r11, r12 ]
+ *          [ r21, r22 ]
+ *          [ r31, r32 ]
+ *
+ *      C++:
+ *          {
+ *              {r11, r21, r31},
+ *              {r12, r22, r32}
+ *          }
  *
  *  Design:
  *      - Scan matrix once to collect global unique values
