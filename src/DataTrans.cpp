@@ -515,22 +515,45 @@ std::vector<std::vector<uint64_t>> pat_r2std(SEXP x, bool byrow = true)
         for (uint64_t i = 0; i < uniq.size(); ++i)
             dict[uniq[i]] = i+1;
 
-        for (size_t j = 0; j < p; ++j)
+        if (byrow)
         {
-            auto &col = mat[j];
+          for (size_t i = 0; i < n; ++i)
+          {
+              auto &row = mat[i];
 
-            for (size_t i = 0; i < n; ++i)
-            {
-                if (Rcpp::CharacterVector::is_na(m(i,j)))
-                {
-                    col.push_back({0});
-                }
-                else
-                {
-                    std::string key = std::string(m(i,j));
-                    col.push_back(dict[key]);
-                }
-            }
+              for (size_t j = 0; j < p; ++j)
+              {
+                  if (Rcpp::CharacterVector::is_na(m(i,j)))
+                  {
+                      row.push_back({0});
+                  }
+                  else
+                  {
+                      std::string key = std::string(m(i,j));
+                      row.push_back(dict[key]);
+                  }
+              }
+          }
+        }
+        else 
+        {
+          for (size_t j = 0; j < p; ++j)
+          {
+              auto &col = mat[j];
+
+              for (size_t i = 0; i < n; ++i)
+              {
+                  if (Rcpp::CharacterVector::is_na(m(i,j)))
+                  {
+                      col.push_back({0});
+                  }
+                  else
+                  {
+                      std::string key = std::string(m(i,j));
+                      col.push_back(dict[key]);
+                  }
+              }
+          }
         }
 
         break;
