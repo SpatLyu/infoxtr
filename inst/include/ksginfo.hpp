@@ -399,6 +399,9 @@ inline double CMI(
     avg_log_eps /= n;
 
     double cmi = NumericUtils::Digamma(k) - sum / n;
+    
+    if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
+        cmi /= std::log(base);
 
     if (!normalize) return cmi;
 
