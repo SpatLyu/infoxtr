@@ -386,9 +386,14 @@ inline double CMI(
             if (!std::isnan(d_z[i][j])  && d_z[i][j]  <= eps) nz++;
         }
 
-        sum += NumericUtils::Digamma(nxz+1)
-             + NumericUtils::Digamma(nyz+1)
-             - NumericUtils::Digamma(nz+1);
+        if (alg == 0)
+            sum += NumericUtils::Digamma(nxz+1)
+                 + NumericUtils::Digamma(nyz+1)
+                 - NumericUtils::Digamma(nz+1);
+        else
+            sum += NumericUtils::Digamma(nxz)
+                 + NumericUtils::Digamma(nyz)
+                 - NumericUtils::Digamma(nz);
     }
 
     avg_log_eps /= n;
