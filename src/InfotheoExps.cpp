@@ -5,6 +5,7 @@
 #include <limits>
 #include <numeric>
 #include <algorithm>
+#include <unordered_map> 
 #include "infotheo.hpp"
 #include "ksginfo.hpp"
 #include "DataTrans.h"
@@ -15,28 +16,112 @@ double RcppDiscEntropy(SEXP series,
                        double base = 2.0,
                        bool na_rm = true)
 {
-    InfoTheo::PatternSeries s;
+    InfoTheo::Series s;
 
     switch (TYPEOF(series))
     {
         case INTSXP:
-        {
+        {   
             Rcpp::IntegerVector v(series);
-            s = vec2pat(v);
+            std::vector<uint64_t> s;
+            s.reserve(v.size());
+
+            std::vector<int> uniq;
+            uniq.reserve(v.size());
+
+            for (int i = 0; i < v.size(); ++i)
+                if (!Rcpp::IntegerVector::is_na(v[i]))
+                    uniq.push_back(v[i]);
+
+            std::sort(uniq.begin(), uniq.end());
+            uniq.erase(std::unique(uniq.begin(), uniq.end()), uniq.end());
+
+            std::unordered_map<int, uint64_t> dict;
+            for (uint64_t i = 0; i < uniq.size(); ++i)
+                dict[uniq[i]] = i+1;
+
+            for (int i = 0; i < v.size(); ++i)
+            {
+                if (Rcpp::IntegerVector::is_na(v[i]))
+                {
+                    series.push_back( 0 );
+                }
+                else
+                {
+                    series.push_back( dict[v[i]] );
+                }
+            }
+            
             break;
         }
 
         case REALSXP:
         {
             Rcpp::NumericVector v(series);
-            s = vec2pat(v);
+            std::vector<uint64_t> s;
+            s.reserve(v.size());
+
+            std::vector<double> uniq;
+            uniq.reserve(v.size());
+
+            for (int i = 0; i < v.size(); ++i)
+                if (!Rcpp::NumericVector::is_na(v[i]))
+                    uniq.push_back(v[i]);
+
+            std::sort(uniq.begin(), uniq.end());
+            uniq.erase(std::unique(uniq.begin(), uniq.end()), uniq.end());
+
+            std::unordered_map<double, uint64_t> dict;
+            for (uint64_t i = 0; i < uniq.size(); ++i)
+                dict[uniq[i]] = i+1;
+
+            for (int i = 0; i < v.size(); ++i)
+            {
+                if (Rcpp::NumericVector::is_na(v[i]))
+                {
+                    series.push_back( 0 );
+                }
+                else
+                {
+                    series.push_back( dict[v[i]] );
+                }
+            }
+
             break;
         }
 
         case STRSXP:
         {
             Rcpp::CharacterVector v(series);
-            s = vec2pat(v);
+            std::vector<uint64_t> s;
+            s.reserve(v.size());
+
+            std::vector<std::string> uniq;
+            uniq.reserve(v.size());
+
+            for (int i = 0; i < v.size(); ++i)
+                if (!Rcpp::CharacterVector::is_na(v[i]))
+                    uniq.push_back(std::string(v[i]));
+
+            std::sort(uniq.begin(), uniq.end());
+            uniq.erase(std::unique(uniq.begin(), uniq.end()), uniq.end());
+
+            std::unordered_map<std::string, uint64_t> dict;
+            for (uint64_t i = 0; i < uniq.size(); ++i)
+                dict[uniq[i]] = i+1;
+
+            for (int i = 0; i < v.size(); ++i)
+            {
+                if (Rcpp::CharacterVector::is_na(v[i]))
+                {
+                    series.push_back( 0 );
+                }
+                else
+                {
+                    series.push_back( dict[std::string(v[i])] );
+                }
+            }
+
             break;
         }
 
