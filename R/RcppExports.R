@@ -13,6 +13,26 @@ RcppDist4MatSub <- function(mat, lib, pred, method = "euclidean", na_rm = TRUE, 
     .Call(`_infocaus_RcppDist4MatSub`, mat, lib, pred, method, na_rm, byrow)
 }
 
+RcppDiscEntropy <- function(series, base = 2.0, na_rm = TRUE) {
+    .Call(`_infocaus_RcppDiscEntropy`, series, base, na_rm)
+}
+
+RcppDiscJE <- function(mat, vars, base = 2.0, na_rm = TRUE) {
+    .Call(`_infocaus_RcppDiscJE`, mat, vars, base, na_rm)
+}
+
+RcppDiscCE <- function(mat, target, conds, base = 2.0, na_rm = TRUE) {
+    .Call(`_infocaus_RcppDiscCE`, mat, target, conds, base, na_rm)
+}
+
+RcppDiscMI <- function(mat, target, interact, base = 2.0, na_rm = TRUE) {
+    .Call(`_infocaus_RcppDiscMI`, mat, target, interact, base, na_rm)
+}
+
+RcppDiscCMI <- function(mat, target, interact, conds, base = 2.0, na_rm = TRUE) {
+    .Call(`_infocaus_RcppDiscCMI`, mat, target, interact, conds, base, na_rm)
+}
+
 RcppGenLatticeLag <- function(mat, nb, lag = 1L) {
     .Call(`_infocaus_RcppGenLatticeLag`, mat, nb, lag)
 }
