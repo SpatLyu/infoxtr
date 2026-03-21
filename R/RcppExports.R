@@ -37,8 +37,8 @@ RcppContCE <- function(mat, target, conds, k = 3L, alg = 0L, base = 2.0) {
     .Call(`_infocaus_RcppContCE`, mat, target, conds, k, alg, base)
 }
 
-RcppDiscMI <- function(mat, target, interact, base = 2.0, na_rm = TRUE) {
-    .Call(`_infocaus_RcppDiscMI`, mat, target, interact, base, na_rm)
+RcppDiscMI <- function(mat, target, interact, base = 2.0, na_rm = TRUE, normalize = FALSE) {
+    .Call(`_infocaus_RcppDiscMI`, mat, target, interact, base, na_rm, normalize)
 }
 
 RcppContMI <- function(mat, target, interact, k = 3L, alg = 0L, base = 2.0, normalize = FALSE) {
