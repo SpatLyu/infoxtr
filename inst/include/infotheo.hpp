@@ -259,7 +259,8 @@ namespace InfoTheo
         const std::vector<size_t>& target,
         const std::vector<size_t>& interact,
         double base = 2.0,
-        bool na_rm = true)
+        bool na_rm = true,
+        bool normalize = false)
     {
         if (mat.empty() || target.empty())
             return std::numeric_limits<double>::quiet_NaN();
@@ -270,9 +271,16 @@ namespace InfoTheo
         std::vector<size_t> ti = interact;
         ti.insert(ti.end(), target.begin(), target.end());
 
-        return JE(mat, target, base, na_rm) +
-            JE(mat, interact, base, na_rm) -
-            JE(mat, ti, base, na_rm);
+        double ht = JE(mat, target, base, na_rm); 
+        double hi = JE(mat, interact, base, na_rm); 
+        double hti = JE(mat, ti, base, na_rm); 
+        
+        double mi = ht + hi - hti; 
+        
+        if (!normalize) return mi; 
+        if (hti <= 0) return mi; 
+
+        return mi / hti;
     }
 
     /***********************************************************
