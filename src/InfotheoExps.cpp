@@ -225,6 +225,42 @@ double RcppDiscCE(SEXP mat,
     return InfoTheo::CE(m, t, c, base, na_rm);
 }
 
+// Wrapper function to calculate conditional entropy for continuous data
+// [[Rcpp::export(rng = false)]]
+double RcppContCE(const Rcpp::NumericMatrix& mat,
+                  const Rcpp::IntegerVector& target,
+                  const Rcpp::IntegerVector& conds,
+                  int k = 3, 
+                  int alg = 0,
+                  double base = 2.0)
+{
+    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+
+    std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
+    std::vector<size_t> c = Rcpp::as<std::vector<size_t>>(conds);
+
+    const size_t n_cols = m.size();
+    for (auto& idx : t) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Target index %d out of bounds [1, %d]", 
+                       static_cast<int>(idx), 
+                       static_cast<int>(n_cols));
+        }
+        idx -= 1;  // to 0-based
+    }
+    for (auto& idx : c) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Conds index %d out of bounds [1, %d]", 
+                       static_cast<int>(idx), 
+                       static_cast<int>(n_cols));
+        }
+        idx -= 1;  // to 0-based
+    }
+    
+    return KSGInfo::CE(m, t, c, static_cast<size_t>(std::abs(k)), 
+                       static_cast<size_t>(std::abs(alg)), base);
+}
+
 // Wrapper function to calculate mutual information for discrete data
 // [[Rcpp::export(rng = false)]]
 double RcppDiscMI(SEXP mat,
