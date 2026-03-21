@@ -295,6 +295,43 @@ double RcppDiscMI(SEXP mat,
     return InfoTheo::MI(m, t, i, base, na_rm);
 }
 
+// Wrapper function to calculate mutual information for continuous data
+// [[Rcpp::export(rng = false)]]
+double RcppContMI(const Rcpp::NumericMatrix& mat,
+                  const Rcpp::IntegerVector& target,
+                  const Rcpp::IntegerVector& interact,
+                  int k = 3, 
+                  int alg = 0,
+                  double base = 2.0,
+                  bool normalize = false)
+{
+    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+
+    std::vector<size_t> t = Rcpp::as<std::vector<size_t>>(target);
+    std::vector<size_t> i = Rcpp::as<std::vector<size_t>>(interact);
+
+    const size_t n_cols = m.size();
+    for (auto& idx : t) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Target index %d out of bounds [1, %d]", 
+                       static_cast<int>(idx), 
+                       static_cast<int>(n_cols));
+        }
+        idx -= 1;  // to 0-based
+    }
+    for (auto& idx : i) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Interact index %d out of bounds [1, %d]", 
+                       static_cast<int>(idx), 
+                       static_cast<int>(n_cols));
+        }
+        idx -= 1;  // to 0-based
+    }
+    
+    return KSGInfo::MI(m, t, i, static_cast<size_t>(std::abs(k)), 
+                       static_cast<size_t>(std::abs(alg)), base, normalize);
+}
+
 // Wrapper function to calculate conditional mutual information for discrete data
 // [[Rcpp::export(rng = false)]]
 double RcppDiscCMI(SEXP mat,
