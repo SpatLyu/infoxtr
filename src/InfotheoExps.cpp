@@ -267,7 +267,8 @@ double RcppDiscMI(SEXP mat,
                   const Rcpp::IntegerVector& target,
                   const Rcpp::IntegerVector& interact,
                   double base = 2.0,
-                  bool na_rm = true)
+                  bool na_rm = true,
+                  bool normalize = false)
 {
     InfoTheo::Matrix m = pat_r2std(mat,false);
 
@@ -292,7 +293,7 @@ double RcppDiscMI(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return InfoTheo::MI(m, t, i, base, na_rm);
+    return InfoTheo::MI(m, t, i, base, na_rm, normalize);
 }
 
 // Wrapper function to calculate mutual information for continuous data
