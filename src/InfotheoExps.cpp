@@ -166,6 +166,31 @@ double RcppDiscJE(SEXP mat,
     return InfoTheo::JE(m, v, base, na_rm);
 }
 
+// Wrapper function to calculate joint entropy for continuous data
+// [[Rcpp::export(rng = false)]]
+double RcppContJE(const Rcpp::NumericMatrix& mat,
+                  const Rcpp::IntegerVector& vars,
+                  int k = 3, 
+                  int alg = 0,
+                  double base = 2.0)
+{
+    std::vector<std::vector<double>> m = mat_r2std(mat, false);
+    std::vector<size_t> v = Rcpp::as<std::vector<size_t>>(vars);
+
+    const size_t n_cols = m.size();
+    for (auto& idx : v) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Column index %d out of bounds [1, %d]", 
+                       static_cast<int>(idx), 
+                       static_cast<int>(n_cols));
+        }
+        idx -= 1;  // to 0-based
+    }
+    
+    return KSGInfo::JE(m, v, static_cast<size_t>(std::abs(k)), 
+                       static_cast<size_t>(std::abs(alg)), base);
+}
+
 // Wrapper function to calculate conditional entropy for discrete data
 // [[Rcpp::export(rng = false)]]
 double RcppDiscCE(SEXP mat,
