@@ -16,14 +16,13 @@ double RcppDiscEntropy(SEXP series,
                        double base = 2.0,
                        bool na_rm = true)
 {
-    InfoTheo::Series s;
+    std::vector<uint64_t> s;
 
     switch (TYPEOF(series))
     {
         case INTSXP:
         {   
             Rcpp::IntegerVector v(series);
-            std::vector<uint64_t> s;
             s.reserve(v.size());
 
             std::vector<int> uniq;
@@ -58,7 +57,6 @@ double RcppDiscEntropy(SEXP series,
         case REALSXP:
         {
             Rcpp::NumericVector v(series);
-            std::vector<uint64_t> s;
             s.reserve(v.size());
 
             std::vector<double> uniq;
@@ -93,7 +91,6 @@ double RcppDiscEntropy(SEXP series,
         case STRSXP:
         {
             Rcpp::CharacterVector v(series);
-            std::vector<uint64_t> s;
             s.reserve(v.size());
 
             std::vector<std::string> uniq;
