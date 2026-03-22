@@ -1,13 +1,14 @@
 #include <vector>
 #include <cmath>
-#include <cstdint>
 #include <string>
 #include <limits>
 #include <numeric>
+#include <cstdint>
 #include <algorithm>
 #include <unordered_map> 
 #include "infotheo.hpp"
 #include "ksginfo.hpp"
+#include "transferentropy.hpp"
 #include "DataTrans.h"
 
 // Wrapper function to calculate Shannon entropy for discrete data
