@@ -178,7 +178,7 @@ namespace TE
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag.size());
 
         // Compute conditional mutual information
-        return InfoTheo::CMI(pm, tg_idx, ag_idx, tgl_idx, base, na_rm, normalize);
+        return KSGInfo::CMI(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
     }    
 
 } // namespace TE
