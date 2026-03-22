@@ -280,10 +280,10 @@ namespace KSGInfo
 
             if (alg == 0)
                 sum += NumericUtils::Digamma(nx+1)
-                    + NumericUtils::Digamma(ny+1);
+                     + NumericUtils::Digamma(ny+1);
             else
                 sum += NumericUtils::Digamma(nx)
-                    + NumericUtils::Digamma(ny);
+                     + NumericUtils::Digamma(ny);
         }
 
         avg_log_eps /= n;
@@ -292,13 +292,13 @@ namespace KSGInfo
 
         if (alg == 0)
             mi = NumericUtils::Digamma(k)
-            + NumericUtils::Digamma(n)
-            - sum / n;
+               + NumericUtils::Digamma(n)
+               - sum / n;
         else
             mi = NumericUtils::Digamma(k)
-            - 1.0 / k
-            + NumericUtils::Digamma(n)
-            - sum / n;
+               - 1.0 / k
+               + NumericUtils::Digamma(n)
+               - sum / n;
 
         mi = std::max(0.0, mi);
 
