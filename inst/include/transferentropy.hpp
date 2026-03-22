@@ -101,6 +101,6 @@ namespace TE
 
     
 
-} // namespace InfoTheo
+} // namespace TE
 
 #endif // TRANSFERENTROPY_HPP
