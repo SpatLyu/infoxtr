@@ -178,7 +178,8 @@ namespace TE
         const ContMat& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& agent,
-        size_t lag = 3,
+        size_t lag_p = 3,
+        size_t lag_q = 3,
         size_t k = 3,
         size_t alg = 0,
         double base = 2.0,
@@ -187,9 +188,9 @@ namespace TE
         const size_t n_obs  = mat[0].size();
         const size_t n_cols = mat.size();
 
-        if (mat.empty() || lag > n_obs)
+        if (mat.empty() || lag_p > n_obs || lag_q > n_obs)
             return std::numeric_limits<double>::quiet_NaN();
-        if (lag == 0 || k <= 1)
+        if (lag_p == 0 || lag_q == 0)
             return 0.0;
 
         // Validate, sort, and deduplicate variable indices
