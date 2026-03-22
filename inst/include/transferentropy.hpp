@@ -11,7 +11,7 @@
  *
  *  Data layout:
  *      DiscMat = std::vector<std::vector<uint64_t>>
- *                 // mat[var][obs]  (discrete state series)
+ *                 // mat[var][obs]  (discrete series)
  *
  *      ContMat = std::vector<std::vector<double>>
  *                 // mat[var][obs]  (continuous observations)
