@@ -400,19 +400,28 @@ namespace KSGInfo
             {
                 if (i == j) continue;
 
-                if (!std::isnan(d_xz[i][j]) && d_xz[i][j] < eps) nxz++;
-                if (!std::isnan(d_yz[i][j]) && d_yz[i][j] < eps) nyz++;
-                if (!std::isnan(d_z[i][j])  && d_z[i][j]  < eps) nz++;
+                if (alg == 0)
+                {
+                    if (!std::isnan(d_xz[i][j]) && d_xz[i][j] < eps) nxz++;
+                    if (!std::isnan(d_yz[i][j]) && d_yz[i][j] < eps) nyz++;
+                    if (!std::isnan(d_z[i][j])  && d_z[i][j]  < eps) nz++;
+                }
+                else
+                {
+                    if (!std::isnan(d_xz[i][j]) && d_xz[i][j] <= eps) nxz++;
+                    if (!std::isnan(d_yz[i][j]) && d_yz[i][j] <= eps) nyz++;
+                    if (!std::isnan(d_z[i][j])  && d_z[i][j]  <= eps) nz++;    
+                } 
             }
 
             if (alg == 0)
                 sum += NumericUtils::Digamma(nxz+1)
-                    + NumericUtils::Digamma(nyz+1)
-                    - NumericUtils::Digamma(nz+1);
+                     + NumericUtils::Digamma(nyz+1)
+                     - NumericUtils::Digamma(nz+1);
             else
                 sum += NumericUtils::Digamma(nxz)
-                    + NumericUtils::Digamma(nyz)
-                    - NumericUtils::Digamma(nz);
+                     + NumericUtils::Digamma(nyz)
+                     - NumericUtils::Digamma(nz);
         }
 
         avg_log_eps /= n;
