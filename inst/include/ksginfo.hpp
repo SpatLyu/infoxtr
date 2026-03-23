@@ -120,7 +120,7 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg += std::log(eps);
+            avg += std::log(eps*2.0);
         }
 
         avg /= static_cast<double>(n);
@@ -128,7 +128,6 @@ namespace KSGInfo
         double H = NumericUtils::Digamma(n)
                  - NumericUtils::Digamma(k)
                  + avg
-                 + std::log(2.0);
 
         if (alg == 1)
             H += 1.0 / k;
@@ -183,7 +182,7 @@ namespace KSGInfo
             double eps = row[k-1];
             // double eps = std::max(row[k-1], 1e-15);
 
-            avg += std::log(eps);
+            avg += std::log(eps*2.0);
         }
 
         avg /= static_cast<double>(n);
@@ -191,7 +190,6 @@ namespace KSGInfo
         double H = NumericUtils::Digamma(n)
                  - NumericUtils::Digamma(k)
                  + d * avg
-                 + d * std::log(2.0);
 
         if (alg == 1)
             H += 1.0 / k;
