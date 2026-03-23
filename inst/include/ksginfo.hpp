@@ -319,6 +319,7 @@ namespace KSGInfo
         double hxy = NumericUtils::Digamma(n)
                    - NumericUtils::Digamma(k)
                    + d * avg_log_eps;
+        if (alg == 1) hxy += 1.0 / k;
 
         if (hxy <= 0) {
             if (!NumericUtils::doubleNearlyEqual(base,std::exp(1.0)))
@@ -437,6 +438,7 @@ namespace KSGInfo
         double hxy_z = NumericUtils::Digamma(n)
                      - NumericUtils::Digamma(k)
                      + d * avg_log_eps;
+        if (alg == 1) hxy_z += 1.0 / k;
 
         if (hxy_z <= 0)
         {
