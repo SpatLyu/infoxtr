@@ -61,8 +61,8 @@ namespace KSGInfo
     using Matrix = std::vector<std::vector<double>>;
 
     /***********************************************************
-    * Utility: subset matrix
-    ***********************************************************/
+     * Utility: subset matrix
+     ***********************************************************/
     inline Matrix subset(
         const Matrix& mat,
         const std::vector<size_t>& vars)
@@ -77,8 +77,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Entropy (Kozachenko–Leonenko)
-    ***********************************************************/
+     * Entropy (Kozachenko–Leonenko)
+     ***********************************************************/
     inline double Entropy(
         const Series& series,
         size_t k = 3,
@@ -139,8 +139,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Joint Entropy
-    ***********************************************************/
+     * Joint Entropy
+     ***********************************************************/
     inline double JE(
         const Matrix& mat,
         const std::vector<size_t>& vars,
@@ -201,8 +201,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Conditional Entropy
-    ***********************************************************/
+     * Conditional Entropy
+     ***********************************************************/
     inline double CE(
         const Matrix& mat,
         const std::vector<size_t>& target,
@@ -218,8 +218,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Mutual Information (KSG estimator)
-    ***********************************************************/
+     * Mutual Information (KSG estimator)
+     ***********************************************************/
     inline double MI(
         const Matrix& mat,
         const std::vector<size_t>& target,
@@ -332,8 +332,8 @@ namespace KSGInfo
     }
 
     /***********************************************************
-    * Conditional Mutual Information
-    ***********************************************************/
+     * Conditional Mutual Information
+     ***********************************************************/
     inline double CMI(
         const Matrix& mat,
         const std::vector<size_t>& target,
