@@ -214,7 +214,7 @@ namespace KSGInfo
         std::vector<size_t> tc = cond;
         tc.insert(tc.end(),target.begin(),target.end());
 
-        return JE(mat,tc,k,base) - JE(mat,cond,k,base);
+        return JE(mat,tc,k,alg,base) - JE(mat,cond,k,alg,base);
     }
 
     /***********************************************************
