@@ -127,7 +127,7 @@ namespace KSGInfo
 
         double H = NumericUtils::Digamma(n)
                  - NumericUtils::Digamma(k)
-                 + avg
+                 + avg;
 
         if (alg == 1)
             H += 1.0 / k;
@@ -189,7 +189,7 @@ namespace KSGInfo
 
         double H = NumericUtils::Digamma(n)
                  - NumericUtils::Digamma(k)
-                 + d * avg
+                 + d * avg;
 
         if (alg == 1)
             H += 1.0 / k;
