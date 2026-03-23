@@ -134,14 +134,11 @@ double RcppDiscEntropy(SEXP series,
 // [[Rcpp::export(rng = false)]]
 double RcppContEntropy(const Rcpp::NumericVector& vec,
                        int k = 3, 
-                       int alg = 0,
                        double base = 2.0)
 {
     std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
     
-    return KSGInfo::Entropy(
-        vec_std, static_cast<size_t>(std::abs(k)), 
-        static_cast<size_t>(std::abs(alg)), base);
+    return KSGInfo::Entropy(vec_std, static_cast<size_t>(std::abs(k)), base);
 }
 
 // Wrapper function to calculate joint entropy for discrete data
