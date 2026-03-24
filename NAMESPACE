@@ -3,4 +3,5 @@
 export(ce)
 export(entropy)
 export(je)
+export(mi)
 useDynLib(infocaus, .registration = TRUE)
