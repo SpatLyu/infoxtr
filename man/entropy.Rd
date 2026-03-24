@@ -22,12 +22,12 @@ Ignored when \code{type = "disc"}.}
 A numerical value.
 }
 \description{
-Estimate the entropy of a vector using either discrete counts
-or a k-nearest neighbor estimator for continuous data.
+Estimate the entropy of a vector using either category counts
+(for discrete data) or a k-nearest neighbor estimator (for continuous data).
 }
 \examples{
 set.seed(42)
-entropy(rnorm(100), type = "cont")
-entropy(sample(letters[1:5], 100, TRUE), base = 2, type = "disc")
+infocaus::entropy(rnorm(100), type = "cont")
+infocaus::entropy(sample(letters[1:5], 100, TRUE), base = 2, type = "disc")
 
 }

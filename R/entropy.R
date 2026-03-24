@@ -1,7 +1,7 @@
 #' Entropy Estimation
 #'
-#' Estimate the entropy of a vector using either discrete counts
-#' or a k-nearest neighbor estimator for continuous data.
+#' Estimate the entropy of a vector using either category counts
+#' (for discrete data) or a k-nearest neighbor estimator (for continuous data).
 #'
 #' @param vec The input vector.
 #' @param base (optional) Logarithm base of the entropy.
