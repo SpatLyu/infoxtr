@@ -3,7 +3,7 @@
 #' Estimate the entropy of a vector using either category counts
 #' (for discrete data) or a k-nearest neighbor estimator (for continuous data).
 #'
-#' @param vec The input vector.
+#' @param vec A vector.
 #' @param base (optional) Logarithm base of the entropy.
 #'   Defaults to `exp(1)` (nats). Use `2` for bits or `10` for dits.
 #' @param type (optional) Estimation method:
@@ -28,6 +28,20 @@ entropy = \(vec, base = exp(1), type = c("cont", "disc"), k = 3) {
   }
 }
 
+#' Joint Entropy
+#'
+#' Estimate the joint entropy of selected variables.
+#'
+#' @inheritParams entropy
+#' @param data Observation data.
+#' @param indices Integer vector of column indices to include in joint entropy calculation.
+#'
+#' @returns A numerical value.
+#' @export
+#'
+#' @examples
+#' infocaus::je(matrix(1:100,ncol=2),1:2)
+#'
 je = \(data, indices, base = exp(1), type = c("cont", "disc"), k = 3) {
   type = match.arg(type)
   mat = as.matrix(data)
