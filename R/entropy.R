@@ -27,3 +27,13 @@ mi = \(data, target, interact, base = exp(1), type = c("cont", "disc"), k = 3, n
     return(RcppContMI(mat, target, interact, k, 0, base, normalize))
   }
 }
+
+cmi = \(data, target, interact, conds, base = exp(1), type = c("cont", "disc"), k = 3, normalize = FALSE) {
+  type = match.arg(type)
+  mat = as.matrix(data)
+  if (type == "disc") {
+    return(RcppDiscCMI(mat, target, interact, conds, base, TRUE, normalize))
+  } else {
+    return(RcppContCMI(mat, target, interact, conds, k, 0, base, normalize))
+  }
+}
