@@ -1,11 +1,11 @@
-#' Mutual Information
+#' Transfer Entropy
 #'
-#' Estimate the mutual information between target and interacting variables.
+#' Estimate the transfer entropy from agent variables to target variables.
 #'
 #' @inheritParams mi
-#' @param agent 
-#' @param lag_p (optional) 
-#' @param lag_q (optional) 
+#' @param agent Integer vector of column indices for the source (agent) variables.
+#' @param lag_p (optional) Lag of the target variables.
+#' @param lag_q (optional) Lag of the agent variables.
 #'
 #' @returns A numerical value.
 #' @export
