@@ -1,3 +1,12 @@
+entropy = \(vec, base = exp(1), type = c("cont", "disc"), k = 3) {
+  type = match.arg(type)
+  if (type == "disc") {
+    return(RcppDiscEntropy(vec, base, TRUE))
+  } else {
+    return(RcppContEntropy(vec, k, 0, base))
+  }
+}
+
 je = \(data, indices, base = exp(1), type = c("cont", "disc"), k = 3) {
   type = match.arg(type)
   mat = as.matrix(data)
