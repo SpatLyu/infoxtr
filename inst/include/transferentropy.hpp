@@ -95,7 +95,7 @@ namespace TE
         const size_t n_obs  = mat[0].size();
         const size_t n_cols = mat.size();
 
-        if (mat.empty() || n_obs <= lag_p + k + 1 || n_obs <= lag_q + k + 1)
+        if (mat.empty() || n_obs <= lag_p + 1 || n_obs <= lag_q + 1)
             return std::numeric_limits<double>::quiet_NaN();
         if (lag_p == 0 || lag_q == 0)
             return 0.0;
