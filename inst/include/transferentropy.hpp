@@ -7,9 +7,15 @@
  *
  *      Transfer Entropy via Conditional Mutual Information
  *
- *      TE(X → Y) = I(Y_t ; X_{t-lag} | Y_{t-lag})
+ *      TE(X → Y) = I(Y_t ; X_{t-q}^{(q)} | Y_{t-p}^{(p)})
+ *
+ *      where
+ *
+ *          X_{t-q}^{(q)} = (X_{t-1}, X_{t-2}, ..., X_{t-q})
+ *          Y_{t-p}^{(p)} = (Y_{t-1}, Y_{t-2}, ..., Y_{t-p})
  *
  *  Data layout:
+ *
  *      DiscMat = std::vector<std::vector<uint64_t>>
  *                 // mat[var][obs]  (discrete series)
  *
@@ -37,8 +43,23 @@
  *
  *  Parameters:
  *
- *      lag_p, lag_q
- *          Time lag for target and agent variables.
+ *      lag_p
+ *          Target history length.
+ *
+ *      lag_q
+ *          Agent history length.
+ *
+ *      lag_single
+ *
+ *          true  → use only single lag
+ *
+ *              X_{t-lag_q}
+ *              Y_{t-lag_p}
+ *
+ *          false → use full lag embedding
+ *
+ *              (X_{t-1} ... X_{t-lag_q})
+ *              (Y_{t-1} ... Y_{t-lag_p})
  *
  *      k
  *          k-nearest neighbours for KSG estimator.
@@ -57,7 +78,7 @@
  *      infotheo.hpp
  *      ksginfo.hpp
  *
- *  Author: Wenbo Lyu (Github: @SpatLyu)
+ *  Author: Wenbo Lyu
  *  License: GPL-3
  **********************************************************************/
 
