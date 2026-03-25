@@ -135,9 +135,9 @@ namespace TE
         // Y_t
         for (size_t i = 0; i < tg.size(); ++i)
         {   
-            for (size_t t = t0; t < n_obs; ++t)
+            for (size_t t = 0; t < N; ++t)
             {
-                pm[i][t - t0] = mat[tg[i]][t];
+                pm[i][t] = mat[tg[i]][t];
             }
         }
 
