@@ -188,17 +188,6 @@ namespace TE
         }
         col += ag_lag;
 
-        // X_{t-lag}
-        for (size_t i = 0; i < ag.size(); ++i)
-        {   
-            for (size_t t = t0; t < n_obs; ++t)
-            {
-                uint64_t v = mat[ag[i]][t - lag_q];
-                if (v != 0)
-                    pm[i + tg.size()][t - t0] = v;
-            }
-        }
-
         // Y_{t-lag}
         for (size_t i = 0; i < tg.size(); ++i)
         {   
