@@ -144,7 +144,7 @@ namespace TE
         // X_{t-lag}
         for (size_t i = 0; i < ag.size(); ++i)
         {   
-            for (size_t t = 0; t < N; ++t)
+            for (size_t t = t0; t < n_obs; ++t)
             {
                 uint64_t v = mat[ag[i]][t - lag_q];
                 if (v != 0)
@@ -155,11 +155,11 @@ namespace TE
         // Y_{t-lag}
         for (size_t i = 0; i < tg.size(); ++i)
         {   
-            for (size_t t = 0; t < N; ++t)
+            for (size_t t = t0; t < n_obs; ++t)
             {
-                uint64_t v = mat[tg[i]][t];
+                uint64_t v = mat[tg[i]][t - lag_p];
                 if (v != 0)
-                    pm[i + tg.size() + ag.size()][t] = v;
+                    pm[i + tg.size() + ag.size()][t - t0] = v;
             }
         }
 
