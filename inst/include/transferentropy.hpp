@@ -183,7 +183,7 @@ namespace TE
             {
                 for (size_t l = 1; l <= lag_q; ++l)
                     for (size_t t = t0; t < n_obs; ++t)
-                        pm[col + i*lag_q + (l-1)][t-t0] = mat[ag[i]][t - l];
+                        pm[col + i * lag_q + (l - 1)][t - t0] = mat[ag[i]][t - l];
             }
         }
         col += ag_lag;
