@@ -160,7 +160,7 @@ namespace TE
         DiscMat pm(tg.size() + ag_lag + tg_lag,
                    std::vector<uint64_t>(N,0));
         
-        // Y_t
+        // Y_present
         for (size_t i = 0; i < tg.size(); ++i)
         {   
             for (size_t t = t0; t < n_obs; ++t)
@@ -168,6 +168,25 @@ namespace TE
                 pm[i][t - t0] = mat[tg[i]][t];
             }
         }
+
+        size_t col = tg.size();
+
+        // X_past
+        for (size_t i = 0; i < ag.size(); ++i)
+        {
+            if (lag_single)
+            {
+                for (size_t t = t0; t < n_obs; ++t)
+                    pm[col + i][t - t0] = mat[ag[i]][t - lag_q];
+            }
+            else
+            {
+                for (size_t l = 1; l <= lag_q; ++l)
+                    for (size_t t = t0; t < n_obs; ++t)
+                        pm[col + i*lag_q + (l-1)][t-t0] = mat[ag[i]][t - l];
+            }
+        }
+        col += ag_lag;
 
         // X_{t-lag}
         for (size_t i = 0; i < ag.size(); ++i)
