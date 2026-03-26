@@ -374,9 +374,7 @@ namespace KSGInfo
         for (size_t i = 0; i < n; ++i)
         {   
             auto& row = d_xyz[i];
-
-            if (i < row.size())
-                row[i] = std::numeric_limits<double>::quiet_NaN();
+            row[i] = std::numeric_limits<double>::quiet_NaN();
 
             row.erase(
                 std::remove_if(
