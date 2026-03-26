@@ -15,12 +15,12 @@
 #' infocaus::te(matrix(stats::rnorm(100,1,10),ncol=2),1,2)
 #'
 te = \(data, target, agent, lag_p = 3, lag_q = 3, base = exp(1), 
-       type = c("cont", "disc"), k = 3, normalize = FALSE) {
+       type = c("cont", "disc"), k = 3, normalize = FALSE, lag_single = FALSE) {
   type = match.arg(type)
   mat = as.matrix(data)
   if (type == "disc") {
-    return(RcppDiscTE(mat, target, agent, lag_p, lag_q, base, TRUE, normalize))
+    return(RcppDiscTE(mat, target, agent, lag_p, lag_q, base, TRUE, normalize, lag_single))
   } else {
-    return(RcppContTE(mat, target, agent, lag_p, lag_q, k, 0, base, normalize))
+    return(RcppContTE(mat, target, agent, lag_p, lag_q, k, 0, base, normalize, lag_single))
   }
 }
