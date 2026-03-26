@@ -4,7 +4,6 @@
  *  Discretization utilities for continuous numeric vectors.
  *
  *  Methods implemented
- *
  *      sd        Standard deviation discretization
  *      equal     Equal interval discretization
  *      geometric Geometric interval discretization
@@ -14,23 +13,18 @@
  *      headtail  Head/Tail breaks
  *
  *  Input
- *
  *      const std::vector<double>& vec
  *
  *  Output
- *
  *      std::vector<size_t>
- *
  *          0  -> NaN values
  *          1..n -> discretized classes
  *
  *  Behaviour
- *
  *      NaN values are ignored when computing breaks
  *      but assigned class 0 in the output.
  *
  *  RNG
- *
  *      Sampling uses std::mt19937_64
  *
  **********************************************************************/
