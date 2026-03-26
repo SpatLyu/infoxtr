@@ -245,8 +245,8 @@ namespace KSGInfo
         double avg_log_eps = 0.0;
 
         for (size_t i = 0; i < n; ++i)
-        {
-            std::vector<double> row = d_xy[i];
+        {   
+            auto& row = d_xy[i];
 
             if (i < row.size())
                 row[i] = std::numeric_limits<double>::quiet_NaN();
