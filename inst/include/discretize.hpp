@@ -403,8 +403,8 @@ inline std::vector<size_t> Disc(
     const std::vector<double>& vec,
     const std::string& method,
     size_t n = 5,
-    double sample_prob = 1.0,
-    uint64_t seed = 123456)
+    double sample_prob = 0.15,
+    uint64_t seed = 123456789)
 {
     if (method == "sd")
         return sdDisc(vec, n);
