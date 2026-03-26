@@ -234,12 +234,17 @@ namespace TE
         double base = 2.0,
         bool normalize = false,
         bool lag_single = true)
-    {
-        const size_t n_obs  = mat[0].size();
+    {   
+        const size_t n_obs = mat[0].size();
         const size_t n_cols = mat.size();
 
-        if (mat.empty() || n_obs <= lag_p + k + 1 || n_obs <= lag_q + k + 1)
+        if (mat.empty())
             return std::numeric_limits<double>::quiet_NaN();
+
+        size_t t0 = std::max(lag_p, lag_q);
+        if (n_obs <= t0 + k + 1)
+            return std::numeric_limits<double>::quiet_NaN();
+
         if (lag_p == 0 || lag_q == 0)
             return 0.0;
 
