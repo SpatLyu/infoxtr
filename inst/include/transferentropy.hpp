@@ -190,7 +190,6 @@ namespace TE
         col += ag_lag;
 
         // Y_past
-
         for (size_t i = 0; i < tg.size(); ++i)
         {
             if (lag_single)
@@ -273,14 +272,15 @@ namespace TE
 
         if (tg.empty() || ag.empty())
             return std::numeric_limits<double>::quiet_NaN();
-        
+
         // Construct joint state matrix
-        size_t t0 = std::max(lag_p, lag_q);
-        size_t N  = n_obs - t0;
-        ContMat pm(tg.size()*2 + ag.size(),
+        size_t tg_lag = lag_single ? tg.size() : tg.size() * lag_p;
+        size_t ag_lag = lag_single ? ag.size() : ag.size() * lag_q;
+        size_t N = n_obs - t0;
+        ContMat pm(tg.size() + ag_lag + tg_lag,
                    std::vector<double>(N, std::numeric_limits<double>::quiet_NaN()));
         
-        // Y_t
+        // Y_present
         for (size_t i = 0; i < tg.size(); ++i)
         {   
             for (size_t t = t0; t < n_obs; ++t)
@@ -289,25 +289,39 @@ namespace TE
             }
         }
 
-        // X_{t-lag}
+        size_t col = tg.size();
+
+        // X_past
         for (size_t i = 0; i < ag.size(); ++i)
-        {   
-            for (size_t t = t0; t < n_obs; ++t)
+        {
+            if (lag_single)
             {
-                double v = mat[ag[i]][t - lag_q];
-                if (!std::isnan(v))
-                    pm[i + tg.size()][t - t0] = v;
+                for (size_t t = t0; t < n_obs; ++t)
+                    pm[col + i][t - t0] = mat[ag[i]][t - lag_q];
+            }
+            else
+            {
+                for (size_t l = 1; l <= lag_q; ++l)
+                    for (size_t t = t0; t < n_obs; ++t)
+                        pm[col + i * lag_q + (l - 1)][t - t0] = mat[ag[i]][t - l];
             }
         }
 
-        // Y_{t-lag}
+        col += ag_lag;
+
+        // Y_past
         for (size_t i = 0; i < tg.size(); ++i)
-        {   
-            for (size_t t = t0; t < n_obs; ++t)
+        {
+            if (lag_single)
             {
-                double v = mat[tg[i]][t - lag_p];
-                if (!std::isnan(v))
-                    pm[i + tg.size() + ag.size()][t - t0] = v;
+                for (size_t t = t0; t < n_obs; ++t)
+                    pm[col + i][t - t0] = mat[tg[i]][t - lag_p];
+            }
+            else
+            {
+                for (size_t l = 1; l <= lag_p; ++l)
+                    for (size_t t = t0; t < n_obs; ++t)
+                        pm[col + i * lag_p + (l - 1)][t - t0] = mat[tg[i]][t - l];
             }
         }
 
