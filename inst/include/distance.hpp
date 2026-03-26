@@ -29,6 +29,7 @@
  *      Dist(scalar, scalar)
  *      Dist(vector, scalar)
  *      Dist(vector, vector)
+ *      Dist(vector)                     -> full distance matrix
  *      Dist(matrix)                     -> full distance matrix
  *      Dist(matrix, lib, pred)          -> subset distance matrix
  *
