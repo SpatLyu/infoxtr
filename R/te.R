@@ -6,6 +6,7 @@
 #' @param agent Integer vector of column indices for the source (agent) variables.
 #' @param lag_p (optional) Lag of the target variables.
 #' @param lag_q (optional) Lag of the agent variables.
+#' @param lag_single (optional) Logical; if `FALSE`, use full lag embedding.
 #'
 #' @returns A numerical value.
 #' @export
