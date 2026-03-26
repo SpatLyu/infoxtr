@@ -318,6 +318,42 @@ namespace Dist
     }
 
     /****************************************************************************
+     * Vector Distance
+     * Computes a full pairwise distance matrix from a numeric vector.
+     ***************************************************************************/
+    inline std::vector<std::vector<double>> Dist(
+        const std::vector<double>& vec)
+    {
+        if (vec.empty()) return {};
+
+        const size_t n = vec.size();
+
+        std::vector<std::vector<double>> distm(
+            n,
+            std::vector<double>(n,
+                std::numeric_limits<double>::quiet_NaN()));
+
+        for (size_t i = 0; i < n; ++i)
+        {   
+            if (std::isnan(vec[i])) continue;
+
+            distm[i][i] = 0.0;
+
+            for (size_t j = i + 1; j < n; ++j)
+            {
+                if (!std::isnan(vec[j]))
+                {
+                    double distv = std::abs(vec[i] - vec[j]);
+                    distm[i][j] = distv;
+                    distm[j][i] = distv;
+                }
+            }
+        }
+
+        return distm;
+    }
+
+    /****************************************************************************
      * Matrix Distance
      *
      * Computes a full pairwise distance matrix from a numeric matrix.
