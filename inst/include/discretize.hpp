@@ -258,6 +258,57 @@ inline std::vector<size_t> quantileDisc(
 }
 
 /***********************************************************
+ * Manual breakpoints discretization
+ ***********************************************************/
+inline std::vector<size_t> manualDisc(
+    const std::vector<double>& vec,
+    const std::vector<double>& breakpoints)
+{
+    if (breakpoints.empty())
+        throw std::invalid_argument("manualDisc: breakpoints cannot be empty");
+
+    bool has_nan = false;
+    auto x = remove_nan(vec, has_nan);
+
+    if (has_nan)
+        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+
+    std::vector<double> bp = breakpoints;
+
+    std::sort(bp.begin(), bp.end());
+
+    std::vector<size_t> res(vec.size());
+
+    size_t n = bp.size() + 1;
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if (is_nan(vec[i]))
+        {
+            res[i] = 0;
+            continue;
+        }
+
+        bool assigned = false;
+
+        for (size_t j = 0; j < bp.size(); ++j)
+        {
+            if (vec[i] < bp[j])
+            {
+                res[i] = j + 1;
+                assigned = true;
+                break;
+            }
+        }
+
+        if (!assigned)
+            res[i] = n;
+    }
+
+    return res;
+}
+
+/***********************************************************
  * Jenks natural breaks (core algorithm)
  ***********************************************************/
 inline std::vector<double> jenksBreaks(
