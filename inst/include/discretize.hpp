@@ -258,7 +258,7 @@ inline std::vector<size_t> quantileDisc(
 }
 
 /***********************************************************
- * Jenks natural breaks
+ * Jenks natural breaks (core algorithm)
  ***********************************************************/
 inline std::vector<double> jenksBreaks(
     std::vector<double> data,
