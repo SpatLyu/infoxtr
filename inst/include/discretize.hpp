@@ -51,11 +51,6 @@ namespace Disc
  * Utility helpers
  ***********************************************************/
 
-inline bool is_nan(double v)
-{
-    return std::isnan(v);
-}
-
 inline std::vector<double> remove_nan(const std::vector<double>& v, bool& has_nan)
 {
     std::vector<double> out;
@@ -120,7 +115,7 @@ inline std::vector<size_t> sdDisc(
 
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (is_nan(vec[i]))
+        if (std::isnan(vec[i]))
         {
             res[i] = 0;
             continue;
@@ -159,7 +154,7 @@ inline std::vector<size_t> equalDisc(
 
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (is_nan(vec[i]))
+        if (std::isnan(vec[i]))
         {
             res[i] = 0;
             continue;
@@ -196,7 +191,7 @@ inline std::vector<size_t> geometricDisc(
 
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (is_nan(vec[i]))
+        if (std::isnan(vec[i]))
         {
             res[i] = 0;
             continue;
@@ -241,7 +236,7 @@ inline std::vector<size_t> quantileDisc(
 
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (is_nan(vec[i]))
+        if (std::isnan(vec[i]))
         {
             res[i] = 0;
             continue;
@@ -286,7 +281,7 @@ inline std::vector<size_t> manualDisc(
 
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (is_nan(vec[i]))
+        if (std::isnan(vec[i]))
         {
             res[i] = 0;
             continue;
@@ -426,7 +421,7 @@ inline std::vector<size_t> naturalDisc(
 
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (is_nan(vec[i]))
+        if (std::isnan(vec[i]))
         {
             res[i] = 0;
             continue;
@@ -509,7 +504,7 @@ inline std::vector<size_t> htDisc(
 
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (is_nan(vec[i]))
+        if (std::isnan(vec[i]))
         {
             result[i] = 0;
             continue;
