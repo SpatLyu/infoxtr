@@ -397,6 +397,92 @@ inline std::vector<size_t> naturalDisc(
 }
 
 /***********************************************************
+ * Head / Tail breaks discretization
+ ***********************************************************/
+inline std::vector<size_t> htDisc(
+    const std::vector<double>& vec,
+    double threshold = 0.4)
+{
+    bool has_nan = false;
+    std::vector<double> x = remove_nan(vec, has_nan);
+
+    if (has_nan)
+        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+
+    std::vector<double> head = x;
+
+    std::vector<double> breaks;
+    breaks.push_back(min_val(x));
+
+    for (size_t i = 0; i < 100; ++i)
+    {
+        double mu = mean(head);
+
+        breaks.push_back(mu);
+
+        std::vector<double> new_head;
+
+        for (double v : head)
+        {
+            if (v > mu)
+            {
+                new_head.push_back(v);
+            }
+        }
+
+        double prop =
+            static_cast<double>(new_head.size()) /
+            static_cast<double>(head.size());
+
+        head = new_head;
+
+        if (prop > threshold || head.size() <= 1)
+        {
+            break;
+        }
+    }
+
+    breaks.push_back(max_val(x));
+
+    std::sort(breaks.begin(), breaks.end());
+
+    breaks.erase(
+        std::unique(breaks.begin(), breaks.end()),
+        breaks.end());
+
+    std::vector<size_t> result(vec.size());
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if (is_nan(vec[i]))
+        {
+            result[i] = 0;
+            continue;
+        }
+
+        size_t label = 1;
+
+        for (size_t j = 0; j < breaks.size() - 1; ++j)
+        {
+            if (vec[i] < breaks[j + 1])
+            {
+                label = j + 1;
+                break;
+            }
+        }
+
+        if (vec[i] >= breaks.back())
+        {
+            label = breaks.size() - 1;
+        }
+
+        result[i] = label;
+    }
+
+    return result;
+}
+
+/***********************************************************
  * Unified interface
  ***********************************************************/
 inline std::vector<size_t> Disc(
