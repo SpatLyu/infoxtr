@@ -108,7 +108,7 @@ inline std::vector<size_t> sdDisc(
     auto x = remove_nan(vec, has_nan);
 
     if (has_nan)
-        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     double m = mean(x);
     double sd = stddev(x);
@@ -145,7 +145,7 @@ inline std::vector<size_t> equalDisc(
     auto x = remove_nan(vec, has_nan);
 
     if (has_nan)
-        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     double minx = min_val(x);
     double maxx = max_val(x);
@@ -182,7 +182,7 @@ inline std::vector<size_t> geometricDisc(
     auto x = remove_nan(vec, has_nan);
 
     if (has_nan)
-        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     double minx = min_val(x);
     double maxx = max_val(x);
@@ -221,7 +221,7 @@ inline std::vector<size_t> quantileDisc(
     auto x = remove_nan(vec, has_nan);
 
     if (has_nan)
-        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     std::vector<double> sorted = x;
     std::sort(sorted.begin(), sorted.end());
@@ -265,13 +265,13 @@ inline std::vector<size_t> manualDisc(
     const std::vector<double>& breakpoints)
 {
     if (breakpoints.empty())
-        throw std::invalid_argument("manualDisc: breakpoints cannot be empty");
+        throw std::invalid_argument("[Discretize] manualDisc: breakpoints cannot be empty");
 
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
 
     if (has_nan)
-        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     std::vector<double> bp = breakpoints;
 
@@ -392,7 +392,7 @@ inline std::vector<size_t> naturalDisc(
     auto x = remove_nan(vec, has_nan);
 
     if (has_nan)
-        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     std::vector<double> data = x;
 
@@ -458,7 +458,7 @@ inline std::vector<size_t> htDisc(
     std::vector<double> x = remove_nan(vec, has_nan);
 
     if (has_nan)
-        std::cerr << "Warning: NaN values detected, assigned to class 0\n";
+        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     std::vector<double> head = x;
 
