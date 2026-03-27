@@ -411,9 +411,10 @@ inline std::vector<size_t> naturalDisc(
         data.reserve(sample_size);
         for (size_t i = 0; i < sample_size; ++i)
             data.push_back(x[idx[i]]);
+        x = std::move(data);
     }
 
-    auto breaks = jenksBreaks(data, n);
+    auto breaks = jenksBreaks(x, n);
 
     std::vector<size_t> res(vec.size(), 0);
 
