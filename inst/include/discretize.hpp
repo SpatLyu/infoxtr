@@ -500,6 +500,12 @@ inline std::vector<size_t> htDisc(
         std::unique(breaks.begin(), breaks.end()),
         breaks.end());
 
+    if (breaks.size() < 2) {
+        for (size_t i = 0; i < vec.size(); ++i)
+            if (!std::isnan(vec[i])) result[i] = 1;
+        return result;
+    }
+
     for (size_t i = 0; i < vec.size(); ++i)
     {
         if (std::isnan(vec[i])) continue;
