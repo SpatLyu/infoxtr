@@ -4,6 +4,7 @@
  *  Discretization utilities for continuous numeric vectors.
  *
  *  Methods implemented
+ *      ---------------------------------------------
  *      sd        Standard deviation discretization
  *      equal     Equal interval discretization
  *      geometric Geometric interval discretization
@@ -27,6 +28,8 @@
  *  RNG
  *      Sampling uses std::mt19937_64
  *
+ *  Author: Wenbo Lyu (Github: @SpatLyu)
+ *  License: GPL-3
  **********************************************************************/
 
 #ifndef DISCRETIZE_HPP
