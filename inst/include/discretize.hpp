@@ -445,7 +445,8 @@ inline std::vector<size_t> naturalDisc(
  ***********************************************************/
 inline std::vector<size_t> htDisc(
     const std::vector<double>& vec,
-    double threshold = 0.4)
+    double threshold = 0.4,
+    size_t iter_step = 100)
 {
     bool has_nan = false;
     std::vector<double> x = remove_nan(vec, has_nan);
@@ -462,7 +463,7 @@ inline std::vector<size_t> htDisc(
     std::vector<double> breaks;
     breaks.push_back(min_val(x));
 
-    for (size_t i = 0; i < 100; ++i)
+    for (size_t i = 0; i < iter_step; ++i)
     {
         double mu = mean(head);
 
@@ -478,16 +479,15 @@ inline std::vector<size_t> htDisc(
             }
         }
 
+        if (new_head.empty()) break;
+
         double prop =
             static_cast<double>(new_head.size()) /
             static_cast<double>(head.size());
 
         head = new_head;
 
-        if (prop > threshold || head.size() <= 1)
-        {
-            break;
-        }
+        if (prop > threshold || head.size() <= 1) break;
     }
 
     breaks.push_back(max_val(x));
