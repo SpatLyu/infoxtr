@@ -411,7 +411,8 @@ inline std::vector<size_t> naturalDisc(
     size_t n,
     size_t sample_begin = 3000,
     double sample_prob = 0.15,
-    uint64_t seed = 123456789)
+    uint64_t seed = 123456789,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -450,8 +451,10 @@ inline std::vector<size_t> naturalDisc(
         bool assigned = false;
 
         for (size_t j = 0; j < breaks.size(); ++j)
-        {
-            if (vec[i] < breaks[j])
+        {   
+            bool classify_val = right_closed ? (vec[i] <= breaks[j])
+                                             : (vec[i] < breaks[j]);
+            if (classify_val)
             {
                 res[i] = j + 1;
                 assigned = true;
