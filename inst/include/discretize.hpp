@@ -475,7 +475,8 @@ inline std::vector<size_t> naturalDisc(
 inline std::vector<size_t> htDisc(
     const std::vector<double>& vec,
     double threshold = 0.4,
-    size_t iter_step = 100)
+    size_t iter_step = 100,
+    bool right_closed = true)
 {
     bool has_nan = false;
     std::vector<double> x = remove_nan(vec, has_nan);
@@ -541,14 +542,16 @@ inline std::vector<size_t> htDisc(
 
         for (size_t j = 0; j < breaks.size() - 1; ++j)
         {
-            if (vec[i] < breaks[j + 1])
+            if (right_closed ? vec[i] <= breaks[j + 1]
+                             : vec[i] < breaks[j + 1])
             {
                 label = j + 1;
                 break;
             }
         }
 
-        if (vec[i] >= breaks.back())
+        if (right_closed ? vec[i] > breaks.back()
+                         : vec[i] >= breaks.back())
         {
             label = breaks.size() - 1;
         }
