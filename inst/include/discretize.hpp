@@ -195,7 +195,8 @@ inline std::vector<size_t> equalDisc(
  ***********************************************************/
 inline std::vector<size_t> geometricDisc(
     const std::vector<double>& vec,
-    size_t n)
+    size_t n,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -234,7 +235,8 @@ inline std::vector<size_t> geometricDisc(
  ***********************************************************/
 inline std::vector<size_t> quantileDisc(
     const std::vector<double>& vec,
-    size_t n)
+    size_t n,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -280,7 +282,8 @@ inline std::vector<size_t> quantileDisc(
  ***********************************************************/
 inline std::vector<size_t> manualDisc(
     const std::vector<double>& vec,
-    const std::vector<double>& breakpoints)
+    const std::vector<double>& breakpoints,
+    bool right_closed = true)
 {
     if (breakpoints.empty())
         throw std::invalid_argument("[Discretize] manualDisc: breakpoints cannot be empty");
@@ -306,8 +309,10 @@ inline std::vector<size_t> manualDisc(
         bool assigned = false;
 
         for (size_t j = 0; j < bp.size(); ++j)
-        {
-            if (vec[i] < bp[j])
+        {   
+            bool classify_val = right_closed ? (vec[i] <= bp[j])
+                                             : (vec[i] < bp[j]);
+            if (classify_val)
             {
                 res[i] = j + 1;
                 assigned = true;
