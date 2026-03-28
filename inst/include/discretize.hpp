@@ -9,7 +9,7 @@
  *      equal     Equal interval discretization
  *      geometric Geometric interval discretization
  *      quantile  Quantile discretization
- *      manual    Manual breakpoints
+ *      manual    Manual discretization
  *      natural   Jenks natural breaks
  *      headtail  Head/Tail breaks
  *
