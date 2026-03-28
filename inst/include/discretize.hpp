@@ -494,7 +494,7 @@ inline std::vector<size_t> htDisc(
 
         head = new_head;
 
-        if (prop > threshold || head.size() <= 1) break;
+        if (prop >= threshold || head.size() <= 1) break;
     }
 
     breaks.push_back(max_val(x));
