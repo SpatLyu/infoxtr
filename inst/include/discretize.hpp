@@ -103,7 +103,8 @@ inline double max_val(const std::vector<double>& v)
  ***********************************************************/
 inline std::vector<size_t> sdDisc(
     const std::vector<double>& vec,
-    size_t n)
+    size_t n,
+    bool right_closed = true)
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
@@ -126,8 +127,14 @@ inline std::vector<size_t> sdDisc(
     for (size_t i = 0; i < vec.size(); ++i)
     {
         if (std::isnan(vec[i])) continue;
+        
+        double z = (vec[i] - m) / sd + n / 2.0;
 
-        long idx = std::floor((vec[i] - m) / sd + n / 2.0);
+        long idx;
+        if (right_closed)
+            idx = std::ceil(z);
+        else
+            idx = std::floor(z);
         idx = std::max<long>(1, std::min<long>(idx, n));
 
         res[i] = static_cast<size_t>(idx);
