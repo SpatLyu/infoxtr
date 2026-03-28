@@ -54,7 +54,8 @@ namespace Disc
  * Utility helpers
  ***********************************************************/
 
-inline std::vector<double> remove_nan(const std::vector<double>& v, bool& has_nan)
+inline std::vector<double> remove_nan(const std::vector<double>& v, 
+                                      bool& has_nan)
 {
     std::vector<double> out;
     out.reserve(v.size());
