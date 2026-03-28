@@ -110,9 +110,6 @@ inline std::vector<size_t> sdDisc(
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
 
-    if (has_nan)
-        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
-
     double m = mean(x);
     double sd = stddev(x);
 
@@ -154,9 +151,6 @@ inline std::vector<size_t> equalDisc(
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
-
-    if (has_nan)
-        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     double minx = min_val(x);
     double maxx = max_val(x);
@@ -202,9 +196,6 @@ inline std::vector<size_t> geometricDisc(
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
 
-    if (has_nan)
-        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
-
     double minx = min_val(x);
     double maxx = max_val(x);
 
@@ -244,9 +235,6 @@ inline std::vector<size_t> quantileDisc(
 {
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
-
-    if (has_nan)
-        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     std::vector<double> sorted = x;
     std::sort(sorted.begin(), sorted.end());
@@ -303,9 +291,6 @@ inline std::vector<size_t> manualDisc(
 
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
-
-    if (has_nan)
-        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     std::vector<double> bp = breakpoints;
 
@@ -430,9 +415,6 @@ inline std::vector<size_t> naturalDisc(
     bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
 
-    if (has_nan)
-        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
-
     if (x.size() > sample_begin)
     {
         std::mt19937_64 rng(seed);
@@ -493,9 +475,6 @@ inline std::vector<size_t> htDisc(
 {
     bool has_nan = false;
     std::vector<double> x = remove_nan(vec, has_nan);
-
-    if (has_nan)
-        std::cerr << "[Discretize] Warning: NaN values detected, assigned to class 0\n";
 
     std::vector<size_t> result(vec.size(), 0);
 
