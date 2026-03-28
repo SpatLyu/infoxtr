@@ -589,26 +589,20 @@ inline std::vector<size_t> Disc(
 {
     if (method == "sd")
         return sdDisc(vec, n, right_closed);
-
-    if (method == "equal")
+    else if (method == "equal")
         return equalDisc(vec, n, right_closed);
-
-    if (method == "geometric")
+    else if (method == "geometric")
         return geometricDisc(vec, n, right_closed);
-
-    if (method == "manual")
+    else if (method == "manual")
         return manualDisc(vec, breakpoints, right_closed);
-
-    if (method == "quantile")
+    else if (method == "quantile")
         return quantileDisc(vec, n, right_closed);
-
-    if (method == "natural")
+    else if (method == "natural")
         return naturalDisc(vec, n, sample_begin, sample_prob, seed, right_closed);
-
-    if (method == "headtail")  
+    else if (method == "headtail")  
         return htDisc(vec, threshold, iter_step, right_closed);
-
-    throw std::invalid_argument("Unknown discretization method");
+    else
+        throw std::invalid_argument("Unknown discretization method");
 }
 
 } // namespace Disc
