@@ -102,9 +102,7 @@ inline std::vector<size_t> sdDisc(
     size_t n,
     bool right_closed = true)
 {
-    bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
-
     double m = mean(x);
     double sd = stddev(x);
 
@@ -144,9 +142,7 @@ inline std::vector<size_t> equalDisc(
     size_t n,
     bool right_closed = true)
 {
-    bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
-
     double minx = min_val(x);
     double maxx = max_val(x);
 
@@ -188,9 +184,7 @@ inline std::vector<size_t> geometricDisc(
     size_t n,
     bool right_closed = true)
 {
-    bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
-
     double minx = min_val(x);
     double maxx = max_val(x);
 
@@ -228,7 +222,6 @@ inline std::vector<size_t> quantileDisc(
     size_t n,
     bool right_closed = true)
 {
-    bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
 
     std::vector<double> sorted = x;
@@ -284,7 +277,6 @@ inline std::vector<size_t> manualDisc(
     if (breakpoints.empty())
         throw std::invalid_argument("[Discretize] manualDisc: breakpoints cannot be empty");
 
-    bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
 
     std::vector<double> bp = breakpoints;
@@ -407,7 +399,6 @@ inline std::vector<size_t> naturalDisc(
     uint64_t seed = 123456789,
     bool right_closed = true)
 {
-    bool has_nan = false;
     auto x = remove_nan(vec, has_nan);
 
     if (x.size() > sample_begin)
@@ -468,7 +459,6 @@ inline std::vector<size_t> htDisc(
     size_t iter_step = 100,
     bool right_closed = true)
 {
-    bool has_nan = false;
     std::vector<double> x = remove_nan(vec, has_nan);
 
     std::vector<size_t> result(vec.size(), 0);
