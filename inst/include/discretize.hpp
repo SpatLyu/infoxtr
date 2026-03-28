@@ -282,7 +282,7 @@ inline std::vector<size_t> quantileDisc(
         }
 
         if (!assigned)
-                res[i] = n;
+            res[i] = n;
 
     }
 
