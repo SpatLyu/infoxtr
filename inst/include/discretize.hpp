@@ -127,7 +127,7 @@ namespace Disc
                 idx = std::ceil(z);
             else
                 idx = std::floor(z) + 1;
-            idx = std::max<long>(1, std::min<long>(idx, n));
+            idx = std::max<long>(1, std::min<long>(idx, static_cast<long>(n)));
 
             res[i] = static_cast<uint64_t>(idx);
         }
@@ -169,7 +169,7 @@ namespace Disc
                 idx = std::ceil(val);
             else
                 idx = std::floor(val) + 1;
-            idx = std::max<long>(1, std::min<long>(idx, n));
+            idx = std::max<long>(1, std::min<long>(idx, static_cast<long>(n)));
 
             res[i] = static_cast<uint64_t>(idx);
         }
@@ -207,7 +207,7 @@ namespace Disc
             else
                 idx = std::floor(std::log(vec[i] / minx) / std::log(factor)) + 1;
 
-            idx = std::max<long>(1, std::min<long>(idx, n));
+            idx = std::max<long>(1, std::min<long>(idx, static_cast<long>(n)));
 
             res[i] = static_cast<uint64_t>(idx);
         }
