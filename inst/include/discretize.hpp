@@ -37,6 +37,7 @@
 
 #include <vector>
 #include <cmath>
+#include <cstdint>
 #include <algorithm>
 #include <numeric>
 #include <utility>
@@ -97,7 +98,7 @@ namespace Disc
     /***********************************************************
     * Standard deviation discretization
     ***********************************************************/
-    inline std::vector<size_t> sdDisc(
+    inline std::vector<uint64_t> sdDisc(
         const std::vector<double>& vec,
         size_t n,
         bool right_closed = true)
@@ -106,7 +107,7 @@ namespace Disc
         double m = mean(x);
         double sd = stddev(x);
 
-        std::vector<size_t> res(vec.size(), 0);
+        std::vector<uint64_t> res(vec.size(), 0);
 
         if (NumericUtils::doubleNearlyEqual(sd, 0.0)) 
         {
@@ -128,7 +129,7 @@ namespace Disc
                 idx = std::floor(z) + 1;
             idx = std::max<long>(1, std::min<long>(idx, n));
 
-            res[i] = static_cast<size_t>(idx);
+            res[i] = static_cast<uint64_t>(idx);
         }
 
         return res;
@@ -137,7 +138,7 @@ namespace Disc
     /***********************************************************
     * Equal interval discretization
     ***********************************************************/
-    inline std::vector<size_t> equalDisc(
+    inline std::vector<uint64_t> equalDisc(
         const std::vector<double>& vec,
         size_t n,
         bool right_closed = true)
@@ -148,7 +149,7 @@ namespace Disc
 
         double interval = (maxx - minx) / n;
 
-        std::vector<size_t> res(vec.size(), 0);
+        std::vector<uint64_t> res(vec.size(), 0);
 
         if (NumericUtils::doubleNearlyEqual(interval, 0.0)) 
         {
@@ -170,7 +171,7 @@ namespace Disc
                 idx = std::floor(val) + 1;
             idx = std::max<long>(1, std::min<long>(idx, n));
 
-            res[i] = static_cast<size_t>(idx);
+            res[i] = static_cast<uint64_t>(idx);
         }
 
         return res;
@@ -179,7 +180,7 @@ namespace Disc
     /***********************************************************
     * Geometric discretization
     ***********************************************************/
-    inline std::vector<size_t> geometricDisc(
+    inline std::vector<uint64_t> geometricDisc(
         const std::vector<double>& vec,
         size_t n,
         bool right_closed = true)
@@ -194,7 +195,7 @@ namespace Disc
 
         double factor = std::pow(maxx / minx, 1.0 / n);
 
-        std::vector<size_t> res(vec.size(), 0);
+        std::vector<uint64_t> res(vec.size(), 0);
 
         for (size_t i = 0; i < vec.size(); ++i)
         {
@@ -208,7 +209,7 @@ namespace Disc
 
             idx = std::max<long>(1, std::min<long>(idx, n));
 
-            res[i] = static_cast<size_t>(idx);
+            res[i] = static_cast<uint64_t>(idx);
         }
 
         return res;
@@ -217,7 +218,7 @@ namespace Disc
     /***********************************************************
     * Quantile discretization
     ***********************************************************/
-    inline std::vector<size_t> quantileDisc(
+    inline std::vector<uint64_t> quantileDisc(
         const std::vector<double>& vec,
         size_t n,
         bool right_closed = true)
@@ -238,7 +239,7 @@ namespace Disc
             q[i] = sorted[lo] * (1 - frac) + sorted[hi] * frac;
         }
 
-        std::vector<size_t> res(vec.size(), 0);
+        std::vector<uint64_t> res(vec.size(), 0);
 
         for (size_t i = 0; i < vec.size(); ++i)
         {
@@ -269,7 +270,7 @@ namespace Disc
     /***********************************************************
     * Manual breakpoints discretization
     ***********************************************************/
-    inline std::vector<size_t> manualDisc(
+    inline std::vector<uint64_t> manualDisc(
         const std::vector<double>& vec,
         const std::vector<double>& breakpoints,
         bool right_closed = true)
@@ -283,7 +284,7 @@ namespace Disc
 
         std::sort(bp.begin(), bp.end());
 
-        std::vector<size_t> res(vec.size(), 0);
+        std::vector<uint64_t> res(vec.size(), 0);
 
         size_t n = bp.size() + 1;
 
@@ -391,7 +392,7 @@ namespace Disc
     /***********************************************************
     * Natural breaks discretization
     ***********************************************************/
-    inline std::vector<size_t> naturalDisc(
+    inline std::vector<uint64_t> naturalDisc(
         const std::vector<double>& vec,
         size_t n,
         size_t sample_begin = 3000,
@@ -423,7 +424,7 @@ namespace Disc
 
         auto breaks = jenksBreaks(x, n);
 
-        std::vector<size_t> res(vec.size(), 0);
+        std::vector<uint64_t> res(vec.size(), 0);
 
         for (size_t i = 0; i < vec.size(); ++i)
         {
@@ -453,7 +454,7 @@ namespace Disc
     /***********************************************************
     * Head / Tail breaks discretization
     ***********************************************************/
-    inline std::vector<size_t> htDisc(
+    inline std::vector<uint64_t> htDisc(
         const std::vector<double>& vec,
         double threshold = 0.4,
         size_t iter_step = 100,
@@ -461,7 +462,7 @@ namespace Disc
     {
         std::vector<double> x = remove_nan(vec);
 
-        std::vector<size_t> result(vec.size(), 0);
+        std::vector<uint64_t> result(vec.size(), 0);
 
         if (x.empty()) return result;
 
@@ -539,7 +540,7 @@ namespace Disc
     /***********************************************************
     * Unified interface
     ***********************************************************/
-    inline std::vector<size_t> Disc(
+    inline std::vector<uint64_t> Disc(
         const std::vector<double>& vec,
         const std::string& method,
         size_t n = 5,

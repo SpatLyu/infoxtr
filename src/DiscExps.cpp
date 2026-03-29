@@ -51,7 +51,7 @@ Rcpp::IntegerVector RcppDisc(
     }
 
     // Call the discretization function
-    std::vector<size_t> discv = 
+    std::vector<uint64_t> discv = 
         Disc::Disc(vec_std, method, 
                    static_cast<size_t>(std::abs(n)), 
                    static_cast<size_t>(std::abs(sample_begin)),
