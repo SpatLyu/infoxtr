@@ -12,19 +12,24 @@
 Rcpp::IntegerVector RcppDisc(
     const Rcpp::NumericVector& vec,
     int n = 5,
-    std::string method = "natural",
+    const std::string& method = "natural",
     int sample_begin = 3000,
     double sample_prob = 0.15,
     int seed = 123456789,
     double threshold = 0.4,
     int iter_step = 100,
-    const Rcpp::NumericVector& breakpoints = Rcpp::NumericVector(),
+    Rcpp::Nullable<Rcpp::NumericVector> breakpoints = R_NilValue,
     bool right_closed = true
 ) {
     // Convert Rcpp::NumericVector to std::vector<double>
     std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
-    std::vector<double> bp_std = Rcpp::as<std::vector<double>>(breakpoints);
-
+    
+    std::vector<double> bp_std;
+    if (breakpoints.isNotNull()) {
+        bp_std = Rcpp::as<std::vector<double>>(breakpoints);
+    }
+    
+    // Check the discretization method
     static const std::vector<std::string> methods = {
         "sd",
         "equal",
