@@ -49,6 +49,6 @@ Estimate the transfer entropy from agent variables to target variables.
 }
 \examples{
 set.seed(42)
-infocaus::te(matrix(stats::rnorm(100,1,10),ncol=2),1,2)
+infoxtr::te(matrix(stats::rnorm(100,1,10),ncol=2),1,2)
 
 }

@@ -2,94 +2,94 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 RcppDisc <- function(vec, n = 5L, method = "natural", sample_begin = 3000L, sample_prob = 0.15, seed = 123456789L, threshold = 0.4, iter_step = 100L, breakpoints = NULL, right_closed = TRUE) {
-    .Call(`_infocaus_RcppDisc`, vec, n, method, sample_begin, sample_prob, seed, threshold, iter_step, breakpoints, right_closed)
+    .Call(`_infoxtr_RcppDisc`, vec, n, method, sample_begin, sample_prob, seed, threshold, iter_step, breakpoints, right_closed)
 }
 
 RcppDist4Vec <- function(v1, v2, method = "euclidean", na_rm = TRUE) {
-    .Call(`_infocaus_RcppDist4Vec`, v1, v2, method, na_rm)
+    .Call(`_infoxtr_RcppDist4Vec`, v1, v2, method, na_rm)
 }
 
 RcppDist4Mat <- function(mat, method = "euclidean", na_rm = TRUE, byrow = TRUE) {
-    .Call(`_infocaus_RcppDist4Mat`, mat, method, na_rm, byrow)
+    .Call(`_infoxtr_RcppDist4Mat`, mat, method, na_rm, byrow)
 }
 
 RcppDist4MatSub <- function(mat, lib, pred, method = "euclidean", na_rm = TRUE, byrow = TRUE) {
-    .Call(`_infocaus_RcppDist4MatSub`, mat, lib, pred, method, na_rm, byrow)
+    .Call(`_infoxtr_RcppDist4MatSub`, mat, lib, pred, method, na_rm, byrow)
 }
 
 RcppDiscEntropy <- function(series, base = 2.0, na_rm = TRUE) {
-    .Call(`_infocaus_RcppDiscEntropy`, series, base, na_rm)
+    .Call(`_infoxtr_RcppDiscEntropy`, series, base, na_rm)
 }
 
 RcppContEntropy <- function(vec, k = 3L, alg = 0L, base = 2.0) {
-    .Call(`_infocaus_RcppContEntropy`, vec, k, alg, base)
+    .Call(`_infoxtr_RcppContEntropy`, vec, k, alg, base)
 }
 
 RcppDiscJE <- function(mat, vars, base = 2.0, na_rm = TRUE) {
-    .Call(`_infocaus_RcppDiscJE`, mat, vars, base, na_rm)
+    .Call(`_infoxtr_RcppDiscJE`, mat, vars, base, na_rm)
 }
 
 RcppContJE <- function(mat, vars, k = 3L, alg = 0L, base = 2.0) {
-    .Call(`_infocaus_RcppContJE`, mat, vars, k, alg, base)
+    .Call(`_infoxtr_RcppContJE`, mat, vars, k, alg, base)
 }
 
 RcppDiscCE <- function(mat, target, conds, base = 2.0, na_rm = TRUE) {
-    .Call(`_infocaus_RcppDiscCE`, mat, target, conds, base, na_rm)
+    .Call(`_infoxtr_RcppDiscCE`, mat, target, conds, base, na_rm)
 }
 
 RcppContCE <- function(mat, target, conds, k = 3L, alg = 0L, base = 2.0) {
-    .Call(`_infocaus_RcppContCE`, mat, target, conds, k, alg, base)
+    .Call(`_infoxtr_RcppContCE`, mat, target, conds, k, alg, base)
 }
 
 RcppDiscMI <- function(mat, target, interact, base = 2.0, na_rm = TRUE, normalize = FALSE) {
-    .Call(`_infocaus_RcppDiscMI`, mat, target, interact, base, na_rm, normalize)
+    .Call(`_infoxtr_RcppDiscMI`, mat, target, interact, base, na_rm, normalize)
 }
 
 RcppContMI <- function(mat, target, interact, k = 3L, alg = 0L, base = 2.0, normalize = FALSE) {
-    .Call(`_infocaus_RcppContMI`, mat, target, interact, k, alg, base, normalize)
+    .Call(`_infoxtr_RcppContMI`, mat, target, interact, k, alg, base, normalize)
 }
 
 RcppDiscCMI <- function(mat, target, interact, conds, base = 2.0, na_rm = TRUE, normalize = FALSE) {
-    .Call(`_infocaus_RcppDiscCMI`, mat, target, interact, conds, base, na_rm, normalize)
+    .Call(`_infoxtr_RcppDiscCMI`, mat, target, interact, conds, base, na_rm, normalize)
 }
 
 RcppContCMI <- function(mat, target, interact, conds, k = 3L, alg = 0L, base = 2.0, normalize = FALSE) {
-    .Call(`_infocaus_RcppContCMI`, mat, target, interact, conds, k, alg, base, normalize)
+    .Call(`_infoxtr_RcppContCMI`, mat, target, interact, conds, k, alg, base, normalize)
 }
 
 RcppDiscTE <- function(mat, target, agent, lag_p = 3L, lag_q = 3L, base = 2.0, na_rm = TRUE, normalize = FALSE, lag_single = FALSE) {
-    .Call(`_infocaus_RcppDiscTE`, mat, target, agent, lag_p, lag_q, base, na_rm, normalize, lag_single)
+    .Call(`_infoxtr_RcppDiscTE`, mat, target, agent, lag_p, lag_q, base, na_rm, normalize, lag_single)
 }
 
 RcppContTE <- function(mat, target, agent, lag_p = 3L, lag_q = 3L, k = 3L, alg = 0L, base = 2.0, normalize = FALSE, lag_single = FALSE) {
-    .Call(`_infocaus_RcppContTE`, mat, target, agent, lag_p, lag_q, k, alg, base, normalize, lag_single)
+    .Call(`_infoxtr_RcppContTE`, mat, target, agent, lag_p, lag_q, k, alg, base, normalize, lag_single)
 }
 
 RcppGenLatticeLag <- function(mat, nb, lag = 1L) {
-    .Call(`_infocaus_RcppGenLatticeLag`, mat, nb, lag)
+    .Call(`_infoxtr_RcppGenLatticeLag`, mat, nb, lag)
 }
 
 RcppGenGridLag <- function(mat, nrows, lag = 1L) {
-    .Call(`_infocaus_RcppGenGridLag`, mat, nrows, lag)
+    .Call(`_infoxtr_RcppGenGridLag`, mat, nrows, lag)
 }
 
 RcppGenTSLag <- function(mat, lag = 1L) {
-    .Call(`_infocaus_RcppGenTSLag`, mat, lag)
+    .Call(`_infoxtr_RcppGenTSLag`, mat, lag)
 }
 
 RcppNN4Mat <- function(mat, k, method = "euclidean", include_self = FALSE, byrow = TRUE) {
-    .Call(`_infocaus_RcppNN4Mat`, mat, k, method, include_self, byrow)
+    .Call(`_infoxtr_RcppNN4Mat`, mat, k, method, include_self, byrow)
 }
 
 RcppNN4MatSub <- function(mat, lib, pred, k, method = "euclidean", include_self = FALSE, byrow = TRUE) {
-    .Call(`_infocaus_RcppNN4MatSub`, mat, lib, pred, k, method, include_self, byrow)
+    .Call(`_infoxtr_RcppNN4MatSub`, mat, lib, pred, k, method, include_self, byrow)
 }
 
 RcppNN4DistMat <- function(distmat, k, include_self = FALSE) {
-    .Call(`_infocaus_RcppNN4DistMat`, distmat, k, include_self)
+    .Call(`_infoxtr_RcppNN4DistMat`, distmat, k, include_self)
 }
 
 RcppNN4DistMatSub <- function(distmat, lib, pred, k, include_self = FALSE) {
-    .Call(`_infocaus_RcppNN4DistMatSub`, distmat, lib, pred, k, include_self)
+    .Call(`_infoxtr_RcppNN4DistMatSub`, distmat, lib, pred, k, include_self)
 }
 

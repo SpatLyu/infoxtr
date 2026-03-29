@@ -44,6 +44,6 @@ variables given conditioning variables.
 }
 \examples{
 set.seed(42)
-infocaus::cmi(matrix(stats::rnorm(99,1,10),ncol=3),1,2,3)
+infoxtr::cmi(matrix(stats::rnorm(99,1,10),ncol=3),1,2,3)
 
 }

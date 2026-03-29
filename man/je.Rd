@@ -27,6 +27,6 @@ A numerical value.
 Estimate the joint entropy of selected variables.
 }
 \examples{
-infocaus::je(matrix(1:100,ncol=2),1:2)
+infoxtr::je(matrix(1:100,ncol=2),1:2)
 
 }
