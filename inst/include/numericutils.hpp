@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <initializer_list>
 
-namespace NumericUtils
+namespace numericutils
 {
 
     // ==============================
@@ -144,6 +144,6 @@ namespace NumericUtils
         return result + std::log(x) - 0.5 * inv_x + series;
     }
 
-} // namespace NumericUtils
+} // namespace numericutils
 
 #endif // NUMERICUTILS_HPP
