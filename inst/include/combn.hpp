@@ -20,7 +20,7 @@
 #include <vector>
 #include <functional>
 
-namespace Combn
+namespace combn
 {
     // ==============================
     // Combination generation
@@ -103,6 +103,6 @@ namespace Combn
         return allSubsets;
     }
 
-} // namespace Combn
+} // namespace combn
 
 #endif // COMBN_HPP
