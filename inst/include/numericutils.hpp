@@ -102,7 +102,7 @@ namespace numericutils
      * @param x Input value
      * @return digamma value ψ(x)
      */
-    inline double Digamma(double x) noexcept
+    inline double digamma(double x) noexcept
     {
         // Handle NaN
         if (std::isnan(x))
@@ -115,7 +115,7 @@ namespace numericutils
         // Reflection formula for negative arguments
         if (x < 0.0)
         {
-            return Digamma(1.0 - x) - PI / std::tan(PI * x);
+            return digamma(1.0 - x) - PI / std::tan(PI * x);
         }
 
         double result = 0.0;
