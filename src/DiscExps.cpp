@@ -37,14 +37,16 @@ Rcpp::IntegerVector RcppDisc(
         "quantile",
         "manual",
         "natural",
-        "headtail"
+        "jenks",
+        "headtail",
+        "headtails"
     };
 
     if (std::find(methods.begin(), methods.end(), method) == methods.end())
     {
         Rcpp::stop(
             "Unknown discretization method. Available methods are: "
-            "sd, equal, geometric, quantile, manual, natural, headtail"
+            "sd, equal, geometric, quantile, manual, natural (or jenks) and headtail(s)"
         );
     }
 
