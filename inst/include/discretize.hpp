@@ -561,9 +561,9 @@ namespace Disc
             return manualDisc(vec, breakpoints, right_closed);
         else if (method == "quantile")
             return quantileDisc(vec, n, right_closed);
-        else if (method == "natural")
+        else if (method == "natural" || method == "jenks")
             return naturalDisc(vec, n, sample_begin, sample_prob, seed, right_closed);
-        else if (method == "headtail")  
+        else if (method == "headtail"|| method == "headtails")  
             return htDisc(vec, threshold, iter_step, right_closed);
         else
             throw std::invalid_argument("Unknown discretization method");
