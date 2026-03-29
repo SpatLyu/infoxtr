@@ -1,5 +1,5 @@
 /********************************************************************
- *  File: neighbour.hpp
+ *  File: neighbor.hpp
  *
  *  High performance nearest neighbor search utilities
  *  for matrix based state space and distance matrix data.
@@ -71,7 +71,7 @@
 #include "numericutils.hpp"
 #include "distance.hpp"
 
-namespace NN
+namespace neighbor
 {
 
     /***********************************************************
@@ -515,6 +515,6 @@ namespace NN
       return result;
     }
 
-} // namespace NN
+} // namespace neighbor
 
 #endif // NEIGHBOUR_HPP
