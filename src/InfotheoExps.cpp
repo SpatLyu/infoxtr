@@ -461,9 +461,10 @@ double RcppDiscTE(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return TE::TE4Disc(m, tg, ag, static_cast<size_t>(std::abs(lag_p)), 
-                       static_cast<size_t>(std::abs(lag_q)), base, 
-                       na_rm, normalize, lag_single);
+    return transferentropy::transferentropy(
+                m, tg, ag, static_cast<size_t>(std::abs(lag_p)), 
+                static_cast<size_t>(std::abs(lag_q)), base, 
+                na_rm, normalize, lag_single);
 }
 
 // Wrapper function to calculate transfer entropy for continuous time series data
@@ -502,10 +503,11 @@ double RcppContTE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return TE::TE4Cont(m, tg, ag, 
-                       static_cast<size_t>(std::abs(lag_p)), 
-                       static_cast<size_t>(std::abs(lag_q)), 
-                       static_cast<size_t>(std::abs(k)), 
-                       static_cast<size_t>(std::abs(alg)), 
-                       base, normalize, lag_single);
+    return transferentropy::transferentropy(
+                m, tg, ag, 
+                static_cast<size_t>(std::abs(lag_p)), 
+                static_cast<size_t>(std::abs(lag_q)), 
+                static_cast<size_t>(std::abs(k)), 
+                static_cast<size_t>(std::abs(alg)), 
+                base, normalize, lag_single);
 }
