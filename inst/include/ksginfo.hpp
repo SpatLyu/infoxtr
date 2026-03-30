@@ -54,7 +54,7 @@
 #include "distance.hpp"
 #include "numericutils.hpp"
 
-namespace KSGInfo
+namespace ksginfo
 {
 
     using Series = std::vector<double>;
@@ -443,6 +443,6 @@ namespace KSGInfo
         return cmi / hxy_z;
     }
 
-} // namespace KSGInfo
+} // namespace ksginfo
 
 #endif // KSGINFO_HPP
