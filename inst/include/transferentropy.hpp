@@ -90,7 +90,7 @@
 #include "infotheo.hpp"
 #include "ksginfo.hpp"
 
-namespace TE
+namespace transferentropy
 {   
     using DiscMat = std::vector<std::vector<uint64_t>>;
     using ContMat = std::vector<std::vector<double>>;
@@ -98,7 +98,7 @@ namespace TE
     /***********************************************************
      * Transfer Entropy for Discrete Data
      ***********************************************************/
-    inline double TE4Disc(
+    inline double transferentropy(
         const DiscMat& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& agent,
@@ -217,7 +217,7 @@ namespace TE
     /***********************************************************
      * Transfer Entropy for Continuous Data
      ***********************************************************/
-    inline double TE4Cont(
+    inline double transferentropy(
         const ContMat& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& agent,
@@ -334,6 +334,6 @@ namespace TE
         return ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
     }    
 
-} // namespace TE
+} // namespace transferentropy
 
 #endif // TRANSFERENTROPY_HPP
