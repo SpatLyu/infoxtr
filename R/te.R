@@ -10,6 +10,8 @@
 #'
 #' @returns A numerical value.
 #' @export
+#' @references
+#' Schreiber, T., 2000. Measuring Information Transfer. Physical Review Letters 85, 461–464.
 #'
 #' @examples
 #' set.seed(42)
