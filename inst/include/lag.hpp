@@ -1,5 +1,5 @@
 /*******************************************************************
- *  File: lag.hpp
+ *  File: lagg.hpp
  *
  *  Lag utilities for matrices.
  *
@@ -15,8 +15,8 @@
  *  License: GPL-3
  *******************************************************************/
 
-#ifndef LAG_HPP
-#define LAG_HPP
+#ifndef LAGG_HPP
+#define LAGG_HPP
 
 #include <vector>
 #include <cmath>
@@ -26,7 +26,7 @@
 #include <stdexcept>
 #include <cstddef>
 
-namespace lag
+namespace lagg
 {
 
     using Index        = std::size_t;
@@ -46,7 +46,7 @@ namespace lag
      * LATTICE LAG
      * ============================================================ */
 
-    inline Matrix lag(
+    inline Matrix lagg(
         const Matrix& mat,
         const NeighborMat& nb,
         size_t lag
@@ -122,7 +122,7 @@ namespace lag
      *  GRID LAG
      * ============================================================ */
 
-    inline Matrix lag(
+    inline Matrix lagg(
         const Matrix& mat,
         size_t nrows,
         size_t lag
@@ -197,7 +197,7 @@ namespace lag
      *  TIME SERIES LAG
      * ============================================================ */
 
-    inline Matrix lag(
+    inline Matrix lagg(
         const Matrix& mat,
         size_t lag
     )
@@ -223,6 +223,6 @@ namespace lag
         return out;
     }
 
-} // namespace lag
+} // namespace lagg
 
-#endif // LAG_HPP
+#endif // LAGG_HPP
