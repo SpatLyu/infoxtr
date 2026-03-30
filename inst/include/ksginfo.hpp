@@ -79,7 +79,7 @@ namespace ksginfo
     /***********************************************************
      * Entropy (Kozachenko–Leonenko)
      ***********************************************************/
-    inline double Entropy(
+    inline double entropy(
         const Series& series,
         size_t k = 3,
         size_t alg = 0,
@@ -136,7 +136,7 @@ namespace ksginfo
     /***********************************************************
      * Joint Entropy
      ***********************************************************/
-    inline double JE(
+    inline double je(
         const Matrix& mat,
         const std::vector<size_t>& vars,
         size_t k = 3,
@@ -197,7 +197,7 @@ namespace ksginfo
     /***********************************************************
      * Conditional Entropy
      ***********************************************************/
-    inline double CE(
+    inline double ce(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& cond,
@@ -208,13 +208,13 @@ namespace ksginfo
         std::vector<size_t> tc = cond;
         tc.insert(tc.end(),target.begin(),target.end());
 
-        return JE(mat,tc,k,alg,base) - JE(mat,cond,k,alg,base);
+        return je(mat,tc,k,alg,base) - je(mat,cond,k,alg,base);
     }
 
     /***********************************************************
      * Mutual Information (KSG estimator)
      ***********************************************************/
-    inline double MI(
+    inline double mi(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& interact,
@@ -287,26 +287,26 @@ namespace ksginfo
 
         avg_log_eps /= n;
 
-        double mi;
+        double mival;
 
         if (alg == 0)
-            mi = numericutils::digamma(k)
-               + numericutils::digamma(n)
-               - sum / n;
+            mival = numericutils::digamma(k)
+                  + numericutils::digamma(n)
+                  - sum / n;
         else
-            mi = numericutils::digamma(k)
-               - 1.0 / k
-               + numericutils::digamma(n)
-               - sum / n;
+            mival = numericutils::digamma(k)
+                  - 1.0 / k
+                  + numericutils::digamma(n)
+                  - sum / n;
 
-        mi = std::max(0.0, mi);
+        mival = std::max(0.0, mival);
 
         if (!normalize) 
         {
             if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
-                mi /= std::log(base);
+                mival /= std::log(base);
 
-            return mi;
+            return mival;
         } 
 
         double hxy = numericutils::digamma(n)
@@ -316,18 +316,18 @@ namespace ksginfo
 
         if (hxy <= 0) {
             if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
-                mi /= std::log(base);
+                mival /= std::log(base);
 
-            return mi;
+            return mival;
         } 
 
-        return mi / hxy;
+        return mival / hxy;
     }
 
     /***********************************************************
      * Conditional Mutual Information
      ***********************************************************/
-    inline double CMI(
+    inline double cmi(
         const Matrix& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& interact,
@@ -416,15 +416,15 @@ namespace ksginfo
 
         avg_log_eps /= n;
 
-        double cmi = numericutils::digamma(k) - sum / n;
-        if (alg == 1) cmi -= 1.0 / k;
+        double cmival = numericutils::digamma(k) - sum / n;
+        if (alg == 1) cmival -= 1.0 / k;
 
         if (!normalize)
         {
             if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
-                cmi /= std::log(base);
+                cmival /= std::log(base);
 
-            return cmi;
+            return cmival;
         } 
 
         double hxy_z = numericutils::digamma(n)
@@ -435,12 +435,12 @@ namespace ksginfo
         if (hxy_z <= 0)
         {
             if (!numericutils::doubleNearlyEqual(base,std::exp(1.0)))
-                cmi /= std::log(base);
+                cmival /= std::log(base);
 
-            return cmi;
+            return cmival;
         } 
 
-        return cmi / hxy_z;
+        return cmival / hxy_z;
     }
 
 } // namespace ksginfo
