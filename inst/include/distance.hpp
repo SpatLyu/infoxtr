@@ -80,7 +80,7 @@ namespace distance
     };
 
     /*
-     * @brief Parses a distance method name string into the corresponding DistanceMethod enum.
+     * @brief Parses a distance method name string into the corresponding distanceMethod enum.
      * 
      * This helper function converts user-facing string identifiers (e.g., "euclidean")
      * into the internal enum representation. It is designed to be called exactly once
@@ -513,7 +513,7 @@ namespace distance
     {
         if (mat.empty()) return {};
 
-        const DistanceMethod dist_method = parseDistanceMethod(method);
+        const distanceMethod dist_method = parseDistanceMethod(method);
         if (dist_method == distanceMethod::Invalid) {
             throw std::invalid_argument("Unsupported distance method: " + method);
         }
