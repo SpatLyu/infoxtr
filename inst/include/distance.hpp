@@ -52,7 +52,7 @@
 namespace distance
 {   
     /*
-     * @enum DistanceMethod
+     * @enum distanceMethod
      * @brief Enumerated type for supported distance metrics in state space projection.
      * 
      * This enum provides a type-safe, efficient way to specify distance calculation
@@ -92,7 +92,7 @@ namespace distance
      *               - "manhattan" : L1 distance
      *               - "maximum"   : Chebyshev / L-infinity distance
      * 
-     * @return The corresponding DistanceMethod enum value. Returns DistanceMethod::Invalid
+     * @return The corresponding distanceMethod enum value. Returns distanceMethod::Invalid
      *         if the input string does not match any supported method.
      * 
      * @note Case-sensitive matching. Whitespace or alternative spellings will result in Invalid.
@@ -100,7 +100,7 @@ namespace distance
      * 
      * @example
      *   auto method = parseDistanceMethod("manhattan");
-     *   if (method == DistanceMethod::Invalid) {
+     *   if (method == distanceMethod::Invalid) {
      *       throw std::invalid_argument("Unknown distance metric");
      *   }
      */
@@ -514,7 +514,7 @@ namespace distance
         if (mat.empty()) return {};
 
         const DistanceMethod dist_method = parseDistanceMethod(method);
-        if (dist_method == DistanceMethod::Invalid) {
+        if (dist_method == distanceMethod::Invalid) {
             throw std::invalid_argument("Unsupported distance method: " + method);
         }
 
