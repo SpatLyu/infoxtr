@@ -35,7 +35,7 @@
  *      ---------------------------
  *      Uses k-nearest neighbor estimators implemented in:
  *
- *          KSGInfo::CMI
+ *          ksginfo::CMI
  *
  *      Based on:
  *
@@ -336,7 +336,7 @@ namespace TE
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return KSGInfo::CMI(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
+        return ksginfo::CMI(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
     }    
 
 } // namespace TE
