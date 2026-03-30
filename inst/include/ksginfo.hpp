@@ -33,7 +33,7 @@
  *            Kraskov–Stögbauer–Grassberger estimator II (KSG2)
  *
  *  Distance backend:
- *      Dist::Dist (Chebyshev metric)
+ *      distance::distance (Chebyshev metric)
  *
  *  Special functions:
  *      numericutils::digamma
@@ -87,7 +87,7 @@ namespace KSGInfo
     {
         const size_t n = series.size();
 
-        auto dist = Dist::Dist(series);
+        auto dist = distance::distance(series);
 
         double avg = 0.0;
 
@@ -148,7 +148,7 @@ namespace KSGInfo
         const size_t d = sub.size();
         const size_t n = sub[0].size();
 
-        auto dist = Dist::Dist(sub,"maximum",true,false);
+        auto dist = distance::distance(sub,"maximum",true,false);
 
         double avg = 0.0;
 
@@ -226,9 +226,9 @@ namespace KSGInfo
         std::vector<size_t> xy = target;
         xy.insert(xy.end(), interact.begin(), interact.end());
 
-        auto d_xy = Dist::Dist(subset(mat,xy),"maximum",true,false);
-        auto d_x  = Dist::Dist(subset(mat,target),"maximum",true,false);
-        auto d_y  = Dist::Dist(subset(mat,interact),"maximum",true,false);
+        auto d_xy = distance::distance(subset(mat,xy),"maximum",true,false);
+        auto d_x  = distance::distance(subset(mat,target),"maximum",true,false);
+        auto d_y  = distance::distance(subset(mat,interact),"maximum",true,false);
 
         const size_t n = d_xy.size();
         const size_t d = xy.size();
@@ -350,10 +350,10 @@ namespace KSGInfo
         std::vector<size_t> yz = conds;
         yz.insert(yz.end(), interact.begin(), interact.end());
 
-        auto d_xyz = Dist::Dist(subset(mat,xyz),"maximum",true,false);
-        auto d_xz  = Dist::Dist(subset(mat,xz),"maximum",true,false);
-        auto d_yz  = Dist::Dist(subset(mat,yz),"maximum",true,false);
-        auto d_z   = Dist::Dist(subset(mat,conds),"maximum",true,false);
+        auto d_xyz = distance::distance(subset(mat,xyz),"maximum",true,false);
+        auto d_xz  = distance::distance(subset(mat,xz),"maximum",true,false);
+        auto d_yz  = distance::distance(subset(mat,yz),"maximum",true,false);
+        auto d_z   = distance::distance(subset(mat,conds),"maximum",true,false);
 
         const size_t n = d_xyz.size();
         const size_t d = xy.size();
