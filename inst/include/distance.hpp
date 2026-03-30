@@ -1,4 +1,4 @@
-/***************************************************************
+/************************************************************************
  *  File: distance.hpp
  *
  *  High performance distance measurements
@@ -26,16 +26,16 @@
  *          Distance matrix is computed between columns.
  *
  *  Functions:
- *      Dist(scalar, scalar)
- *      Dist(vector, scalar)
- *      Dist(vector, vector)
- *      Dist(vector)                     -> full distance matrix
- *      Dist(matrix)                     -> full distance matrix
- *      Dist(matrix, lib, pred)          -> subset distance matrix
+ *      distance(scalar, scalar)
+ *      distance(vector, scalar)
+ *      distance(vector, vector)
+ *      distance(vector)                     -> full distance matrix
+ *      distance(matrix)                     -> full distance matrix
+ *      distance(matrix, lib, pred)          -> subset distance matrix
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
- ***************************************************************/
+ ************************************************************************/
 
 #ifndef DIST_HPP
 #define DIST_HPP
