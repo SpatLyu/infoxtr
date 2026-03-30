@@ -36,7 +36,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace InfoTheo
+namespace infotheo
 {
 
     using Series = std::vector<uint64_t>;
@@ -328,6 +328,6 @@ namespace InfoTheo
         return cmi / h_ti_c;
     }
 
-} // namespace InfoTheo
+} // namespace infotheo
 
 #endif // INFOTHEO_HPP
