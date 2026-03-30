@@ -1,14 +1,20 @@
 /********************************************************************************
  * File: numericutils.hpp
  *
- * Utility functions for safe and consistent floating-point operations.
- *
  * Provides helper functions for:
  *   - Floating-point comparison with combined relative and absolute tolerance.
  *   - Portable numeric constants (epsilon and tolerance).
  *   - Special mathematical functions such as the digamma function ψ(x).
+ *   - Basic statistical utilities (mean, quantiles).
  *
- * Intended for scientific computation where double precision stability matters.
+ * Statistical features:
+ *   mean(vec)
+ *
+ *   quantile(vec, probs)
+ *       Computes sample quantiles using R's Type 7 method:
+ *           h = 1 + (n - 1) * p
+ *
+ *       Supports multiple probability inputs and linear interpolation.
  *
  * Author: Wenbo Lyu (Github: @SpatLyu)
  * License: GPL-3
@@ -17,9 +23,11 @@
 #ifndef INFOXTR_NUMERICUTILS_HPP
 #define INFOXTR_NUMERICUTILS_HPP
 
+#include <vector>
 #include <cmath>
 #include <limits>
 #include <numeric>
+#include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
 
@@ -145,6 +153,103 @@ namespace numericutils
                       3617.0 / 8160.0)))))));
 
         return result + std::log(x) - 0.5 * inv_x + series;
+    }
+
+    // ==============================
+    // Basic statistical functions
+    // ==============================
+
+    /**
+     * @brief Compute mean of a numeric vector.
+     *
+     * @param vec Input vector
+     * @return Mean value (NaN if no valid data)
+     */
+    inline double mean(const std::vector<double>& vec) noexcept
+    {
+        if (vec.empty())
+            return std::numeric_limits<double>::quiet_NaN();
+
+        double sum = 0.0;
+        size_t count = 0;
+
+        for (double v : vec)
+        {
+            if (!std::isnan(v))
+            {
+                sum += v;
+                ++count;
+            }
+        }
+
+        if (count == 0)
+            return std::numeric_limits<double>::quiet_NaN();
+
+        return sum / static_cast<double>(count);
+    }
+
+    /**
+     * @brief Compute quantiles of a numeric vector (R Type 7).
+     *
+     * Uses linear interpolation:
+     *
+     *   h = 1 + (n - 1) * p
+     *
+     * @param vec Input data vector
+     * @param probs Probabilities (default: {0.05, 0.5, 0.95})
+     * @return Vector of quantiles
+     */
+    inline std::vector<double> quantile(
+        const std::vector<double>& vec,
+        const std::vector<double>& probs = {0.05, 0.5, 0.95})
+    {
+        std::vector<double> clean_vec;
+
+        clean_vec.reserve(vec.size());
+        for (double v : vec)
+        {
+            if (!std::isnan(v))
+                clean_vec.push_back(v);
+        }
+
+        if (clean_vec.empty())
+        {
+            return std::vector<double>(
+                probs.size(),
+                std::numeric_limits<double>::quiet_NaN());
+        }
+
+        std::sort(clean_vec.begin(), clean_vec.end());
+
+        size_t n = clean_vec.size();
+        std::vector<double> results;
+        results.reserve(probs.size());
+
+        for (double p : probs)
+        {
+            if (p < 0.0 || p > 1.0)
+                throw std::out_of_range("probabilities must be between 0 and 1");
+
+            if (n == 1)
+            {
+                results.push_back(clean_vec[0]);
+                continue;
+            }
+
+            double h = 1.0 + (n - 1) * p;
+            size_t hf = static_cast<size_t>(std::floor(h));
+            double gamma = h - hf;
+
+            size_t idx_lower = (hf <= 1) ? 0 : hf - 1;
+            size_t idx_upper = (hf >= n) ? n - 1 : hf;
+
+            double q = (1.0 - gamma) * clean_vec[idx_lower] +
+                       gamma * clean_vec[idx_upper];
+
+            results.push_back(q);
+        }
+
+        return results;
     }
 
 } // namespace numericutils
