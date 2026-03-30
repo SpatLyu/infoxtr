@@ -46,7 +46,7 @@ namespace lag
      * LATTICE LAG
      * ============================================================ */
 
-    inline Matrix lag4Lattice(
+    inline Matrix lag(
         const Matrix& mat,
         const NeighborMat& nb,
         size_t lag
@@ -122,7 +122,7 @@ namespace lag
      *  GRID LAG
      * ============================================================ */
 
-    inline Matrix lag4Grid(
+    inline Matrix lag(
         const Matrix& mat,
         size_t nrows,
         size_t lag
@@ -197,7 +197,7 @@ namespace lag
      *  TIME SERIES LAG
      * ============================================================ */
 
-    inline Matrix lag4TS(
+    inline Matrix lag(
         const Matrix& mat,
         size_t lag
     )
