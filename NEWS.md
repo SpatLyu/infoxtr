@@ -1,3 +1,5 @@
+# infoxtr 0.3
+
 # infoxtr 0.2
 
 ### enhancements
