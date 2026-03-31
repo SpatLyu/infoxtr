@@ -20,8 +20,12 @@
 #include <vector>
 #include <functional>
 
+namespace infoxtr
+{
+
 namespace combn
 {
+    
     // ==============================
     // Combination generation
     // ==============================
@@ -104,5 +108,7 @@ namespace combn
     }
 
 } // namespace combn
+
+}
 
 #endif // COMBN_HPP
