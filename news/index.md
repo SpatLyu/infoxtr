@@ -4,6 +4,8 @@
 
 ## infoxtr 0.2
 
+CRAN release: 2026-03-30
+
 #### enhancements
 
 - Support variable-specific discretization settings via vectorized `bin`
