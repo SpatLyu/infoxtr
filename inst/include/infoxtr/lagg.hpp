@@ -26,6 +26,9 @@
 #include <stdexcept>
 #include <cstddef>
 
+namespace infoxtr
+{
+
 namespace lagg
 {
 
@@ -224,5 +227,7 @@ namespace lagg
     }
 
 } // namespace lagg
+
+}
 
 #endif // LAGG_HPP
