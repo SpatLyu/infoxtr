@@ -14,3 +14,19 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with infoxtr. If not, see <https://www.gnu.org/licenses/>.
+
+#ifndef INFOXTR_INFOXTR_H
+#define INFOXTR_INFOXTR_H
+
+#include "infoxtr/lagg.hpp"
+#include "infoxtr/embed.hpp"
+#include "infoxtr/combn.hpp"
+#include "infoxtr/numericutils.hpp"
+#include "infoxtr/distance.hpp"
+#include "infoxtr/neighbor.hpp"
+#include "infoxtr/discretize.hpp"
+#include "infoxtr/infotheo.hpp"
+#include "infoxtr/ksginfo.hpp"
+#include "infoxtr/transferentropy.hpp"
+
+#endif // INFOXTR_INFOXTR_H
