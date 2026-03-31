@@ -70,15 +70,15 @@
  *
  *  Dependencies:
  *
- *      infotheo.hpp
- *      ksginfo.hpp
+ *      infoxtr/infotheo.hpp
+ *      infoxtr/ksginfo.hpp
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
  **********************************************************************/
 
-#ifndef TRANSFERENTROPY_HPP
-#define TRANSFERENTROPY_HPP
+#ifndef INFOXTR_TRANSFERENTROPY_HPP
+#define INFOXTR_TRANSFERENTROPY_HPP
 
 #include <vector>
 #include <cmath>
@@ -87,8 +87,11 @@
 #include <numeric>
 #include <algorithm>
 #include <stdexcept>
-#include "infotheo.hpp"
-#include "ksginfo.hpp"
+#include "infoxtr/infotheo.hpp"
+#include "infoxtr/ksginfo.hpp"
+
+namespace infoxtr
+{
 
 namespace transferentropy
 {   
@@ -336,4 +339,6 @@ namespace transferentropy
 
 } // namespace transferentropy
 
-#endif // TRANSFERENTROPY_HPP
+}
+
+#endif // INFOXTR_TRANSFERENTROPY_HPP
