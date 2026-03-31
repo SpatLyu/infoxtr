@@ -214,7 +214,7 @@ namespace transferentropy
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return infotheo::cmi(pm, tg_idx, ag_idx, tgl_idx, base, na_rm, normalize);
+        return infoxtr::infotheo::cmi(pm, tg_idx, ag_idx, tgl_idx, base, na_rm, normalize);
     }
 
     /***********************************************************
@@ -334,7 +334,7 @@ namespace transferentropy
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
+        return infoxtr::ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
     }    
 
 } // namespace transferentropy
