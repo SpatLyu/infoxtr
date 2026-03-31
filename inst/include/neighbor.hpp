@@ -227,7 +227,7 @@ namespace neighbor
         bool byrow = true)
     {
         const distance::distanceMethod dist_method =
-            distance::parsedistanceMethod(method);
+            distance::parseDistanceMethod(method);
 
         if (dist_method == distance::distanceMethod::Invalid)
         {
