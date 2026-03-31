@@ -4,7 +4,7 @@
 #include <limits>
 #include <numeric>
 #include <algorithm>
-#include "distance.hpp"
+#include "infoxtr.h"
 #include "DataTrans.h"
 
 // Wrapper function to compute the distance between two vectors
@@ -20,7 +20,7 @@ double RcppDist4Vec(
     std::vector<double> v2_std = Rcpp::as<std::vector<double>>(v2);
 
     // Call the distance function
-    double distv = distance::distance(v1_std, v2_std, method, na_rm);
+    double distv = infoxtr::distance::distance(v1_std, v2_std, method, na_rm);
 
     return distv;
 }
@@ -37,7 +37,7 @@ Rcpp::NumericVector RcppDist4Mat(
     std::vector<std::vector<double>> cppMat = mat_r2std(mat, true);
 
     // Call the distance function
-    std::vector<std::vector<double>> distm = distance::distance(cppMat, method, na_rm, byrow);
+    std::vector<std::vector<double>> distm = infoxtr::distance::distance(cppMat, method, na_rm, byrow);
 
     // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
     return mat_std2r(distm, true);
@@ -78,7 +78,7 @@ Rcpp::NumericVector RcppDist4MatSub(
     }
 
     // Call the distance function
-    std::vector<std::vector<double>> distm = distance::distance(
+    std::vector<std::vector<double>> distm = infoxtr::distance::distance(
         cppMat, lib_std, pred_std, method, na_rm, byrow);
 
     // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
