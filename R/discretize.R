@@ -1,15 +1,27 @@
-#' Title
+#' Discretization
 #'
-#' @param x
-#' @param n
-#' @param method
-#' @param large
-#' @param prop
-#' @param seed
-#' @param thr
-#' @param iter
-#' @param bps
-#' @param right_closed
+#' Discretizes a numeric vector into categorical classes using several
+#' commonly used discretization methods. Missing values (`NA`/`NaN`) are 
+#' ignored when computing breakpoints and returned as class `0`.
+#'
+#' @note If `x` is a character or factor vector, it will be converted to
+#' integer categories via `as.factor()`.
+#'
+#' @param x A vector.
+#' @param n (optional) Number of classes.
+#' @param method (optional) Discretization method. One of
+#'   `"sd"`, `"equal"`, `"geometric"`, `"quantile"`,
+#'   `"manual"`, `"natural("jenks")"`, or `"headtail"("headtails")`.
+#' @param large (optional) Threshold sample size for natural breaks sampling.
+#' @param prop (optional) Sampling proportion used when `method = "natural"`
+#'   and the input size exceeds `large`.
+#' @param seed (optional) Random seed used for sampling in natural breaks.
+#' @param thr (optional) Threshold used in the head/tail breaks algorithm.
+#' @param iter (optional) Maximum number of iterations for head/tail breaks.
+#' @param bps (optional) Numeric vector of manual breakpoints used when
+#'   `method = "manual"`.
+#' @param right_closed (optional) Logical. If `TRUE`, intervals are right-closed
+#'   (e.g., `(a, b]`). If `FALSE`, intervals are left-closed `[a, b)`.
 #'
 #' @returns A discretized integer vector.
 #' @export
