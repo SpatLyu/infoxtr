@@ -2,7 +2,7 @@
 % Please edit documentation in R/entropy.R
 \name{entropy}
 \alias{entropy}
-\title{Entropy Estimation}
+\title{Shannon Entropy}
 \usage{
 entropy(vec, base = exp(1), type = c("cont", "disc"), k = 3)
 }
