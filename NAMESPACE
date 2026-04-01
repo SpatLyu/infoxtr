@@ -2,6 +2,7 @@
 
 export(ce)
 export(cmi)
+export(discretize)
 export(entropy)
 export(je)
 export(mi)
