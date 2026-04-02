@@ -57,4 +57,5 @@ integer categories via \code{as.factor()}.
 }
 \examples{
 infoxtr::discretize(1:100, n = 5, method = 'natural')
+
 }
