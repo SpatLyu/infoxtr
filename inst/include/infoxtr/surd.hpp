@@ -25,12 +25,6 @@ namespace surd
     using ContMat = std::vector<std::vector<double>>;
 
     /***********************************************************
-     * Utilities
-     ***********************************************************/
-
-    
-
-    /***********************************************************
      * Result structure
      ***********************************************************/
     struct SURDRes
@@ -41,6 +35,155 @@ namespace surd
 
         size_t size() const noexcept { return values.size(); }
     };
+
+    /***********************************************************
+     * Synergistic-Unique-Redundant Decomposition Utilities
+     ***********************************************************/
+    inline SURDRes
+    info_decomposition(
+        const std::vector<std::vector<size_t>>& combs,
+        const std::vector<double>& mi,
+        bool normalize = false)
+    {
+        struct Entry
+        {
+            size_t idx;
+            size_t order;
+            double mi;
+        };
+
+        const size_t n = combs.size();
+
+        std::vector<Entry> entries(n);
+
+        size_t max_order = 0;
+
+        for (size_t i = 0; i < n; ++i)
+        {
+            entries[i] = {i, combs[i].size(), mi[i]};
+            max_order = std::max(max_order, combs[i].size());
+        }
+
+        /***********************************************************
+        * Group by order
+        ***********************************************************/
+        std::vector<std::vector<Entry*>> groups(max_order + 1);
+
+        for (auto& e : entries)
+            groups[e.order].push_back(&e);
+
+        for (auto& g : groups)
+        {
+            std::sort(
+                g.begin(),
+                g.end(),
+                [&](Entry* a, Entry* b)
+                {
+                    if (std::fabs(a->mi - b->mi) > 1e-12)
+                        return a->mi < b->mi;
+
+                    return a->idx < b->idx;
+                });
+        }
+
+        const double eps = 1e-12;
+
+        auto get_max = [&](size_t m)
+        {
+            if (m >= groups.size() || groups[m].empty())
+                return 0.0;
+
+            return groups[m].back()->mi;
+        };
+
+        SURDRes result;
+
+        /***********************************************************
+        * Order 1 decomposition
+        ***********************************************************/
+        if (!groups[1].empty())
+        {
+            double prev = 0.0;
+
+            for (size_t i = 0; i < groups[1].size(); ++i)
+            {
+                auto* e = groups[1][i];
+
+                double delta = e->mi - prev;
+
+                if (delta > eps)
+                {
+                    result.values.push_back(delta);
+
+                    if (i == groups[1].size() - 1)
+                        result.types.push_back(1);  // unique
+                    else
+                        result.types.push_back(0);  // redundant
+
+                    result.var_indices.push_back(combs[e->idx]);
+                }
+
+                prev = e->mi;
+            }
+        }
+
+        /***********************************************************
+        * Higher order synergy
+        ***********************************************************/
+        for (size_t m = 2; m <= max_order; ++m)
+        {
+            if (groups[m].empty())
+                continue;
+
+            double max_prev = get_max(m - 1);
+
+            for (size_t i = 0; i < groups[m].size(); ++i)
+            {
+                auto* e = groups[m][i];
+
+                double prev =
+                    (i > 0) ? groups[m][i - 1]->mi : 0.0;
+
+                double delta = 0.0;
+
+                if (e->mi > max_prev + eps)
+                {
+                    if (prev >= max_prev)
+                        delta = e->mi - prev;
+                    else
+                        delta = e->mi - max_prev;
+                }
+
+                if (delta > eps)
+                {
+                    result.values.push_back(delta);
+                    result.types.push_back(2);  // synergistic
+                    result.var_indices.push_back(combs[e->idx]);
+                }
+            }
+        }
+
+        /***********************************************************
+        * Optional normalization
+        ***********************************************************/
+        if (normalize)
+        {
+            double sum = 0.0;
+
+            for (size_t i = 0; i < result.values.size(); ++i)
+                if (result.types[i] != 3)
+                    sum += result.values[i];
+
+            if (sum > eps)
+            {
+                for (size_t i = 0; i < result.values.size(); ++i)
+                    if (result.types[i] != 3)
+                        result.values[i] /= sum;
+            }
+        }
+
+        return result;
+    }
 
     /***************************************************************
      * Synergistic-Unique-Redundant Decomposition for Discrete Data
