@@ -45,7 +45,7 @@ namespace combn
      * @return std::vector<std::vector<T>> All possible m-combinations
      */
     template <typename T>
-    inline std::vector<std::vector<T>> Combn(const std::vector<T>& vec, size_t m)
+    inline std::vector<std::vector<T>> combn(const std::vector<T>& vec, size_t m)
     {
         std::vector<std::vector<T>> result;
         std::vector<T> current;
@@ -84,7 +84,7 @@ namespace combn
     /**
      * @brief Generate all non-empty subsets of a given vector.
      *
-     * Iteratively calls Combn for sizes 1 to n,
+     * Iteratively calls combn for sizes 1 to n,
      * where n is the size of the input vector.
      *
      * @tparam T Element type
@@ -92,7 +92,7 @@ namespace combn
      * @return std::vector<std::vector<T>> All non-empty subsets
      */
     template <typename T>
-    inline std::vector<std::vector<T>> GenSubsets(const std::vector<T>& vec)
+    inline std::vector<std::vector<T>> genSubsets(const std::vector<T>& vec)
     {
         std::vector<std::vector<T>> allSubsets;
 
@@ -100,7 +100,7 @@ namespace combn
 
         for (size_t m = 1; m <= n; ++m)
         {
-            std::vector<std::vector<T>> combs = Combn(vec, m);
+            std::vector<std::vector<T>> combs = combn(vec, m);
             allSubsets.insert(allSubsets.end(), combs.begin(), combs.end());
         }
 
