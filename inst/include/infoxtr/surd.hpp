@@ -39,8 +39,7 @@ namespace surd
     /***********************************************************
      * Synergistic-Unique-Redundant Decomposition Utilities
      ***********************************************************/
-    inline SURDRes
-    info_decomposition(
+    inline SURDRes mutualinfo_decomposition(
         const std::vector<std::vector<size_t>>& combs,
         const std::vector<double>& mi,
         bool normalize = false)
@@ -199,9 +198,8 @@ namespace surd
         size_t hw = std::thread::hardware_concurrency();
         if (hw > 0) threads = std::min(threads, hw);
 
-        SURDRes result;
-
-        if (mat.size() < 2) return result;
+        if (mat.size() < 2)
+            throw std::invalid_argument("[SURD] SURD needs >2 variables");
 
         const size_t n_vars = mat.size();
         const size_t n_sources = mat.size() - 1;
@@ -216,8 +214,8 @@ namespace surd
         // Compute joint entropies
         std::vector<double> H_sources(combs.size(), 
                                       std::numeric_limits<double>::quiet_NaN());
-        std::vector<double> H_joint(combs.size(), 
-                                    std::numeric_limits<double>::quiet_NaN());
+        std::vector<double> H_joints(combs.size(), 
+                                     std::numeric_limits<double>::quiet_NaN());
         double H_target = infoxtr::infotheo::je(mat, {0}, base, true);
 
         for (size_t i = 0; i < combs.size(); ++i)
@@ -225,9 +223,43 @@ namespace surd
             std::vector<size_t> joint_idx = {0};
             joint_idx.insert(joint_idx.end(), combs[i].begin(), combs[i].end());
             H_sources[i] = Infoxtr::infotheo::je(mat, combs[i], base, true);
-            H_joint[i] = Infoxtr::infotheo::je(mat, joint_idx, base, true);
+            H_joints[i] = Infoxtr::infotheo::je(mat, joint_idx, base, true);
         }
-            
+
+        // Compute mutual information
+        std::vector<double> mi_combs(combs.size(), 
+                                     std::numeric_limits<double>::quiet_NaN());
+        for (size_t i = 0; i < combs.size(); ++i)
+        {   
+            mi_combs[i] = H_target + H_sources[i] - H_joints[i];
+        }
+        
+        // Decompose mutual information
+        SURDRes result = mutualinfo_decomposition(combs, mi_combs, normalize);
+
+        // Information loss
+        double leak = 0.0;
+        if (!infoxtr::numericutils::doubleNearlyEqual(H_target, 0.0))
+        {
+            if (max_order < n_sources) 
+            {
+                std::vector<size_t> joint_idx = {0};
+                joint_idx.insert(joint_idx.end(), ag_idx.begin(), ag_idx.end());
+                leak = (Infoxtr::infotheo::je(mat, joint_idx, base, true) - 
+                        Infoxtr::infotheo::je(mat, ag_idx, base, true)) / H_target;
+            }
+            else 
+            {   
+                leak = (H_joints.back() - H_sources.back()) / H_target;
+            }
+        }
+        leak = std::max(0.0, std::min(1.0, leak));
+
+        result.values.push_back(leak);
+        result.types.push_back(3);
+        result.var_indices.push_back(ag_idx);
+
+        return result;
     }
 
     // /*****************************************************************
