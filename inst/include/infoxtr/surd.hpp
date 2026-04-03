@@ -3,6 +3,14 @@
 #ifndef INFOXTR_SURD_HPP
 #define INFOXTR_SURD_HPP
 
+#include <vector>
+#include <cmath>
+#include <limits>
+#include <cstdint>
+#include <thread>
+#include <algorithm>
+#include <stdexcept>
+
 namespace infoxtr 
 {
 
@@ -27,6 +35,12 @@ namespace surd
     /***************************************************************
      * Synergistic-Unique-Redundant Decomposition for Discrete Data
      ***************************************************************/
+    inline SURDRes surd(
+        const DiscMat& mat,
+        double base = 2.0,
+        bool normalize = false,
+        size_t threads = 1,
+        size_t max_order = std::numeric_limits<size_t>::max())
 
     /*****************************************************************
      * Synergistic-Unique-Redundant Decomposition for Continuous Data
