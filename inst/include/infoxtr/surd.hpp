@@ -200,12 +200,11 @@ namespace surd
         if (mat.size() < 2)
             throw std::invalid_argument("[SURD] SURD needs >2 variables");
 
-        const size_t n_vars = mat.size();
         const size_t n_sources = mat.size() - 1;
         max_order = std::min(max_order, n_sources);
 
         // Construct variable combination vector
-        std::vector<size_t> ag_idx(n_sources.size());
+        std::vector<size_t> ag_idx(n_sources);
         std::iota(ag_idx.begin(), ag_idx.end(), 1);
         const std::vector<std::vector<size_t>> combs =
             infoxtr::combn::genSubsets(ag_idx, max_order);
@@ -221,8 +220,8 @@ namespace surd
         {   
             std::vector<size_t> joint_idx = {0};
             joint_idx.insert(joint_idx.end(), combs[i].begin(), combs[i].end());
-            H_sources[i] = Infoxtr::infotheo::je(mat, combs[i], base, true);
-            H_joints[i] = Infoxtr::infotheo::je(mat, joint_idx, base, true);
+            H_sources[i] = infoxtr::infotheo::je(mat, combs[i], base, true);
+            H_joints[i] = infoxtr::infotheo::je(mat, joint_idx, base, true);
         }
 
         // Compute mutual information
@@ -244,8 +243,8 @@ namespace surd
             {
                 std::vector<size_t> joint_idx = {0};
                 joint_idx.insert(joint_idx.end(), ag_idx.begin(), ag_idx.end());
-                leak = (Infoxtr::infotheo::je(mat, joint_idx, base, true) - 
-                        Infoxtr::infotheo::je(mat, ag_idx, base, true)) / H_target;
+                leak = (infoxtr::infotheo::je(mat, joint_idx, base, true) - 
+                        infoxtr::infotheo::je(mat, ag_idx, base, true)) / H_target;
             }
             else 
             {   
