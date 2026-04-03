@@ -253,6 +253,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppDiscSURD
+Rcpp::List RcppDiscSURD(SEXP mat, int max_order, int threads, double base, bool normalize);
+RcppExport SEXP _infoxtr_RcppDiscSURD(SEXP matSEXP, SEXP max_orderSEXP, SEXP threadsSEXP, SEXP baseSEXP, SEXP normalizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< int >::type max_order(max_orderSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDiscSURD(mat, max_order, threads, base, normalize));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppGenLatticeLag
 Rcpp::NumericMatrix RcppGenLatticeLag(const Rcpp::NumericMatrix& mat, const Rcpp::List& nb, int lag);
 RcppExport SEXP _infoxtr_RcppGenLatticeLag(SEXP matSEXP, SEXP nbSEXP, SEXP lagSEXP) {
@@ -362,6 +376,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_infoxtr_RcppContCMI", (DL_FUNC) &_infoxtr_RcppContCMI, 8},
     {"_infoxtr_RcppDiscTE", (DL_FUNC) &_infoxtr_RcppDiscTE, 9},
     {"_infoxtr_RcppContTE", (DL_FUNC) &_infoxtr_RcppContTE, 10},
+    {"_infoxtr_RcppDiscSURD", (DL_FUNC) &_infoxtr_RcppDiscSURD, 5},
     {"_infoxtr_RcppGenLatticeLag", (DL_FUNC) &_infoxtr_RcppGenLatticeLag, 3},
     {"_infoxtr_RcppGenGridLag", (DL_FUNC) &_infoxtr_RcppGenGridLag, 3},
     {"_infoxtr_RcppGenTSLag", (DL_FUNC) &_infoxtr_RcppGenTSLag, 2},
