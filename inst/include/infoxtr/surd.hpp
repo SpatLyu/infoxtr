@@ -78,7 +78,7 @@ namespace surd
             std::sort(
                 g.begin(),
                 g.end(),
-                [&](Entry* a, Entry* b)
+                [](Entry* a, Entry* b)
                 {   
                     if (!infoxtr::numericutils::doubleNearlyEqual(a->mi, b->mi))
                         return a->mi < b->mi;
@@ -96,6 +96,9 @@ namespace surd
         };
 
         SURDRes result;
+        result.values.reserve(combs.size());
+        result.types.reserve(combs.size());
+        result.var_indices.reserve(combs.size());
 
         /***********************************************************
          * Order 1 decomposition
@@ -306,6 +309,8 @@ namespace surd
 
         // Information loss
         double leak = infoxtr::ksginfo::ce(mat, {0}, ag_idx, k, alg, base);
+
+        leak /= infoxtr::ksginfo::je(mat, {0}, k, alg, base);
 
         leak = std::max(0.0, std::min(1.0, leak));
 
