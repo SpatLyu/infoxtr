@@ -13,8 +13,8 @@ namespace surd
     using ContMat = std::vector<std::vector<double>>;
 
     /***********************************************************
-    * Result structure
-    ***********************************************************/
+     * Result structure
+     ***********************************************************/
     struct SURDRes
     {
         std::vector<double> values;
@@ -28,7 +28,7 @@ namespace surd
      * Synergistic-Unique-Redundant Decomposition for Discrete Data
      ***************************************************************/
 
-     /****************************************************************
+    /*****************************************************************
      * Synergistic-Unique-Redundant Decomposition for Continuous Data
      *****************************************************************/
     
