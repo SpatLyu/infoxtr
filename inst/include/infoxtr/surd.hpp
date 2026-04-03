@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include "infoxtr/combn.hpp"
 #include "infoxtr/numericutils.hpp"
-#include <RcppThread.h>
+// #include <RcppThread.h>
 
 namespace infoxtr 
 {
@@ -64,8 +64,8 @@ namespace surd
         }
 
         /***********************************************************
-        * Group by order
-        ***********************************************************/
+         * Group by order
+         ***********************************************************/
         std::vector<std::vector<Entry*>> groups(max_order + 1);
 
         for (auto& e : entries)
@@ -77,15 +77,13 @@ namespace surd
                 g.begin(),
                 g.end(),
                 [&](Entry* a, Entry* b)
-                {
-                    if (std::fabs(a->mi - b->mi) > 1e-12)
+                {   
+                    if (!infoxtr::numericutils::doubleNearlyEqual(a->mi, b->mi))
                         return a->mi < b->mi;
 
                     return a->idx < b->idx;
                 });
         }
-
-        const double eps = 1e-12;
 
         auto get_max = [&](size_t m)
         {
@@ -98,8 +96,8 @@ namespace surd
         SURDRes result;
 
         /***********************************************************
-        * Order 1 decomposition
-        ***********************************************************/
+         * Order 1 decomposition
+         ***********************************************************/
         if (!groups[1].empty())
         {
             double prev = 0.0;
@@ -110,25 +108,28 @@ namespace surd
 
                 double delta = e->mi - prev;
 
-                if (delta > eps)
+                if (!infoxtr::numericutils::doubleNearlyEqual(delta,0.0) 
+                    && delta < 0.0 )
                 {
-                    result.values.push_back(delta);
-
-                    if (i == groups[1].size() - 1)
-                        result.types.push_back(1);  // unique
-                    else
-                        result.types.push_back(0);  // redundant
-
-                    result.var_indices.push_back(combs[e->idx]);
+                    delta = 0.0;
                 }
+
+                result.values.push_back(delta);
+
+                if (i == groups[1].size() - 1)
+                    result.types.push_back(1);  // unique
+                else
+                    result.types.push_back(0);  // redundant
+
+                result.var_indices.push_back(combs[e->idx]);
 
                 prev = e->mi;
             }
         }
 
         /***********************************************************
-        * Higher order synergy
-        ***********************************************************/
+         * Higher order synergy
+         ***********************************************************/
         for (size_t m = 2; m <= max_order; ++m)
         {
             if (groups[m].empty())
@@ -145,20 +146,18 @@ namespace surd
 
                 double delta = 0.0;
 
-                if (e->mi > max_prev + eps)
+                if (!infoxtr::numericutils::doubleNearlyEqual(e->mi, max_prev)\
+                     && e->mi > max_prev)
                 {
                     if (prev >= max_prev)
                         delta = e->mi - prev;
                     else
                         delta = e->mi - max_prev;
                 }
-
-                if (delta > eps)
-                {
-                    result.values.push_back(delta);
-                    result.types.push_back(2);  // synergistic
-                    result.var_indices.push_back(combs[e->idx]);
-                }
+                
+                result.values.push_back(delta);
+                result.types.push_back(2);  // synergistic
+                result.var_indices.push_back(combs[e->idx]);
             }
         }
 
@@ -173,7 +172,7 @@ namespace surd
                 if (result.types[i] != 3)
                     sum += result.values[i];
 
-            if (sum > eps)
+            if (!infoxtr::numericutils::doubleNearlyEqual(sum, 0.0))
             {
                 for (size_t i = 0; i < result.values.size(); ++i)
                     if (result.types[i] != 3)
