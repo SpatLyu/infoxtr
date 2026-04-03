@@ -9,6 +9,7 @@
 #include <thread>
 #include <cstdint>
 #include <algorithm>
+#include <numeric>
 #include <stdexcept>
 
 namespace infoxtr 
@@ -19,6 +20,12 @@ namespace surd
 
     using DiscMat = std::vector<std::vector<uint64_t>>;
     using ContMat = std::vector<std::vector<double>>;
+
+    /***********************************************************
+     * Utilities
+     ***********************************************************/
+
+    
 
     /***********************************************************
      * Result structure
