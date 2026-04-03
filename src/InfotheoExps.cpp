@@ -584,6 +584,6 @@ Rcpp::List RcppDiscSURD(SEXP mat,
     return Rcpp::List::create(
         Rcpp::Named("vars")  = names,
         Rcpp::Named("types")  = types,
-        Rcpp::Named("values") = values,
+        Rcpp::Named("values") = values
     );
 }
