@@ -283,7 +283,6 @@ namespace surd
         if (mat[0].size() < k + 1)
             throw std::invalid_argument("[SURD] SURD needs >k observations");
         
-        const size_t n_obs = mat[0].size();
         const size_t n_sources = mat.size() - 1;
         max_order = std::min(max_order, n_sources);
 
