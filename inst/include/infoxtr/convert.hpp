@@ -1,3 +1,21 @@
+/********************************************************************
+ *  File: convert.hpp
+ *
+ *  Data Structure Conversion Utilities for R and C++
+ *
+ *  This header provides a collection of lightweight helper
+ *  functions that convert data structures between the R
+ *  environment (via Rcpp) and standard C++ containers.
+ *
+ *  The goal is to provide efficient and predictable translation
+ *  between the two ecosystems so that computational routines
+ *  implemented in C++ can operate on native STL structures while
+ *  remaining fully compatible with R data objects.
+ *
+ *  Author: Wenbo Lyu (Github: @SpatLyu)
+ *  License: GPL-3
+ **********************************************************************/
+
 #ifndef INFOXTR_CONVERT_HPP
 #define INFOXTR_CONVERT_HPP
 
