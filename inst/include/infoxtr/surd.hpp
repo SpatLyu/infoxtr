@@ -287,12 +287,12 @@ namespace surd
         } 
         else 
         {
-            RcppThread::parallelFor(0, combs.size()), [&](size_t i) {
+            RcppThread::parallelFor(0, combs.size(), [&](size_t i) {
                 std::vector<size_t> joint_idx = {0};
                 joint_idx.insert(joint_idx.end(), combs[i].begin(), combs[i].end());
                 H_sources[i] = infoxtr::infotheo::je(mat, combs[i], base, true);
                 H_joints[i] = infoxtr::infotheo::je(mat, joint_idx, base, true);
-            }
+            }, threads);
         }
 
         // Compute mutual information
@@ -376,10 +376,10 @@ namespace surd
         } 
         else 
         {
-            RcppThread::parallelFor(0, combs.size()), [&](size_t i) {
+            RcppThread::parallelFor(0, combs.size(), [&](size_t i) {
                 mi_combs[i] = infoxtr::ksginfo::mi(
                     mat, {0}, combs[i], k, alg, base, false);
-            }
+            }, threads);
         }
         
         // Decompose mutual information
