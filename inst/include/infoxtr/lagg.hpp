@@ -302,8 +302,14 @@ namespace lagg
             for (size_t j = 0; j < p; ++j)
             {
                 double v = mat[t - lag][j];
+
                 if (!std::isnan(v))
-                    out[t][j] = v;
+                {
+                    if (byrow)
+                        out[t][j] = v;
+                    else
+                        out[j][t] = v;
+                }
             }
         }
 
