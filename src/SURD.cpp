@@ -20,8 +20,8 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
                     Rcpp::Nullable<Rcpp::List> nb = R_NilValue,
                     Rcpp::Nullable<int> nrow = R_NilValue)
 {   
-    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
-    const size_t n_cols = m.size();
+    const size_t n_cols = static_cast<size_t>(mat.ncol());
+    const size_t n_obs = static_cast<size_t>(mat.nrow());
 
     if (tg[0] < 1 || tg[0] > n_cols) {
             Rcpp::stop("Target index %d out of bounds [1, %d]", 
@@ -53,23 +53,13 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     const size_t n_vars = vars.size();
 
     // Construct discrete data matrix
-    std::vector<std::vector<std::vector<uint8_t>>> pm;
+    std::vector<std::vector<std::vector<uint64_t>>> pm;
     pm.resize(n_vars);
-
-    std::vector<std::vector<uint64_t>> pm(n_vars);
-
     
-
-    // Convert Rcpp::List to std::vector<std::vector<size_t>>
-    std::vector<std::vector<size_t>> nb_std;
-    if (nb.isNotNull()) {
-        nb_std = infoxtr::convert::nb2std(nb);
-    }
-
     // Process each selected variable
     for (size_t j = 0; j < n_vars; ++j)
     {
-        size_t col_id = v[j];
+        size_t col_id = vars[j];
 
         // Extract column vector from R matrix
         std::vector<double> vec(n_obs);
@@ -94,6 +84,14 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
             relative,
             na_rm
         );
+    }
+
+    
+
+    // Convert Rcpp::List to std::vector<std::vector<size_t>>
+    std::vector<std::vector<size_t>> nb_std;
+    if (nb.isNotNull()) {
+        nb_std = infoxtr::convert::nb2std(nb);
     }
 
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
