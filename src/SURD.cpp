@@ -20,7 +20,8 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
                     Rcpp::Nullable<Rcpp::List> nb = R_NilValue,
                     Rcpp::Nullable<int> nrow = R_NilValue)
 {   
-    const size_t n_cols = mat.size();
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
+    const size_t n_cols = m.size();
 
     if (tg[0] < 1 || tg[0] > n_cols) {
             Rcpp::stop("Target index %d out of bounds [1, %d]", 
@@ -57,7 +58,7 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
 
     std::vector<std::vector<uint64_t>> pm(n_vars);
 
-    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
+    
 
     // Convert Rcpp::List to std::vector<std::vector<size_t>>
     std::vector<std::vector<size_t>> nb_std;
