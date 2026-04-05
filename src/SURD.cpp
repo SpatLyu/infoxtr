@@ -9,10 +9,12 @@
 // [[Rcpp::export(rng = false)]]
 Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
                     int lag = 1,
+                    int n = 5,
                     int max_order = 3,
                     int threads = 1,
                     double base = 2.0,
                     bool normalize = true,
+                    const std::string& method = "equal",
                     Rcpp::Nullable<Rcpp::List> nb = R_NilValue,
                     Rcpp::Nullable<int> nrow = R_NilValue)
 {
