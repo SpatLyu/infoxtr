@@ -100,35 +100,6 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     // Discrete lagged values for agent variables
     std::vector<std::vector<double>> discm;
 
-    
-    
-        
-
-        // Extract column vector from R matrix
-        std::vector<double> vec(n_obs);
-        
-        // Generate lagged  values for agent variables
-        std::vector<std::vector<double>> embeddings =
-            Embed::GenLatticeEmbedding(
-                vec,
-                nb_std,
-                static_cast<size_t>(std::abs(E[j])),
-                static_cast<size_t>(std::abs(tau[j])),
-                static_cast<size_t>(std::abs(style[j]))
-            );
-
-        // Convert continuous embedding -> symbolic patterns
-        pm[j] = SymDync::GenSymbolicPattern(
-            embeddings,
-            relative,
-            na_rm
-        );
-    }
-
-    
-
-    
-
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
         m, static_cast<size_t>(std::abs(max_order)),
         static_cast<size_t>(std::abs(threads)), base, normalize);
