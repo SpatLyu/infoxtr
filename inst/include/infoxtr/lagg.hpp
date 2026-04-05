@@ -151,9 +151,14 @@ namespace lagg
                                 ++cnt;
                             }
                         }
-
+                        
                         if (cnt > 0)
-                            out[i][j] = sum / cnt;
+                        {
+                            if (byrow)
+                                out[i][j] = sum / cnt;
+                            else
+                                out[j][i] = sum / cnt;
+                        }
                     }
                 }
 
@@ -246,9 +251,14 @@ namespace lagg
                             }
                         }
                     }
-
+                    
                     if (cnt > 0)
-                        out[id][j] = sum / cnt;
+                    {
+                        if (byrow)
+                            out[id][j] = sum / cnt;
+                        else
+                            out[j][id] = sum / cnt;
+                    }
                 }
             }
         }
