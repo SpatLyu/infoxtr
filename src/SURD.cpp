@@ -16,7 +16,10 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
                     Rcpp::Nullable<Rcpp::List> nb = R_NilValue,
                     Rcpp::Nullable<int> nrow = R_NilValue)
 {
-    infoxtr::surd::DiscMat m = infoxtr::convert::pat_r2std(mat, false);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
+
+    // Convert Rcpp::List to std::vector<std::vector<size_t>>
+    std::vector<std::vector<size_t>> nb_std = infoxtr::convert::nb2std(nb);
 
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
         m, static_cast<size_t>(std::abs(max_order)),
