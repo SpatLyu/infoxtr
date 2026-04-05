@@ -35,13 +35,13 @@
  *
  *  Supported operations
  *
- *      lagg(mat, nb, lag)
+ *      lagg(mat, nb, lag, byrow)
  *          Lag aggregation on arbitrary neighbor graphs
  *
- *      lagg(mat, nrows, lag)
+ *      lagg(mat, nrows, lag, byrow)
  *          Lag aggregation on regular grids
  *
- *      lagg(mat, lag)
+ *      lagg(mat, lag, byrow)
  *          Temporal lag for time series
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
