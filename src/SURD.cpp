@@ -46,29 +46,43 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     );
     if (ag.empty())
         Rcpp::stop("Agent indices should not be empty");
-    
-    // Construct variable indices vector for SURD
-    std::vector<size_t> vars= {tg_idx};
-    vars.insert(vars.end(), ag.begin(), ag.end());
-    const size_t n_vars = vars.size();
 
     // Construct discrete data matrix
-    std::vector<std::vector<std::vector<uint64_t>>> pm;
-    pm.resize(n_vars);
+    std::vector<std::vector<uint64_t>> pm;
+    pm.reserve(ag.size() + 1);
     
-    // Process each selected variable
-    for (size_t j = 0; j < n_vars; ++j)
+    // Preserve original values in target variable and discretize it
+    std::vector<double> vec(n_obs);
+    for (size_t r = 0; r < n_obs; ++r)
     {
-        size_t col_id = vars[j];
+        vec[r] = mat(r, tg_idx);
+    }
+    pm[0] = infoxtr::discretize::discrete(
+        vec, method, static_cast<size_t>(std::abs(n))
+    );
+    
+    // Generate lagged values for agent variables
+    std::vector<std::vector<double>> cppMat(
+        ag.size(), std::vector<double>(n_obs)
+    );
+    for (size_t j = 0; j < ag.size(); ++j)
+    {   
+        size_t col_id = ag[j];
+
+        for (size_t r = 0; r < n_obs; ++r)
+        {
+            cppMat[col_id][r] = mat(r, col_id);
+        }
+    }
+
+    // Discrete lagged values for agent variables
+
+        
 
         // Extract column vector from R matrix
         std::vector<double> vec(n_obs);
-        for (size_t r = 0; r < n_obs; ++r)
-        {
-            vec[r] = mat(r, col_id);
-        }
-
-        // Generate lattice embedding
+        
+        // Generate lagged  values for agent variables
         std::vector<std::vector<double>> embeddings =
             Embed::GenLatticeEmbedding(
                 vec,
