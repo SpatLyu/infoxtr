@@ -51,9 +51,8 @@
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-#' \donttest{
 #' infoxtr::surd(columbus, 1, 2:3)
-#' }
+#'
 methods::setMethod("surd", "data.frame", .surd_ts)
 
 #' @rdname surd
