@@ -1,5 +1,5 @@
-.surd_ts = \(data, target, agent, lag = 1, bin = 5, max.combs = 3, 
-             threads = 1, base = 2.0, normalize = TRUE){
+.surd_ts = \(data, target, agent, lag = 1, bin = 5, method = "equal",
+             max.combs = 3, threads = 1, base = 2.0, normalize = TRUE){
   if (is.null(bin) || bin <= 0) {
     pfm = RcppDiscMat2PFM(as.matrix(data[,c(target, agents),drop = FALSE]))
   } else {
@@ -12,8 +12,8 @@
   utils_run_surd(pfm, bin, max.combs, cores)
 }
 
-.surd_lattice = \(data, target, agent, lag = 1, bin = 5, max.combs = 3, 
-                  threads = 1, base = 2.0, normalize = TRUE, nb = NULL){
+.surd_lattice = \(data, target, agent, lag = 1, bin = 5, method = "equal", 
+                  max.combs = 3, threads = 1, base = 2.0, normalize = TRUE, nb = NULL){
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   data = sf::st_drop_geometry(data)
   if (is.null(bin) || bin <= 0) {
@@ -28,8 +28,8 @@
   utils_run_surd(pfm, bin, max.combs, cores)
 }
 
-.surd_grid = \(data, target, agent, lag = 1, bin = 5, max.combs = 3, 
-               threads = 1, base = 2.0, normalize = TRUE){
+.surd_grid = \(data, target, agent, lag = 1, bin = 5, method = "equal",
+               max.combs = 3, threads = 1, base = 2.0, normalize = TRUE){
   if (is.null(bin) || bin <= 0) {
     pfm = RcppDiscMat2PFM(terra::values(data[[c(target, agents)]],mat = TRUE,na.rm = FALSE))
   } else {
@@ -49,6 +49,9 @@
 #' @inheritParams te
 #' @param lag (optional) Lag of the agent variables.
 #' @param bin (optional) Number of discretization bins.
+#' @param method (optional) Discretization method. One of
+#'   `"sd"`, `"equal"`, `"geometric"`, `"quantile"`,
+#'   `"natural("jenks")"`, or `"headtail"("headtails")`.
 #' @param max.combs (optional) Maximum combination order.
 #' @param threads (optional) Number of threads used.
 #' @param nb (optional) Neighbours list.
