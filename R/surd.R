@@ -1,45 +1,23 @@
 .surd_ts = \(data, target, agent, lag = 1, bin = 5, method = "equal",
-             max.combs = 3, threads = 1, base = 2.0, normalize = TRUE){
-  if (is.null(bin) || bin <= 0) {
-    pfm = RcppDiscMat2PFM(as.matrix(data[,c(target, agents),drop = FALSE]))
-  } else {
-    pfm = cbind(
-      data[,target,drop = TRUE],
-      RcppGenTSLagMulti(as.matrix(data[,agents,drop = FALSE]),
-                        rep(lag,length.out = length(agents)))
-    )
-  }
-  utils_run_surd(pfm, bin, max.combs, cores)
+             max.combs = 3, threads = 1, base = 2.0, normalize = TRUE) {
+  mat = .convert2mat(data)
+  return(RcppSURD(mat, target, agent, lag, bin, max.combs, 
+                  threads, base, normalize, method))
 }
 
 .surd_lattice = \(data, target, agent, lag = 1, bin = 5, method = "equal", 
-                  max.combs = 3, threads = 1, base = 2.0, normalize = TRUE, nb = NULL){
+                  max.combs = 3, threads = 1, base = 2.0, normalize = TRUE, nb = NULL) {
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
-  data = sf::st_drop_geometry(data)
-  if (is.null(bin) || bin <= 0) {
-    pfm = RcppDiscMat2PFM(as.matrix(data[,c(target, agents),drop = FALSE]))
-  } else {
-    pfm = cbind(
-      data[,target,drop = TRUE],
-      RcppGenLatticeLagMulti(as.matrix(data[,agents,drop = FALSE]),
-                             nb,rep(lag,length.out = length(agents)))
-    )
-  }
-  utils_run_surd(pfm, bin, max.combs, cores)
+  mat = .convert2mat(data)
+  return(RcppSURD(mat, target, agent, lag, bin, max.combs, 
+                  threads, base, normalize, method, nb))
 }
 
 .surd_grid = \(data, target, agent, lag = 1, bin = 5, method = "equal",
-               max.combs = 3, threads = 1, base = 2.0, normalize = TRUE){
-  if (is.null(bin) || bin <= 0) {
-    pfm = RcppDiscMat2PFM(terra::values(data[[c(target, agents)]],mat = TRUE,na.rm = FALSE))
-  } else {
-    pfm = cbind(
-      terra::values(data[[target]],mat = TRUE,na.rm = FALSE),
-      RcppGenGridLagMulti(terra::values(data[[agents]],mat = TRUE,na.rm = FALSE),
-                          rep(lag,length.out = length(agents)),terra::nrow(data))
-    )
-  }
-  utils_run_surd(pfm, bin, max.combs, cores)
+               max.combs = 3, threads = 1, base = 2.0, normalize = TRUE) {
+  mat = .convert2mat(data)
+  return(RcppSURD(mat, target, agent, lag, bin, max.combs, 
+                  threads, base, normalize, method, NULL, terra::nrow(data[[1]])))
 }
 
 #' SURD
