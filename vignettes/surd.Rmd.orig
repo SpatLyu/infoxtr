@@ -163,8 +163,7 @@ fig_cvds_ts
 To investigate the causal influences of air pollutants on the incidence of cardiovascular diseases, we performed SURD analysis using a time lag step `3` and `10` discretization bins.
 
 ```{r surd_cvds}
-res_cvds = infoxtr::surd(cvd, "cvd",
-                         c("rsp", "no2", "so2", "o3"),
+res_cvds = infoxtr::surd(cvd, 1, 2:5,
                          lag = 15, bin = 10, threads = 6)
 ```
 
@@ -184,7 +183,7 @@ popd_sf
 ```
 
 ```{r surd_popd}
-res_popd = infoxtr::surd(popd_sf,"popd",c("elev","tem","pre","slope"),
+res_popd = infoxtr::surd(popd_sf, 1, 2:5,
                          lag = 3, bin = 10, nb = popd_nb, threads = 6)
 ```
 
@@ -200,7 +199,7 @@ npp
 ```
 
 ```{r surd_npp}
-res_npp = infoxtr::surd(npp,"npp",c("pre","tem","elev","hfp"),
+res_npp = infoxtr::surd(npp,1, 2:5,
                         lag = 2, bin = 10, threads = 6)
 ```
 
