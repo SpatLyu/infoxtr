@@ -57,6 +57,6 @@ integer categories via \code{as.factor()}.
 }
 \examples{
 set.seed(42)
-infoxtr::discretize(stats::rnorm(99,1,10), n = 5, method = 'natural')
+infoxtr::discretize(stats::rnorm(99,1,10))
 
 }
