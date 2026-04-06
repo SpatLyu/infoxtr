@@ -77,66 +77,66 @@ namespace infotheo
         std::vector<uint64_t> states;
         states.reserve(n_obs * k);
 
-        for(size_t i=0;i<n_obs;i++)
-            for(size_t j=0;j<k;j++)
+        for(size_t i = 0; i < n_obs; i++)
+            for(size_t j = 0; j < k; j++)
                 states.push_back(mat[j][i]);
 
         std::vector<size_t> order(n_obs);
-        for(size_t i=0;i<n_obs;i++) order[i]=i;
+        for(size_t i = 0; i < n_obs; i++) order[i] = i;
 
-        std::sort(order.begin(),order.end(),
-        [&](size_t a,size_t b)
+        std::sort(order.begin(), order.end(),
+        [&](size_t a, size_t b)
         {
-            size_t ia=a*k;
-            size_t ib=b*k;
+            size_t ia = a * k;
+            size_t ib = b * k;
 
-            for(size_t j=0;j<k;j++)
+            for(size_t j = 0; j < k; j++)
             {
-                uint64_t va=states[ia+j];
-                uint64_t vb=states[ib+j];
+                uint64_t va = states[ia + j];
+                uint64_t vb = states[ib + j];
 
-                if(va<vb) return true;
-                if(va>vb) return false;
+                if(va < vb) return true;
+                if(va > vb) return false;
             }
 
             return false;
         });
 
-        size_t run=1;
+        size_t run = 1;
 
-        auto equal_state=[&](size_t a,size_t b)
+        auto equal_state = [&](size_t a, size_t b)
         {
-            size_t ia=a*k;
-            size_t ib=b*k;
+            size_t ia = a * k;
+            size_t ib = b * k;
 
-            for(size_t j=0;j<k;j++)
-                if(states[ia+j]!=states[ib+j])
+            for(size_t j = 0; j < k; j++)
+                if(states[ia + j] != states[ib + j])
                     return false;
 
             return true;
         };
 
-        for(size_t i=1;i<n_obs;i++)
+        for(size_t i = 1; i < n_obs; i++)
         {
-            if(equal_state(order[i],order[i-1]))
+            if(equal_state(order[i], order[i-1]))
             {
                 run++;
             }
             else
             {
-                size_t idx=order[i-1]*k;
+                size_t idx = order[i - 1] * k;
 
-                for(size_t j=0;j<k;j++)
-                    jt.states.push_back(states[idx+j]);
+                for(size_t j = 0; j < k; j++)
+                    jt.states.push_back(states[idx + j]);
 
                 jt.counts.push_back(run);
-                run=1;
+                run = 1;
             }
         }
 
-        size_t idx=order[n_obs-1]*k;
+        size_t idx = order[n_obs - 1] * k;
 
-        for(size_t j=0;j<k;j++)
+        for(size_t j = 0; j < k; j++)
             jt.states.push_back(states[idx+j]);
 
         jt.counts.push_back(run);
