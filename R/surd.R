@@ -23,6 +23,8 @@
 #' SURD
 #' 
 #' Synergistic-Unique-Redundant Decomposition of causality
+#' 
+#' @note SURD only support numeric data.
 #'
 #' @inheritParams te
 #' @param lag (optional) Lag of the agent variables.
@@ -36,11 +38,9 @@
 #'
 #' @return A list.
 #' \describe{
-#'   \item{unique}{Unique information contributions per variable.}
-#'   \item{synergistic}{Synergistic information components by agent combinations.}
-#'   \item{redundant}{Redundant information shared by agent subsets.}
-#'   \item{mutual_info}{Mutual information measures for each combination.}
-#'   \item{info_leak}{Information leak ratio.}
+#'   \item{vars}{Character vector indicating the variable combination associated with each information component.}
+#'   \item{types}{Character vector indicating the information type of each component.}
+#'   \item{values}{Numeric vector giving the magnitude of each information component.}
 #' }
 #'
 #' @export
@@ -52,10 +52,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' tryCatch(
-#'   infoxtr::surd(columbus, "hoval", c("inc", "crime")),
-#'   error = \(e) message("Skipping Python-dependent example: ", e$message)
-#' )
+#' infoxtr::surd(columbus, 1, 2:3)
 #' }
 methods::setMethod("surd", "data.frame", .surd_ts)
 
