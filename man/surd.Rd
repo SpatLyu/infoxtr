@@ -89,9 +89,8 @@ SURD only support numeric data.
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-\donttest{
 infoxtr::surd(columbus, 1, 2:3)
-}
+
 }
 \references{
 Martinez-Sanchez, A., Arranz, G. & Lozano-Duran, A. Decomposing causality into its synergistic, unique, and redundant components. Nat Commun 15, 9296 (2024).
