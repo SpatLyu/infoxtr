@@ -109,8 +109,10 @@ inline SURDRes surd(
     size_t threads = 1,
     double base = 2.0,
     bool normalize = false)
-{
-    SURDRes result;
+{   
+    if (threads == 0) threads = 1;
+    size_t hw = std::thread::hardware_concurrency();
+    if (hw > 0) threads = std::min(threads, hw);
 
     if (mat.size() < 2)
         throw std::invalid_argument("SURD requires >=2 variables");
@@ -217,70 +219,139 @@ inline SURDRes surd(
 
     std::vector<std::vector<PxGroup>> px_groups(n_combs);
 
-    for (size_t ci = 0; ci < n_combs; ci++)
+    if (threads <= 1) 
+    {   
+        for (size_t ci = 0; ci < n_combs; ci++)
+        {
+            auto & subset = combs[ci];
+            const size_t kk = subset.size();
+
+            std::vector<std::vector<uint64_t>> proj(n_states);
+
+            for (size_t i = 0; i < n_states; i++)
+            {
+                size_t base = i * k;
+
+                proj[i].resize(kk);
+
+                for (size_t j = 0; j < kk; j++)
+                    proj[i][j] = jt.states[base + subset[j]];
+            }
+
+            std::vector<size_t> order(n_states);
+
+            for (size_t i = 0; i < n_states; i++)
+                order[i] = i;
+
+            std::sort(order.begin(), order.end(),
+            [&](size_t a, size_t b)
+            {
+                for (size_t j = 0; j < kk; j++)
+                {
+                    if (proj[a][j] < proj[b][j]) return true;
+                    if (proj[a][j] > proj[b][j]) return false;
+                }
+                return false;
+            });
+
+            PxGroup g;
+            g.state = proj[order[0]];
+            g.count = jt.counts[order[0]];
+            g.rows.push_back(order[0]);
+
+            for (size_t i = 1; i < n_states; i++)
+            {
+                bool same = true;
+
+                for (size_t j = 0; j < kk; j++)
+                    if (proj[order[i]][j] != g.state[j])
+                        same = false;
+
+                if (same)
+                {
+                    g.count += jt.counts[order[i]];
+                    g.rows.push_back(order[i]);
+                }
+                else
+                {
+                    px_groups[ci].push_back(g);
+
+                    g.state = proj[order[i]];
+                    g.count = jt.counts[order[i]];
+                    g.rows.clear();
+                    g.rows.push_back(order[i]);
+                }
+            }
+
+            px_groups[ci].push_back(g);
+        }
+    } 
+    else  
     {
-        auto & subset = combs[ci];
-        const size_t kk = subset.size();
+        RcppThread::parallelFor(0, n_combs, [&](size_t ci) {
+            auto & subset = combs[ci];
+            const size_t kk = subset.size();
 
-        std::vector<std::vector<uint64_t>> proj(n_states);
+            std::vector<std::vector<uint64_t>> proj(n_states);
 
-        for (size_t i = 0; i < n_states; i++)
-        {
-            size_t base = i * k;
-
-            proj[i].resize(kk);
-
-            for (size_t j = 0; j < kk; j++)
-                proj[i][j] = jt.states[base + subset[j]];
-        }
-
-        std::vector<size_t> order(n_states);
-
-        for (size_t i = 0; i < n_states; i++)
-            order[i] = i;
-
-        std::sort(order.begin(), order.end(),
-        [&](size_t a, size_t b)
-        {
-            for (size_t j = 0; j < kk; j++)
+            for (size_t i = 0; i < n_states; i++)
             {
-                if (proj[a][j] < proj[b][j]) return true;
-                if (proj[a][j] > proj[b][j]) return false;
+                size_t base = i * k;
+
+                proj[i].resize(kk);
+
+                for (size_t j = 0; j < kk; j++)
+                    proj[i][j] = jt.states[base + subset[j]];
             }
-            return false;
-        });
 
-        PxGroup g;
-        g.state = proj[order[0]];
-        g.count = jt.counts[order[0]];
-        g.rows.push_back(order[0]);
+            std::vector<size_t> order(n_states);
 
-        for (size_t i = 1; i < n_states; i++)
-        {
-            bool same = true;
+            for (size_t i = 0; i < n_states; i++)
+                order[i] = i;
 
-            for (size_t j = 0; j < kk; j++)
-                if (proj[order[i]][j] != g.state[j])
-                    same = false;
-
-            if (same)
+            std::sort(order.begin(), order.end(),
+            [&](size_t a, size_t b)
             {
-                g.count += jt.counts[order[i]];
-                g.rows.push_back(order[i]);
-            }
-            else
+                for (size_t j = 0; j < kk; j++)
+                {
+                    if (proj[a][j] < proj[b][j]) return true;
+                    if (proj[a][j] > proj[b][j]) return false;
+                }
+                return false;
+            });
+
+            PxGroup g;
+            g.state = proj[order[0]];
+            g.count = jt.counts[order[0]];
+            g.rows.push_back(order[0]);
+
+            for (size_t i = 1; i < n_states; i++)
             {
-                px_groups[ci].push_back(g);
+                bool same = true;
 
-                g.state = proj[order[i]];
-                g.count = jt.counts[order[i]];
-                g.rows.clear();
-                g.rows.push_back(order[i]);
+                for (size_t j = 0; j < kk; j++)
+                    if (proj[order[i]][j] != g.state[j])
+                        same = false;
+
+                if (same)
+                {
+                    g.count += jt.counts[order[i]];
+                    g.rows.push_back(order[i]);
+                }
+                else
+                {
+                    px_groups[ci].push_back(g);
+
+                    g.state = proj[order[i]];
+                    g.count = jt.counts[order[i]];
+                    g.rows.clear();
+                    g.rows.push_back(order[i]);
+                }
             }
-        }
 
-        px_groups[ci].push_back(g);
-    }
+            px_groups[ci].push_back(g);
+        }, threads);
+    } 
 
     /***********************************************************
      * Loop target states
@@ -291,37 +362,73 @@ inline SURDRes surd(
             static_cast<double>(s_counts[si]) / total_n;
 
         std::vector<double> I_s(n_combs , 0.0);
-
-        for (size_t ci = 0; ci < n_combs; ci++)
+        
+        if (threads <= 1)
         {
-            double sum = 0.0;
-
-            for (auto & g : px_groups[ci])
+            for (size_t ci = 0; ci < n_combs; ci++)
             {
-                size_t psx_count = 0;
+                double sum = 0.0;
 
-                for (auto r : g.rows)
-                    if (state_s_index[r] == si)
-                        psx_count += jt.counts[r];
+                for (auto & g : px_groups[ci])
+                {
+                    size_t psx_count = 0;
 
-                if (psx_count == 0)
-                    continue;
+                    for (auto r : g.rows)
+                        if (state_s_index[r] == si)
+                            psx_count += jt.counts[r];
 
-                double psx =
-                    static_cast<double>(psx_count) / total_n;
+                    if (psx_count == 0)
+                        continue;
 
-                double px =
-                    static_cast<double>(g.count) / total_n;
+                    double psx =
+                        static_cast<double>(psx_count) / total_n;
 
-                sum += psx * std::log(psx / (p_s * px));
+                    double px =
+                        static_cast<double>(g.count) / total_n;
+
+                    sum += psx * std::log(psx / (p_s * px));
+                }
+
+                double pointwise = sum / p_s / log_base;
+
+                I_s[ci] = pointwise;
+
+                // accumulate MI 
+                info[ci] += p_s * pointwise;
             }
+        }
+        else 
+        {
+            RcppThread::parallelFor(0, n_combs, [&](size_t ci) {
+                double sum = 0.0;
 
-            double pointwise = sum / p_s / log_base;
+                for (auto & g : px_groups[ci])
+                {
+                    size_t psx_count = 0;
 
-            I_s[ci] = pointwise;
+                    for (auto r : g.rows)
+                        if (state_s_index[r] == si)
+                            psx_count += jt.counts[r];
 
-            // accumulate MI 
-            info[ci] += p_s * pointwise;
+                    if (psx_count == 0)
+                        continue;
+
+                    double psx =
+                        static_cast<double>(psx_count) / total_n;
+
+                    double px =
+                        static_cast<double>(g.count) / total_n;
+
+                    sum += psx * std::log(psx / (p_s * px));
+                }
+
+                double pointwise = sum / p_s / log_base;
+
+                I_s[ci] = pointwise;
+
+                // accumulate MI 
+                info[ci] += p_s * pointwise;
+            }, threads);
         }
 
         /**************************************************
@@ -431,6 +538,8 @@ inline SURDRes surd(
                 prev = n.val;
         }
     }
+
+    SURDRes result;
 
     /**************************************************
      * Redundant + Unique
