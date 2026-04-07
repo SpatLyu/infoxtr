@@ -1127,72 +1127,111 @@ inline SURDRes surd_pointwise_ultra(
         /**************************************************
          * SURD decomposition
          **************************************************/
-        std::vector<size_t> order(n_combs);
+
+        struct Node
+        {
+            size_t idx;
+            size_t len;
+            double val;
+        };
+
+        std::vector<Node> nodes;
+        nodes.reserve(n_combs);
 
         for (size_t i = 0; i < n_combs; i++)
-            order[i] = i;
-
-        std::sort(order.begin(), order.end(),
-        [&](size_t a, size_t b)
         {
-            return I_s[a] < I_s[b];
+            Node n;
+            n.idx = i;
+            n.len = combs[i].size();
+            n.val = I_s[i];
+            nodes.push_back(n);
+        }
+
+        // sort once 
+        std::sort(nodes.begin(), nodes.end(),
+        [](const Node & a, const Node & b)
+        {
+            return a.val < b.val;
         });
 
+        // find max subset length 
         size_t max_len = 0;
 
-        for (auto & c : combs)
-            if (c.size() > max_len)
-                max_len = c.size();
+        for (auto & n : nodes)
+            if (n.len > max_len)
+                max_len = n.len;
+
+        /**************************************************
+         * SURD monotonic filter
+         **************************************************/
 
         for (size_t l = 1; l < max_len; l++)
         {
-            double Il1max = -1e300;
+            double Il1max = -std::numeric_limits<double>::infinity();
 
-            for (size_t i = 0; i < n_combs; i++)
-                if (combs[i].size() == l)
-                    if (I_s[i] > Il1max)
-                        Il1max = I_s[i];
+            for (auto & n : nodes)
+                if (n.len == l)
+                    if (n.val > Il1max)
+                        Il1max = n.val;
 
-            for (size_t i = 0; i < n_combs; i++)
-                if (combs[i].size() == l + 1)
-                    if (I_s[i] < Il1max)
-                        I_s[i] = 0.0;
+            for (auto & n : nodes)
+                if (n.len == l + 1)
+                    if (n.val < Il1max)
+                        n.val = 0.0;
         }
+
+        /**************************************************
+         * SURD information layers
+         **************************************************/
 
         double prev = 0.0;
 
-        for (size_t oi = 0; oi < n_combs; oi++)
+        std::vector<size_t> red_vars;
+
+        for (size_t v = 1; v <= n_sources; v++)
+            red_vars.push_back(v);
+
+        for (auto & n : nodes)
         {
-            size_t idx = order[oi];
-
-            double cur = I_s[idx];
-
-            double delta = cur - prev;
+            double delta = n.val - prev;
 
             if (delta < 0)
                 delta = 0;
 
-            info[idx] += delta * p_s;
+            double info_add = delta * p_s;
 
-            if (cur > prev)
-                prev = cur;
+            const auto & subset = combs[n.idx];
+
+            if (subset.size() == 1)
+            {
+                // redundant information
+                result.redundant_vars.push_back(red_vars);
+                result.redundant_vals.push_back(info_add);
+
+                auto it = std::find(
+                    red_vars.begin(),
+                    red_vars.end(),
+                    subset[0]);
+
+                if (it != red_vars.end())
+                    red_vars.erase(it);
+            }
+            else
+            {
+                // synergy information
+                result.synergy_vars.push_back(subset);
+                result.synergy_vals.push_back(info_add);
+            }
+
+            if (n.val > prev)
+                prev = n.val;
         }
     }
 
-    /***********************************************************
-     * Store results
-     ***********************************************************/
     for (size_t i = 0; i < n_combs; i++)
     {
-        result.values.push_back(info[i]);
-
-        size_t kk = combs[i].size();
-
-        if (kk == 1) result.types.push_back(0);
-        else if (kk == 2) result.types.push_back(1);
-        else result.types.push_back(2);
-
-        result.var_indices.push_back(combs[i]);
+        result.mi_vars.push_back(combs[i]);
+        result.mi_vals.push_back(info[i]);
     }
 
     return result;
