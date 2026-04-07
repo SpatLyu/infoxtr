@@ -99,6 +99,10 @@ namespace surd
         double info_leak;
     };
 
+    /***************************************************************
+     * Synergistic-Unique-Redundant Decomposition for Discrete Data
+     ***************************************************************/
+
 inline SURDRes surd(
     const DiscMat& mat,
     size_t max_order = std::numeric_limits<size_t>::max(),
@@ -932,96 +936,6 @@ inline SURDRes surd(
 
 //     return result;
 // }
-
-    /***************************************************************
-     * Synergistic-Unique-Redundant Decomposition for Discrete Data
-     ***************************************************************/
-    inline SURDRes surd(
-        const DiscMat& mat,
-        size_t max_order = std::numeric_limits<size_t>::max(),
-        size_t threads = 1,
-        double base = 2.0,
-        bool normalize = false)
-    {
-        if (threads == 0) threads = 1;
-        size_t hw = std::thread::hardware_concurrency();
-        if (hw > 0) threads = std::min(threads, hw);
-
-        if (mat.size() < 2)
-            throw std::invalid_argument("[SURD] SURD needs >2 variables");
-
-        const size_t n_sources = mat.size() - 1;
-        max_order = std::min(max_order, n_sources);
-
-        // Construct variable combination vector
-        std::vector<size_t> ag_idx(n_sources);
-        std::iota(ag_idx.begin(), ag_idx.end(), 1);
-        const std::vector<std::vector<size_t>> combs =
-            infoxtr::combn::genSubsets(ag_idx, max_order);
-
-        // Compute joint entropies
-        std::vector<double> H_sources(combs.size(), 
-                                      std::numeric_limits<double>::quiet_NaN());
-        std::vector<double> H_joints(combs.size(), 
-                                     std::numeric_limits<double>::quiet_NaN());
-        double H_target = infoxtr::infotheo::je(mat, {0}, base, true);
-
-        if (threads <= 1) 
-        {   
-            for (size_t i = 0; i < combs.size(); ++i)
-            {   
-                std::vector<size_t> joint_idx = {0};
-                joint_idx.insert(joint_idx.end(), combs[i].begin(), combs[i].end());
-                H_sources[i] = infoxtr::infotheo::je(mat, combs[i], base, true);
-                H_joints[i] = infoxtr::infotheo::je(mat, joint_idx, base, true);
-            }
-        } 
-        else 
-        {
-            RcppThread::parallelFor(0, combs.size(), [&](size_t i) {
-                std::vector<size_t> joint_idx = {0};
-                joint_idx.insert(joint_idx.end(), combs[i].begin(), combs[i].end());
-                H_sources[i] = infoxtr::infotheo::je(mat, combs[i], base, true);
-                H_joints[i] = infoxtr::infotheo::je(mat, joint_idx, base, true);
-            }, threads);
-        }
-
-        // Compute mutual information
-        std::vector<double> mi_combs(combs.size(), 
-                                     std::numeric_limits<double>::quiet_NaN());
-        
-        for (size_t i = 0; i < combs.size(); ++i)
-        {   
-            mi_combs[i] = H_target + H_sources[i] - H_joints[i];
-        }
-        
-        // Decompose mutual information
-        SURDRes result = mutualinfo_decomposition(combs, mi_combs, normalize);
-
-        // Information loss
-        double leak = 0.0;
-        if (!infoxtr::numericutils::doubleNearlyEqual(H_target, 0.0))
-        {
-            if (max_order < n_sources) 
-            {
-                std::vector<size_t> joint_idx = {0};
-                joint_idx.insert(joint_idx.end(), ag_idx.begin(), ag_idx.end());
-                leak = (infoxtr::infotheo::je(mat, joint_idx, base, true) - 
-                        infoxtr::infotheo::je(mat, ag_idx, base, true)) / H_target;
-            }
-            else 
-            {   
-                leak = (H_joints.back() - H_sources.back()) / H_target;
-            }
-        }
-        leak = std::max(0.0, std::min(1.0, leak));
-
-        result.values.push_back(leak);
-        result.types.push_back(3);
-        result.var_indices.push_back(ag_idx);
-
-        return result;
-    }
     
 } // namespace surd
 
