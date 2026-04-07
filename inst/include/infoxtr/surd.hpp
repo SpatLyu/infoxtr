@@ -125,25 +125,31 @@ inline SURDRes surd(
     const double log_base = std::log(base);
 
     /***********************************************************
-     * Generate subsets
+     * Construct variable combination vector
      ***********************************************************/
-    std::vector<std::vector<size_t>> combs;
+    std::vector<size_t> ag_idx(n_sources);
+    std::iota(ag_idx.begin(), ag_idx.end(), 1);
 
-    for (size_t mask = 1; mask < (1ULL << n_sources); mask++)
-    {
-        std::vector<size_t> subset;
+    const std::vector<std::vector<size_t>> combs =
+        infoxtr::combn::genSubsets(ag_idx, max_order);
 
-        for (size_t j = 0; j < n_sources; j++)
-            if (mask & (1ULL << j))
-                subset.push_back(j + 1);
+    // std::vector<std::vector<size_t>> combs;
 
-        if (subset.size() <= max_order)
-            combs.push_back(subset);
-    }
+    // for (size_t mask = 1; mask < (1ULL << n_sources); mask++)
+    // {
+    //     std::vector<size_t> subset;
+
+    //     for (size_t j = 0; j < n_sources; j++)
+    //         if (mask & (1ULL << j))
+    //             subset.push_back(j + 1);
+
+    //     if (subset.size() <= max_order)
+    //         combs.push_back(subset);
+    // }
 
     const size_t n_combs = combs.size();
     
-    // Initinalize containers for result
+    // Initialize containers for result
     std::vector<double> info(n_combs , 0.0);
     std::vector<double> I_unique(n_sources , 0.0);
     std::vector<std::vector<size_t>> unique_vars(n_sources);
@@ -583,8 +589,6 @@ inline SURDRes surd(
 
     // Information leak
     double H_target = infoxtr::infotheo::je(mat, {0}, base, false);
-    std::vector<size_t> ag_idx(n_sources);
-    std::iota(ag_idx.begin(), ag_idx.end(), 1);
     double leak = infoxtr::infotheo::ce(mat, {0}, ag_idx, base, false) / H_target;
     result.info_leak = std::max(0.0, std::min(1.0, leak));
 
