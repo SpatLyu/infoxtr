@@ -1,2 +1,5 @@
+# Suppress GCC false positives from STL copy/memmove
+# seen on GCC 13/14 during CRAN checks
+PKG_CXXFLAGS += -Wno-stringop-overflow -Wno-array-bounds
 PKG_CPPFLAGS = -I../inst/include
 PKG_LIBS = `"$(R_HOME)/bin/Rscript" -e "RcppThread::LdFlags()"`
