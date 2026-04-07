@@ -457,7 +457,7 @@ inline SURDRes surd(
     }
 
     /**************************************************
-     * Redundant (derived from MI)
+     * Redundant
      **************************************************/
 
     for (size_t i = 0; i < n_combs; i++)
