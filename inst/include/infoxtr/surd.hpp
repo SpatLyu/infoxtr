@@ -641,6 +641,404 @@ inline SURDRes surd_pointwise(
     return result;
 }
 
+inline SURDRes surd_pointwise_fast(
+    const DiscMat& mat,
+    size_t max_order = std::numeric_limits<size_t>::max(),
+    size_t threads = 1,
+    double base = 2.0,
+    bool normalize = false)
+{
+    SURDRes result;
+
+    if (mat.size() < 2)
+        throw std::invalid_argument("SURD requires >=2 variables");
+
+    const size_t n_vars    = mat.size();
+    const size_t n_sources = n_vars - 1;
+
+    max_order = std::min(max_order , n_sources);
+
+    const double log_base = std::log(base);
+
+    /***********************************************************
+     * Generate subsets
+     ***********************************************************/
+    std::vector<std::vector<size_t>> combs;
+
+    for (size_t mask = 1; mask < (1ULL << n_sources); mask++)
+    {
+        std::vector<size_t> subset;
+
+        for (size_t j = 0; j < n_sources; j++)
+            if (mask & (1ULL << j))
+                subset.push_back(j + 1);
+
+        if (subset.size() <= max_order)
+            combs.push_back(subset);
+    }
+
+    const size_t n_combs = combs.size();
+
+    std::vector<double> info(n_combs , 0.0);
+
+    /*********************************************************************
+     * Joint table
+     *********************************************************************/
+    infoxtr::infotheo::JointTable jt = infoxtr::infotheo::joint_table(mat);
+
+    const size_t k        = jt.k;
+    const size_t n_states = jt.counts.size();
+
+    size_t total_n = 0;
+    for (auto c : jt.counts)
+        total_n += c;
+
+    /***********************************************************
+     * Target states
+     ***********************************************************/
+    std::vector<uint64_t> s_vals;
+    std::vector<size_t>   s_counts;
+
+    for (size_t i = 0; i < n_states; i++)
+    {
+        uint64_t s = jt.states[i * k];
+
+        auto it = std::find(s_vals.begin(), s_vals.end(), s);
+
+        if (it == s_vals.end())
+        {
+            s_vals.push_back(s);
+            s_counts.push_back(jt.counts[i]);
+        }
+        else
+        {
+            size_t idx = it - s_vals.begin();
+            s_counts[idx] += jt.counts[i];
+        }
+    }
+
+    const size_t n_s = s_vals.size();
+
+    /***********************************************************
+     * state -> s index
+     ***********************************************************/
+    std::vector<size_t> state_s_index(n_states);
+
+    for (size_t i = 0; i < n_states; i++)
+    {
+        uint64_t s = jt.states[i * k];
+
+        for (size_t j = 0; j < n_s; j++)
+            if (s_vals[j] == s)
+                state_s_index[i] = j;
+    }
+
+    /***********************************************************
+     * Precompute projections and px
+     ***********************************************************/
+    std::vector<std::vector<uint64_t>> proj_all(n_combs);
+    std::vector<std::vector<uint64_t>> px_states_all(n_combs);
+    std::vector<std::vector<size_t>>   px_counts_all(n_combs);
+
+    for (size_t ci = 0; ci < n_combs; ci++)
+    {
+        auto & subset = combs[ci];
+
+        const size_t kk = subset.size();
+
+        auto & proj = proj_all[ci];
+        proj.reserve(n_states * kk);
+
+        for (size_t i = 0; i < n_states; i++)
+        {
+            size_t base = i * k;
+
+            for (auto v : subset)
+                proj.push_back(jt.states[base + v]);
+        }
+
+        std::vector<size_t> order(n_states);
+
+        for (size_t i = 0; i < n_states; i++)
+            order[i] = i;
+
+        std::sort(order.begin(), order.end(),
+        [&](size_t a, size_t b)
+        {
+            size_t ia = a * kk;
+            size_t ib = b * kk;
+
+            for (size_t j = 0; j < kk; j++)
+            {
+                uint64_t va = proj[ia + j];
+                uint64_t vb = proj[ib + j];
+
+                if (va < vb) return true;
+                if (va > vb) return false;
+            }
+
+            return false;
+        });
+
+        auto equal = [&](size_t a, size_t b)
+        {
+            size_t ia = a * kk;
+            size_t ib = b * kk;
+
+            for (size_t j = 0; j < kk; j++)
+                if (proj[ia + j] != proj[ib + j])
+                    return false;
+
+            return true;
+        };
+
+        auto & px_states = px_states_all[ci];
+        auto & px_counts = px_counts_all[ci];
+
+        size_t run = jt.counts[order[0]];
+
+        for (size_t i = 1; i < n_states; i++)
+        {
+            if (equal(order[i], order[i - 1]))
+            {
+                run += jt.counts[order[i]];
+            }
+            else
+            {
+                size_t idx = order[i - 1] * kk;
+
+                for (size_t j = 0; j < kk; j++)
+                    px_states.push_back(proj[idx + j]);
+
+                px_counts.push_back(run);
+
+                run = jt.counts[order[i]];
+            }
+        }
+
+        size_t idx_last = order.back() * kk;
+
+        for (size_t j = 0; j < kk; j++)
+            px_states.push_back(proj[idx_last + j]);
+
+        px_counts.push_back(run);
+    }
+
+    /***********************************************************
+     * Loop target states
+     ***********************************************************/
+    for (size_t si = 0; si < n_s; si++)
+    {
+        const double p_s =
+            static_cast<double>(s_counts[si]) / total_n;
+
+        std::vector<double> I_s(n_combs , 0.0);
+
+        for (size_t ci = 0; ci < n_combs; ci++)
+        {
+            const auto & subset = combs[ci];
+            const size_t kk = subset.size();
+
+            const auto & proj = proj_all[ci];
+            const auto & px_states = px_states_all[ci];
+            const auto & px_counts = px_counts_all[ci];
+
+            std::vector<uint64_t> proj_s;
+            std::vector<size_t>   weight_s;
+
+            for (size_t i = 0; i < n_states; i++)
+            {
+                if (state_s_index[i] != si)
+                    continue;
+
+                size_t base = i * kk;
+
+                for (size_t j = 0; j < kk; j++)
+                    proj_s.push_back(proj[base + j]);
+
+                weight_s.push_back(jt.counts[i]);
+            }
+
+            if (proj_s.empty())
+                continue;
+
+            const size_t ns = weight_s.size();
+
+            std::vector<size_t> order(ns);
+
+            for (size_t i = 0; i < ns; i++)
+                order[i] = i;
+
+            std::sort(order.begin(), order.end(),
+            [&](size_t a, size_t b)
+            {
+                size_t ia = a * kk;
+                size_t ib = b * kk;
+
+                for (size_t j = 0; j < kk; j++)
+                {
+                    uint64_t va = proj_s[ia + j];
+                    uint64_t vb = proj_s[ib + j];
+
+                    if (va < vb) return true;
+                    if (va > vb) return false;
+                }
+
+                return false;
+            });
+
+            auto equal = [&](size_t a, size_t b)
+            {
+                size_t ia = a * kk;
+                size_t ib = b * kk;
+
+                for (size_t j = 0; j < kk; j++)
+                    if (proj_s[ia + j] != proj_s[ib + j])
+                        return false;
+
+                return true;
+            };
+
+            std::vector<uint64_t> psx_states;
+            std::vector<size_t>   psx_counts;
+
+            size_t run = weight_s[order[0]];
+
+            for (size_t i = 1; i < ns; i++)
+            {
+                if (equal(order[i], order[i - 1]))
+                {
+                    run += weight_s[order[i]];
+                }
+                else
+                {
+                    size_t idx = order[i - 1] * kk;
+
+                    for (size_t j = 0; j < kk; j++)
+                        psx_states.push_back(proj_s[idx + j]);
+
+                    psx_counts.push_back(run);
+
+                    run = weight_s[order[i]];
+                }
+            }
+
+            size_t idx = order.back() * kk;
+
+            for (size_t j = 0; j < kk; j++)
+                psx_states.push_back(proj_s[idx + j]);
+
+            psx_counts.push_back(run);
+
+            double sum = 0.0;
+
+            for (size_t i = 0; i < psx_counts.size(); i++)
+            {
+                double psx =
+                    static_cast<double>(psx_counts[i]) / total_n;
+
+                size_t base = i * kk;
+
+                for (size_t j = 0; j < px_counts.size(); j++)
+                {
+                    bool match = true;
+
+                    for (size_t t = 0; t < kk; t++)
+                        if (px_states[j * kk + t] != psx_states[base + t])
+                            match = false;
+
+                    if (match)
+                    {
+                        double px =
+                            static_cast<double>(px_counts[j]) / total_n;
+
+                        sum += psx *
+                               std::log(psx / (p_s * px));
+
+                        break;
+                    }
+                }
+            }
+
+            double pointwise = sum / p_s / log_base;
+
+            I_s[ci] = pointwise;
+        }
+
+        /**************************************************
+         * SURD decomposition
+         **************************************************/
+        std::vector<size_t> order(n_combs);
+
+        for (size_t i = 0; i < n_combs; i++)
+            order[i] = i;
+
+        std::sort(order.begin(), order.end(),
+        [&](size_t a, size_t b)
+        {
+            return I_s[a] < I_s[b];
+        });
+
+        size_t max_len = 0;
+
+        for (auto & c : combs)
+            if (c.size() > max_len)
+                max_len = c.size();
+
+        for (size_t l = 1; l < max_len; l++)
+        {
+            double Il1max = -1e300;
+
+            for (size_t i = 0; i < n_combs; i++)
+                if (combs[i].size() == l)
+                    if (I_s[i] > Il1max)
+                        Il1max = I_s[i];
+
+            for (size_t i = 0; i < n_combs; i++)
+                if (combs[i].size() == l + 1)
+                    if (I_s[i] < Il1max)
+                        I_s[i] = 0.0;
+        }
+
+        double prev = 0.0;
+
+        for (size_t oi = 0; oi < n_combs; oi++)
+        {
+            size_t idx = order[oi];
+
+            double cur = I_s[idx];
+
+            double delta = cur - prev;
+
+            if (delta < 0)
+                delta = 0;
+
+            info[idx] += delta * p_s;
+
+            if (cur > prev)
+                prev = cur;
+        }
+    }
+
+    /***********************************************************
+     * Store results
+     ***********************************************************/
+    for (size_t i = 0; i < n_combs; i++)
+    {
+        result.values.push_back(info[i]);
+
+        size_t kk = combs[i].size();
+
+        if (kk == 1) result.types.push_back(0);
+        else if (kk == 2) result.types.push_back(1);
+        else result.types.push_back(2);
+
+        result.var_indices.push_back(combs[i]);
+    }
+
+    return result;
+}
+
     /***************************************************************
      * Synergistic-Unique-Redundant Decomposition for Discrete Data
      ***************************************************************/
