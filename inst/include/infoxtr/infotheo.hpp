@@ -65,7 +65,7 @@ namespace infotheo
         size_t k;                       // number of variables
     };
 
-    inline JointTable joint_table(const DiscMat& mat)
+    inline JointTable joint_table(const Matrix& mat)
     {
         JointTable jt;
 
