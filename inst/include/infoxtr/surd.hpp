@@ -282,10 +282,10 @@ namespace surd
 
         std::vector<double> info(n_combs, 0.0);
 
-        /***********************************************************
+        /*********************************************************************
          * Joint table
-         ***********************************************************/
-        JointTable jt = joint_table(mat);
+         *********************************************************************/
+        infoxtr::nfotheo::JointTable jt = infoxtr::nfotheo::joint_table(mat);
 
         const size_t k        = jt.k;
         const size_t n_states = jt.counts.size();
