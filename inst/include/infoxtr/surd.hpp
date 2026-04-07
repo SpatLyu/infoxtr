@@ -145,7 +145,6 @@ inline SURDRes surd(
     for (size_t i = 0; i < n_sources; i++)
         unique_vars[i] = {i + 1};
 
-    std::vector<double> I_R(n_combs , 0.0);
     std::vector<double> I_S(n_combs , 0.0);
 
     /***********************************************************
@@ -316,10 +315,6 @@ inline SURDRes surd(
 
             I_s[ci] = pointwise;
 
-            double pointwise = sum / p_s / log_base;
-
-            I_s[ci] = pointwise;
-
             // accumulate MI 
             info[ci] += p_s * pointwise;
         }
@@ -386,11 +381,6 @@ inline SURDRes surd(
 
         double prev = 0.0;
 
-        std::vector<size_t> red_vars;
-
-        for (size_t v = 1; v <= n_sources; v++)
-            red_vars.push_back(v);
-
         for (auto & n : nodes)
         {
             double delta = n.val - prev;
@@ -407,14 +397,6 @@ inline SURDRes surd(
                 size_t vid = subset[0] - 1;
 
                 I_unique[vid] += info_add;
-
-                auto it = std::find(
-                    red_vars.begin(),
-                    red_vars.end(),
-                    subset[0]);
-
-                if (it != red_vars.end())
-                    red_vars.erase(it);
             }
             else
             {
@@ -501,6 +483,33 @@ inline SURDRes surd(
     std::iota(ag_idx.begin(), ag_idx.end(), 1);
     double leak = infoxtr::infotheo::ce(mat, {0}, ag_idx, base, false) / H_target;
     result.info_leak = std::max(0.0, std::min(1.0, leak));
+
+    /***********************************************************
+     * Normalize (optional)
+     ***********************************************************/
+    if (normalize)
+    {
+        double max_mi = 0.0;
+
+        for (double v : result.mi_vals)
+            if (v > max_mi)
+                max_mi = v;
+
+        if (max_mi <= 0.0)
+            max_mi = 1.0;
+
+        for (auto & v : result.unique_vals)
+            v /= max_mi;
+
+        for (auto & v : result.redundant_vals)
+            v /= max_mi;
+
+        for (auto & v : result.synergy_vals)
+            v /= max_mi;
+
+        // for (auto & v : result.mi_vals)
+        //     v /= max_mi;
+    }
 
     return result;
 }
