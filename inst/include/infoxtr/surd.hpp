@@ -285,7 +285,7 @@ namespace surd
         /*********************************************************************
          * Joint table
          *********************************************************************/
-        infoxtr::nfotheo::JointTable jt = infoxtr::nfotheo::joint_table(mat);
+        infoxtr::infotheo::JointTable jt = infoxtr::infotheo::joint_table(mat);
 
         const size_t k        = jt.k;
         const size_t n_states = jt.counts.size();
