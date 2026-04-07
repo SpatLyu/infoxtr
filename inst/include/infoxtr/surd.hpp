@@ -148,7 +148,8 @@ inline SURDRes surd(
 
     for (size_t i = 0; i < n_sources; i++)
         unique_vars[i] = {i + 1};
-
+    
+    std::vector<double> I_R(n_combs , 0.0);
     std::vector<double> I_S(n_combs , 0.0);
 
     /***********************************************************
@@ -383,6 +384,10 @@ inline SURDRes surd(
          * SURD information layers
          **************************************************/
 
+        std::vector<size_t> red_vars(n_sources);
+        for(size_t i = 0; i < n_sources; i++)
+            red_vars[i] = i+1;
+
         double prev = 0.0;
 
         for (auto & n : nodes)
@@ -398,35 +403,29 @@ inline SURDRes surd(
 
             if (subset.size() == 1)
             {
-                size_t vid = subset[0] - 1;
+                // redundant information
+                for (size_t ri = 0; ri < n_combs; ri++)
+                {
+                    if (combs[ri] == red_vars)
+                    {
+                        I_R[ri] += info_add;
+                        break;
+                    }
+                }
 
-                I_unique[vid] += info_add;
+                auto it = std::find(
+                    red_vars.begin(),
+                    red_vars.end(),
+                    subset[0]);
+
+                if (it != red_vars.end())
+                    red_vars.erase(it);
             }
             else
             {
+                // synergy information
                 I_S[n.idx] += info_add;
             }
-
-            // if (subset.size() == 1)
-            // {
-            //     // redundant information
-            //     result.redundant_vars.push_back(red_vars);
-            //     result.redundant_vals.push_back(info_add);
-
-            //     auto it = std::find(
-            //         red_vars.begin(),
-            //         red_vars.end(),
-            //         subset[0]);
-
-            //     if (it != red_vars.end())
-            //         red_vars.erase(it);
-            // }
-            // else
-            // {
-            //     // synergy information
-            //     result.synergy_vars.push_back(subset);
-            //     result.synergy_vals.push_back(info_add);
-            // }
 
             if (n.val > prev)
                 prev = n.val;
@@ -434,13 +433,24 @@ inline SURDRes surd(
     }
 
     /**************************************************
-     * Unique
+     * Redundant + Unique
      **************************************************/
 
-    for (size_t i = 0; i < n_sources; i++)
+    for (size_t i = 0; i < n_combs; i++)
     {
-        result.unique_vars.push_back(unique_vars[i]);
-        result.unique_vals.push_back(I_unique[i]);
+        if (I_R[i] > 0)
+        {
+            if (combs[i].size() == 1)
+            {
+                result.unique_vars.push_back(combs[i]);
+                result.unique_vals.push_back(I_R[i]);
+            }
+            else
+            {
+                result.redundant_vars.push_back(combs[i]);
+                result.redundant_vals.push_back(I_R[i]);
+            }
+        }
     }
 
     /**************************************************
@@ -453,25 +463,6 @@ inline SURDRes surd(
         {
             result.synergy_vars.push_back(combs[i]);
             result.synergy_vals.push_back(I_S[i]);
-        }
-    }
-
-    /**************************************************
-     * Redundant
-     **************************************************/
-
-    for (size_t i = 0; i < n_combs; i++)
-    {
-        if (combs[i].size() > 1)
-        {
-            double red =
-                info[i] - I_S[i];
-
-            if (red > 0)
-            {
-                result.redundant_vars.push_back(combs[i]);
-                result.redundant_vals.push_back(red);
-            }
         }
     }
 
