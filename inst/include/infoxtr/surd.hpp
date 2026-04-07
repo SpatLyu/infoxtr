@@ -531,6 +531,11 @@ inline SURDRes surd(
     }
 
     SURDRes result;
+    
+    result.unique_vars.reserve(n_sources);
+    result.redundant_vars.reserve(n_combs);
+    result.synergy_vars.reserve(n_combs);
+    result.mi_vars.reserve(n_combs);
 
     /**************************************************
      * Redundant + Unique
@@ -542,13 +547,13 @@ inline SURDRes surd(
         {
             if (combs[i].size() == 1)
             {
-                result.unique_vars.push_back(combs[i]);
-                result.unique_vals.push_back(I_R[i]);
+                result.unique_vars.emplace_back(combs[i]);
+                result.unique_vals.emplace_back(I_R[i]);
             }
             else
             {
-                result.redundant_vars.push_back(combs[i]);
-                result.redundant_vals.push_back(I_R[i]);
+                result.redundant_vars.emplace_back(combs[i]);
+                result.redundant_vals.emplace_back(I_R[i]);
             }
         }
     }
@@ -561,15 +566,15 @@ inline SURDRes surd(
     {
         if (combs[i].size() > 1 && I_S[i] > 0)
         {
-            result.synergy_vars.push_back(combs[i]);
-            result.synergy_vals.push_back(I_S[i]);
+            result.synergy_vars.emplace_back(combs[i]);
+            result.synergy_vals.emplace_back(I_S[i]);
         }
     }
 
     for (size_t i = 0; i < n_combs; i++)
     {
-        result.mi_vars.push_back(combs[i]);
-        result.mi_vals.push_back(info[i]);
+        result.mi_vars.emplace_back(combs[i]);
+        result.mi_vals.emplace_back(info[i]);
     }
 
     // Information leak
