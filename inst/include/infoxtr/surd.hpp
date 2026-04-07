@@ -99,6 +99,335 @@ namespace surd
         double info_leak;
     };
 
+inline SURDRes surd(
+    const DiscMat& mat,
+    size_t max_order = std::numeric_limits<size_t>::max(),
+    size_t threads = 1,
+    double base = 2.0,
+    bool normalize = false)
+{
+    SURDRes result;
+
+    if (mat.size() < 2)
+        throw std::invalid_argument("SURD requires >=2 variables");
+
+    const size_t n_vars    = mat.size();
+    const size_t n_sources = n_vars - 1;
+
+    max_order = std::min(max_order , n_sources);
+
+    const double log_base = std::log(base);
+
+    /***********************************************************
+     * Generate subsets
+     ***********************************************************/
+    std::vector<std::vector<size_t>> combs;
+
+    for (size_t mask = 1; mask < (1ULL << n_sources); mask++)
+    {
+        std::vector<size_t> subset;
+
+        for (size_t j = 0; j < n_sources; j++)
+            if (mask & (1ULL << j))
+                subset.push_back(j + 1);
+
+        if (subset.size() <= max_order)
+            combs.push_back(subset);
+    }
+
+    const size_t n_combs = combs.size();
+
+    std::vector<double> info(n_combs , 0.0);
+
+    /***********************************************************
+     * Joint table
+     ***********************************************************/
+    infoxtr::infotheo::JointTable jt =
+        infoxtr::infotheo::joint_table(mat);
+
+    const size_t k        = jt.k;
+    const size_t n_states = jt.counts.size();
+
+    size_t total_n = 0;
+    for (auto c : jt.counts)
+        total_n += c;
+
+    /***********************************************************
+     * Target states
+     ***********************************************************/
+    std::vector<uint64_t> s_vals;
+    std::vector<size_t>   s_counts;
+
+    for (size_t i = 0; i < n_states; i++)
+    {
+        uint64_t s = jt.states[i * k];
+
+        auto it = std::find(s_vals.begin(), s_vals.end(), s);
+
+        if (it == s_vals.end())
+        {
+            s_vals.push_back(s);
+            s_counts.push_back(jt.counts[i]);
+        }
+        else
+        {
+            size_t idx = it - s_vals.begin();
+            s_counts[idx] += jt.counts[i];
+        }
+    }
+
+    const size_t n_s = s_vals.size();
+
+    /***********************************************************
+     * state -> s index
+     ***********************************************************/
+    std::vector<size_t> state_s_index(n_states);
+
+    for (size_t i = 0; i < n_states; i++)
+    {
+        uint64_t s = jt.states[i * k];
+
+        for (size_t j = 0; j < n_s; j++)
+            if (s_vals[j] == s)
+                state_s_index[i] = j;
+    }
+
+    /***********************************************************
+     * Precompute projection + px groups
+     ***********************************************************/
+    struct PxGroup
+    {
+        std::vector<uint64_t> state;
+        size_t count = 0;
+        std::vector<size_t> rows;
+    };
+
+    std::vector<std::vector<PxGroup>> px_groups(n_combs);
+
+    for (size_t ci = 0; ci < n_combs; ci++)
+    {
+        auto & subset = combs[ci];
+        const size_t kk = subset.size();
+
+        std::vector<std::vector<uint64_t>> proj(n_states);
+
+        for (size_t i = 0; i < n_states; i++)
+        {
+            size_t base = i * k;
+
+            proj[i].resize(kk);
+
+            for (size_t j = 0; j < kk; j++)
+                proj[i][j] = jt.states[base + subset[j]];
+        }
+
+        std::vector<size_t> order(n_states);
+
+        for (size_t i = 0; i < n_states; i++)
+            order[i] = i;
+
+        std::sort(order.begin(), order.end(),
+        [&](size_t a, size_t b)
+        {
+            for (size_t j = 0; j < kk; j++)
+            {
+                if (proj[a][j] < proj[b][j]) return true;
+                if (proj[a][j] > proj[b][j]) return false;
+            }
+            return false;
+        });
+
+        PxGroup g;
+        g.state = proj[order[0]];
+        g.count = jt.counts[order[0]];
+        g.rows.push_back(order[0]);
+
+        for (size_t i = 1; i < n_states; i++)
+        {
+            bool same = true;
+
+            for (size_t j = 0; j < kk; j++)
+                if (proj[order[i]][j] != g.state[j])
+                    same = false;
+
+            if (same)
+            {
+                g.count += jt.counts[order[i]];
+                g.rows.push_back(order[i]);
+            }
+            else
+            {
+                px_groups[ci].push_back(g);
+
+                g.state = proj[order[i]];
+                g.count = jt.counts[order[i]];
+                g.rows.clear();
+                g.rows.push_back(order[i]);
+            }
+        }
+
+        px_groups[ci].push_back(g);
+    }
+
+    /***********************************************************
+     * Loop target states
+     ***********************************************************/
+    for (size_t si = 0; si < n_s; si++)
+    {
+        double p_s =
+            static_cast<double>(s_counts[si]) / total_n;
+
+        std::vector<double> I_s(n_combs , 0.0);
+
+        for (size_t ci = 0; ci < n_combs; ci++)
+        {
+            double sum = 0.0;
+
+            for (auto & g : px_groups[ci])
+            {
+                size_t psx_count = 0;
+
+                for (auto r : g.rows)
+                    if (state_s_index[r] == si)
+                        psx_count += jt.counts[r];
+
+                if (psx_count == 0)
+                    continue;
+
+                double psx =
+                    static_cast<double>(psx_count) / total_n;
+
+                double px =
+                    static_cast<double>(g.count) / total_n;
+
+                sum += psx * std::log(psx / (p_s * px));
+            }
+
+            double pointwise = sum / p_s / log_base;
+
+            I_s[ci] = pointwise;
+        }
+
+        /**************************************************
+         * SURD decomposition
+         **************************************************/
+
+        struct Node
+        {
+            size_t idx;
+            size_t len;
+            double val;
+        };
+
+        std::vector<Node> nodes;
+        nodes.reserve(n_combs);
+
+        for (size_t i = 0; i < n_combs; i++)
+        {
+            Node n;
+            n.idx = i;
+            n.len = combs[i].size();
+            n.val = I_s[i];
+            nodes.push_back(n);
+        }
+
+        // sort once 
+        std::sort(nodes.begin(), nodes.end(),
+        [](const Node & a, const Node & b)
+        {
+            return a.val < b.val;
+        });
+
+        // find max subset length 
+        size_t max_len = 0;
+
+        for (auto & n : nodes)
+            if (n.len > max_len)
+                max_len = n.len;
+
+        /**************************************************
+         * SURD monotonic filter
+         **************************************************/
+
+        for (size_t l = 1; l < max_len; l++)
+        {
+            double Il1max = -std::numeric_limits<double>::infinity();
+
+            for (auto & n : nodes)
+                if (n.len == l)
+                    if (n.val > Il1max)
+                        Il1max = n.val;
+
+            for (auto & n : nodes)
+                if (n.len == l + 1)
+                    if (n.val < Il1max)
+                        n.val = 0.0;
+        }
+
+        /**************************************************
+         * SURD information layers
+         **************************************************/
+
+        double prev = 0.0;
+
+        std::vector<size_t> red_vars;
+
+        for (size_t v = 1; v <= n_sources; v++)
+            red_vars.push_back(v);
+
+        for (auto & n : nodes)
+        {
+            double delta = n.val - prev;
+
+            if (delta < 0)
+                delta = 0;
+
+            double info_add = delta * p_s;
+
+            const auto & subset = combs[n.idx];
+
+            if (subset.size() == 1)
+            {
+                // redundant information
+                result.redundant_vars.push_back(red_vars);
+                result.redundant_vals.push_back(info_add);
+
+                auto it = std::find(
+                    red_vars.begin(),
+                    red_vars.end(),
+                    subset[0]);
+
+                if (it != red_vars.end())
+                    red_vars.erase(it);
+            }
+            else
+            {
+                // synergy information
+                result.synergy_vars.push_back(subset);
+                result.synergy_vals.push_back(info_add);
+            }
+
+            if (n.val > prev)
+                prev = n.val;
+        }
+    }
+
+    for (size_t i = 0; i < n_combs; i++)
+    {
+        result.mi_vars.push_back(combs[i]);
+        result.mi_vals.push_back(info[i]);
+    }
+
+    // Information leak
+    double H_target = infoxtr::infotheo::je(mat, {0}, base, false);
+    std::vector<size_t> ag_idx(n_sources);
+    std::iota(ag_idx.begin(), ag_idx.end(), 1);
+    double leak = infoxtr::infotheo::ce(mat, {0}, ag_idx, base, false) / H_target;
+    result.info_leak = std::max(0.0, std::min(1.0, leak));
+
+    return result;
+}
+
 // inline SURDRes surd_pointwise_fast(
 //     const DiscMat& mat,
 //     size_t max_order = std::numeric_limits<size_t>::max(),
@@ -517,335 +846,6 @@ namespace surd
 
 //     return result;
 // }
-
-inline SURDRes surd(
-    const DiscMat& mat,
-    size_t max_order = std::numeric_limits<size_t>::max(),
-    size_t threads = 1,
-    double base = 2.0,
-    bool normalize = false)
-{
-    SURDRes result;
-
-    if (mat.size() < 2)
-        throw std::invalid_argument("SURD requires >=2 variables");
-
-    const size_t n_vars    = mat.size();
-    const size_t n_sources = n_vars - 1;
-
-    max_order = std::min(max_order , n_sources);
-
-    const double log_base = std::log(base);
-
-    /***********************************************************
-     * Generate subsets
-     ***********************************************************/
-    std::vector<std::vector<size_t>> combs;
-
-    for (size_t mask = 1; mask < (1ULL << n_sources); mask++)
-    {
-        std::vector<size_t> subset;
-
-        for (size_t j = 0; j < n_sources; j++)
-            if (mask & (1ULL << j))
-                subset.push_back(j + 1);
-
-        if (subset.size() <= max_order)
-            combs.push_back(subset);
-    }
-
-    const size_t n_combs = combs.size();
-
-    std::vector<double> info(n_combs , 0.0);
-
-    /***********************************************************
-     * Joint table
-     ***********************************************************/
-    infoxtr::infotheo::JointTable jt =
-        infoxtr::infotheo::joint_table(mat);
-
-    const size_t k        = jt.k;
-    const size_t n_states = jt.counts.size();
-
-    size_t total_n = 0;
-    for (auto c : jt.counts)
-        total_n += c;
-
-    /***********************************************************
-     * Target states
-     ***********************************************************/
-    std::vector<uint64_t> s_vals;
-    std::vector<size_t>   s_counts;
-
-    for (size_t i = 0; i < n_states; i++)
-    {
-        uint64_t s = jt.states[i * k];
-
-        auto it = std::find(s_vals.begin(), s_vals.end(), s);
-
-        if (it == s_vals.end())
-        {
-            s_vals.push_back(s);
-            s_counts.push_back(jt.counts[i]);
-        }
-        else
-        {
-            size_t idx = it - s_vals.begin();
-            s_counts[idx] += jt.counts[i];
-        }
-    }
-
-    const size_t n_s = s_vals.size();
-
-    /***********************************************************
-     * state -> s index
-     ***********************************************************/
-    std::vector<size_t> state_s_index(n_states);
-
-    for (size_t i = 0; i < n_states; i++)
-    {
-        uint64_t s = jt.states[i * k];
-
-        for (size_t j = 0; j < n_s; j++)
-            if (s_vals[j] == s)
-                state_s_index[i] = j;
-    }
-
-    /***********************************************************
-     * Precompute projection + px groups
-     ***********************************************************/
-    struct PxGroup
-    {
-        std::vector<uint64_t> state;
-        size_t count = 0;
-        std::vector<size_t> rows;
-    };
-
-    std::vector<std::vector<PxGroup>> px_groups(n_combs);
-
-    for (size_t ci = 0; ci < n_combs; ci++)
-    {
-        auto & subset = combs[ci];
-        const size_t kk = subset.size();
-
-        std::vector<std::vector<uint64_t>> proj(n_states);
-
-        for (size_t i = 0; i < n_states; i++)
-        {
-            size_t base = i * k;
-
-            proj[i].resize(kk);
-
-            for (size_t j = 0; j < kk; j++)
-                proj[i][j] = jt.states[base + subset[j]];
-        }
-
-        std::vector<size_t> order(n_states);
-
-        for (size_t i = 0; i < n_states; i++)
-            order[i] = i;
-
-        std::sort(order.begin(), order.end(),
-        [&](size_t a, size_t b)
-        {
-            for (size_t j = 0; j < kk; j++)
-            {
-                if (proj[a][j] < proj[b][j]) return true;
-                if (proj[a][j] > proj[b][j]) return false;
-            }
-            return false;
-        });
-
-        PxGroup g;
-        g.state = proj[order[0]];
-        g.count = jt.counts[order[0]];
-        g.rows.push_back(order[0]);
-
-        for (size_t i = 1; i < n_states; i++)
-        {
-            bool same = true;
-
-            for (size_t j = 0; j < kk; j++)
-                if (proj[order[i]][j] != g.state[j])
-                    same = false;
-
-            if (same)
-            {
-                g.count += jt.counts[order[i]];
-                g.rows.push_back(order[i]);
-            }
-            else
-            {
-                px_groups[ci].push_back(g);
-
-                g.state = proj[order[i]];
-                g.count = jt.counts[order[i]];
-                g.rows.clear();
-                g.rows.push_back(order[i]);
-            }
-        }
-
-        px_groups[ci].push_back(g);
-    }
-
-    /***********************************************************
-     * Loop target states
-     ***********************************************************/
-    for (size_t si = 0; si < n_s; si++)
-    {
-        double p_s =
-            static_cast<double>(s_counts[si]) / total_n;
-
-        std::vector<double> I_s(n_combs , 0.0);
-
-        for (size_t ci = 0; ci < n_combs; ci++)
-        {
-            double sum = 0.0;
-
-            for (auto & g : px_groups[ci])
-            {
-                size_t psx_count = 0;
-
-                for (auto r : g.rows)
-                    if (state_s_index[r] == si)
-                        psx_count += jt.counts[r];
-
-                if (psx_count == 0)
-                    continue;
-
-                double psx =
-                    static_cast<double>(psx_count) / total_n;
-
-                double px =
-                    static_cast<double>(g.count) / total_n;
-
-                sum += psx * std::log(psx / (p_s * px));
-            }
-
-            double pointwise = sum / p_s / log_base;
-
-            I_s[ci] = pointwise;
-        }
-
-        /**************************************************
-         * SURD decomposition
-         **************************************************/
-
-        struct Node
-        {
-            size_t idx;
-            size_t len;
-            double val;
-        };
-
-        std::vector<Node> nodes;
-        nodes.reserve(n_combs);
-
-        for (size_t i = 0; i < n_combs; i++)
-        {
-            Node n;
-            n.idx = i;
-            n.len = combs[i].size();
-            n.val = I_s[i];
-            nodes.push_back(n);
-        }
-
-        // sort once 
-        std::sort(nodes.begin(), nodes.end(),
-        [](const Node & a, const Node & b)
-        {
-            return a.val < b.val;
-        });
-
-        // find max subset length 
-        size_t max_len = 0;
-
-        for (auto & n : nodes)
-            if (n.len > max_len)
-                max_len = n.len;
-
-        /**************************************************
-         * SURD monotonic filter
-         **************************************************/
-
-        for (size_t l = 1; l < max_len; l++)
-        {
-            double Il1max = -std::numeric_limits<double>::infinity();
-
-            for (auto & n : nodes)
-                if (n.len == l)
-                    if (n.val > Il1max)
-                        Il1max = n.val;
-
-            for (auto & n : nodes)
-                if (n.len == l + 1)
-                    if (n.val < Il1max)
-                        n.val = 0.0;
-        }
-
-        /**************************************************
-         * SURD information layers
-         **************************************************/
-
-        double prev = 0.0;
-
-        std::vector<size_t> red_vars;
-
-        for (size_t v = 1; v <= n_sources; v++)
-            red_vars.push_back(v);
-
-        for (auto & n : nodes)
-        {
-            double delta = n.val - prev;
-
-            if (delta < 0)
-                delta = 0;
-
-            double info_add = delta * p_s;
-
-            const auto & subset = combs[n.idx];
-
-            if (subset.size() == 1)
-            {
-                // redundant information
-                result.redundant_vars.push_back(red_vars);
-                result.redundant_vals.push_back(info_add);
-
-                auto it = std::find(
-                    red_vars.begin(),
-                    red_vars.end(),
-                    subset[0]);
-
-                if (it != red_vars.end())
-                    red_vars.erase(it);
-            }
-            else
-            {
-                // synergy information
-                result.synergy_vars.push_back(subset);
-                result.synergy_vals.push_back(info_add);
-            }
-
-            if (n.val > prev)
-                prev = n.val;
-        }
-    }
-
-    for (size_t i = 0; i < n_combs; i++)
-    {
-        result.mi_vars.push_back(combs[i]);
-        result.mi_vals.push_back(info[i]);
-    }
-
-    // Information leak
-    double H_target = infoxtr::infotheo::je(mat, {0}, base, false);
-    std::vector<size_t> ag_idx(n_sources);
-    std::iota(ag_idx.begin(), ag_idx.end(), 1);
-    double leak = infoxtr::infotheo::ce(mat, {0}, ag_idx, base, false) / H_target;
-    result.info_leak = std::max(0.0, std::min(1.0, leak));
-
-    return result;
-}
 
     /***************************************************************
      * Synergistic-Unique-Redundant Decomposition for Discrete Data
