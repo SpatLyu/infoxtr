@@ -333,9 +333,23 @@ namespace infotheo
 
         if (conds.empty())
             throw std::invalid_argument("conds cannot be empty");
+        
+        /*
+        // Previous implementation (may trigger GCC13/14 static-analysis warnings):
 
         std::vector<size_t> tc = conds;
         tc.insert(tc.end(), target.begin(), target.end());
+        */
+
+        // Build concatenated index vector: tc = conds ∪ target
+        std::vector<size_t> tc;
+        tc.reserve(conds.size() + target.size());
+
+        for (size_t v : conds)
+            tc.push_back(v);
+
+        for (size_t v : target)
+            tc.push_back(v);
 
         return je(mat, tc, base, na_rm) - je(mat, conds, base, na_rm);
     }
