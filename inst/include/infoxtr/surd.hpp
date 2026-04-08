@@ -585,72 +585,46 @@ namespace surd
         result.synergy_vars.reserve(n_combs);
         result.mi_vars.reserve(n_combs);
 
-        /* 
-        ====================================================
-        * Result assembly
-        *
-        * NOTE:
-        * We intentionally use `emplace_back()` instead of
-        * `push_back()` when inserting vectors into the
-        * result containers (e.g. vector<vector<size_t>>).
-        *
-        * With GCC 13/14 (used by recent Rtools / CRAN),
-        * `push_back()` on nested vectors may trigger
-        * false-positive warnings such as:
-        *
-        *   -Warray-bounds
-        *   -Wstringop-overflow
-        *
-        * originating from STL internals (memmove inside
-        * vector copy construction). These warnings appear
-        * during template inlining even though the code is
-        * logically correct.
-        *
-        * Using `emplace_back()` avoids the extra copy
-        * construction path and prevents these warnings.
-        *
-        * Please do NOT replace these calls with push_back()
-        * unless the compiler behavior changes in the future.
-        ======================================================
-        */
+        /*
+        NOTE
 
-        /**************************************************
-         * Redundant + Unique
-         **************************************************/
+        We copy combinations (vector<size_t>) into the result
+        containers using push_back() with a local reference.
+
+        Older GCC versions (11–12) and newer ones (13–14) have
+        different false-positive warnings related to nested
+        STL containers and memmove detection.
+
+        Using a local reference here avoids triggering those
+        static analyzer paths while keeping the code simple
+        and portable across CRAN build systems.
+        */
 
         for (size_t i = 0; i < n_combs; i++)
         {
+            const auto & c = combs[i];
+
             if (I_R[i] > 0)
             {
-                if (combs[i].size() == 1)
+                if (c.size() == 1)
                 {
-                    result.unique_vars.push_back(combs[i]);
+                    result.unique_vars.push_back(c);
                     result.unique_vals.emplace_back(I_R[i]);
                 }
                 else
                 {
-                    result.redundant_vars.push_back(combs[i]);
+                    result.redundant_vars.push_back(c);
                     result.redundant_vals.emplace_back(I_R[i]);
                 }
             }
-        }
 
-        /**************************************************
-         * Synergy
-         **************************************************/
-
-        for (size_t i = 0; i < n_combs; i++)
-        {
-            if (combs[i].size() > 1 && I_S[i] > 0)
+            if (c.size() > 1 && I_S[i] > 0)
             {
-                result.synergy_vars.push_back(combs[i]);
+                result.synergy_vars.push_back(c);
                 result.synergy_vals.emplace_back(I_S[i]);
             }
-        }
 
-        for (size_t i = 0; i < n_combs; i++)
-        {
-            result.mi_vars.push_back(combs[i]);
+            result.mi_vars.push_back(c);
             result.mi_vals.emplace_back(info[i]);
         }
 
