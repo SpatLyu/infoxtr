@@ -47,7 +47,7 @@ utils_plot_surd = \(surd_list,threshold = 0,style = "shallow") {
   df = df |> 
     dplyr::mutate(
       var_nums = stringr::str_extract_all(vars, "(?<=V)\\d+"),
-      nums_joined = sapply(var_nums, \(x) paste(x, collapse = "_")),
+      nums_joined = sapply(var_nums, \(x) paste(x, collapse = '*","*')),
       vars_formatted = paste0(types, "[", nums_joined, "]"),
       type_order = dplyr::case_when(
         types == "U" ~ 1,  
