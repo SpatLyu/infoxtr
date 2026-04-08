@@ -52,7 +52,7 @@
 // ============================================================
 // Suppress GCC 13/14 false positives in surd.hpp
 // Warning: -Warray-bounds, -Wstringop-overflow
-// See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115074
+// See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117983
 // ============================================================
 #if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
@@ -65,7 +65,6 @@
 #if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
-
 
 // ============================================================
 // Convenience Converters (Inline helpers for R/C++ interop)
