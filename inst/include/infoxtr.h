@@ -47,24 +47,7 @@
 #include "infoxtr/infotheo.hpp"
 #include "infoxtr/ksginfo.hpp"
 #include "infoxtr/transferentropy.hpp"
-// #include "infoxtr/surd.hpp"
-
-// ============================================================
-// Suppress GCC 13/14 false positives in surd.hpp
-// Warning: -Warray-bounds, -Wstringop-overflow
-// See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117983
-// ============================================================
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif
-
 #include "infoxtr/surd.hpp"
-
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
 
 // ============================================================
 // Convenience Converters (Inline helpers for R/C++ interop)
