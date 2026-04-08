@@ -69,38 +69,20 @@ utils_process_surd_result = \(surd_list,threshold = 0){
 `utils_plot_surd()` produces a SURD decomposition plot — a grouped bar chart of **unique (U)**, **synergistic (S)**, and **redundant (R)** components, along with a side panel showing the **information leak**.
 
 ```{r}
-utils_plot_surd = \(surd_list,threshold = 0,style = "shallow"){
-  I_unique = surd_list$unique
-  I_synergistic = surd_list$synergistic
-  I_redundant = surd_list$redundant
-
-  df = tibble::tibble(
-    label = c(
-      paste0("U[", names(I_unique), "]"),
-      paste0("S[", names(I_synergistic), "]"),
-      paste0("R[", names(I_redundant), "]")
-    ),
-    value = c(as.numeric(I_unique),
-              as.numeric(I_synergistic),
-              as.numeric(I_redundant)),
-    type = c(rep("unique", length(I_unique)),
-             rep("synergistic", length(I_synergistic)),
-             rep("redundant", length(I_redundant)))
-  )
-
-  df$value = df$value / sum(df$value)
+utils_plot_surd = \(surd_list,threshold = 0,style = "shallow") {
+  df = dplyr::filter(tibble::as_tibble(surd_list), vars != "InfoLeak")
   if(threshold > 0){
     df = dplyr::filter(df, value > threshold)
   }
-  df$label = factor(df$label, levels = df$label)
+  df$vars = factor(df$vars, levels = unique(df$vars))
 
   if (style == "shallow") {
-    colors = c(unique = "#ec9e9e", synergistic = "#fac58c", redundant = "#668392", infoleak = "#7f7f7f")
+    colors = c(U = "#ec9e9e", S = "#fac58c", R = "#668392", InfoLeak = "#7f7f7f")
   } else {
-    colors = c(unique = "#d62828", synergistic = "#f77f00", redundant = "#003049", infoleak = "gray")
+    colors = c(U = "#d62828", S = "#f77f00", R = "#003049", InfoLeak = "gray")
   }
 
-  p1 = ggplot2::ggplot(df, ggplot2::aes(x = label, y = value, fill = type)) +
+  p1 = ggplot2::ggplot(df, ggplot2::aes(x = vars, y = values, fill = types)) +
     ggplot2::geom_col(color = "black", linewidth = 0.15, show.legend = FALSE) +
     ggplot2::scale_fill_manual(name = NULL, values = colors) +
     ggplot2::scale_x_discrete(name = NULL, labels = function(x) parse(text = x)) +
@@ -115,8 +97,8 @@ utils_plot_surd = \(surd_list,threshold = 0,style = "shallow"){
       panel.border = ggplot2::element_rect(color = "black", linewidth = 2)
     )
 
-  df_leak = tibble::tibble(label = "Info Leak", value = surd_list$info_leak)
-  p2 = ggplot2::ggplot(df_leak, ggplot2::aes(x = label, y = value)) +
+  df_leak = dplyr::slice_tail(tibble::as_tibble(surd_list), n = 1)
+  p2 = ggplot2::ggplot(df_leak, ggplot2::aes(x = vars, y = values)) +
     ggplot2::geom_col(fill = colors[4], color = "black", linewidth = 0.15) +
     ggplot2::scale_x_discrete(name = NULL, expand = c(0, 0)) +
     ggplot2::scale_y_continuous(name = NULL, limits = c(0, 1), expand = c(0, 0),
