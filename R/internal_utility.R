@@ -7,7 +7,6 @@
         type_suffix, ". "
       )
       stop(msg, call. = FALSE)
-      stop("The input vector must be numeric for continuous variables (`type = \"cont\"`). ")
     }
   }
   
