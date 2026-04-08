@@ -628,6 +628,21 @@ namespace surd
         //     result.mi_vals.emplace_back(info[i]);
         // }
 
+        /*
+        NOTE
+
+        We use `insert(end(), ...)` instead of push_back/emplace_back
+        for nested containers (vector<vector<size_t>>).
+
+        Some GCC versions (11–14) may emit false-positive warnings
+        such as -Wstringop-overflow or -Warray-bounds when copying
+        nested vectors via push_back/emplace_back due to STL
+        memmove analysis.
+
+        Using insert(end(), ...) avoids those static analyzer paths
+        and keeps the code portable across CRAN build systems.
+        */
+
         for (size_t i = 0; i < n_combs; ++i)
         {
             const auto & c = combs[i];
