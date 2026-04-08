@@ -608,23 +608,23 @@ namespace surd
             {
                 if (c.size() == 1)
                 {
-                    result.unique_vars.push_back(c);
+                    result.unique_vars.emplace_back(c);
                     result.unique_vals.emplace_back(I_R[i]);
                 }
                 else
                 {
-                    result.redundant_vars.push_back(c);
+                    result.redundant_vars.emplace_back(c);
                     result.redundant_vals.emplace_back(I_R[i]);
                 }
             }
 
             if (c.size() > 1 && I_S[i] > 0)
             {
-                result.synergy_vars.push_back(c);
+                result.synergy_vars.emplace_back(c);
                 result.synergy_vals.emplace_back(I_S[i]);
             }
 
-            result.mi_vars.push_back(c);
+            result.mi_vars.emplace_back(c);
             result.mi_vals.emplace_back(info[i]);
         }
 
