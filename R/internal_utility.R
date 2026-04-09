@@ -23,12 +23,13 @@
   }
 
   if (type == "cont" && !(typeof(mat) %in% c("integer", "double"))) {
-    type_suffix = if (contain_type) " when `type = \"cont\"`" else ""
+    type_suffix = if (contain_type) 
+                     "When `type = \"cont\"`, all variables must be numeric. " 
+                  else ""
     msg = paste0(
       "Non-numeric values detected in input data. ",
-      "All variables must be numeric",
       type_suffix,
-      ". Please remove columns such as dates, characters, or factors."
+      "Please remove columns such as dates, characters, or factors."
     )
     stop(msg, call. = FALSE)
   }
