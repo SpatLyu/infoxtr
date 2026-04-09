@@ -178,6 +178,14 @@ namespace kocmi
     /*****************************************************************
      * Knockoff Conditional Mutual Information for Continuous Data
      *****************************************************************/
+    inline KOCMIRes kocmi(
+        const ContVec& target,
+        const ContVec& agent,
+        const ContMat& conds,
+        size_t k = 3,
+        size_t alg = 0,
+        size_t threads = 1,
+        double base = 2.0)
 
      /*****************************************************************
      * Knockoff Conditional Mutual Information for Discrete Data
