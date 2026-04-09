@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cmath>
+#include <random>
 #include <limits>
 #include <thread>
 #include <cstdint>
@@ -24,18 +25,70 @@ namespace kocmi
     using ContVec = std::vector<double>;
     using ContMat = std::vector<std::vector<double>>;
 
-    /***********************************************************
+    /******************************************************************
      * Result structure
-     ***********************************************************/
+     ******************************************************************/
     struct KOCMIRes
     {
         double t_stat = std::numeric_limits<double>::quiet_NaN();
         double p_value = std::numeric_limits<double>::quiet_NaN();
     };
 
-    /***********************************************************
+    /*****************************************************************
      * Utilities
-     ***********************************************************/
+     *****************************************************************/
+    inline double permutation_test_mean(const std::vector<double>& diffs,
+                                        size_t nboots = 10000,
+                                        uint64_t seed = 123456789) {
+
+        // Extract non-NaN values
+        std::vector<double> vec;
+        vec.reserve(diffs.size());
+
+        for (double v : diffs) {
+            if (!std::isnan(v)) {
+                vec.push_back(v);
+            }
+        }
+
+        // If all values are NaN
+        if (vec.empty()) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+
+        const size_t n = vec.size();
+
+        // Compute observed statistic
+        double sum = 0.0;
+        for (double v : vec) {
+            sum += v;
+        }
+        const double observed_stat = std::abs(sum / static_cast<double>(n));
+
+        // RNG
+        std::mt19937_64 rng(seed);
+        std::uniform_int_distribution<int> sign_dist(0, 1);
+
+        size_t count = 0;
+
+        for (size_t b = 0; b < nboots; ++b) {
+
+            double perm_sum = 0.0;
+
+            for (size_t i = 0; i < n; ++i) {
+                int sign = sign_dist(rng) ? 1 : -1;
+                perm_sum += vec[i] * sign;
+            }
+
+            double perm_stat = std::abs(perm_sum / static_cast<double>(n));
+
+            if (perm_stat >= observed_stat) {
+                ++count;
+            }
+        }
+
+        return static_cast<double>(count) / static_cast<double>(nboots);
+    }
 
     
 
