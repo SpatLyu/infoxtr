@@ -37,9 +37,10 @@ namespace kocmi
     /*****************************************************************
      * Utilities
      *****************************************************************/
-    inline double permutation_test_mean(const std::vector<double>& diffs,
-                                        size_t nboots = 10000,
-                                        uint64_t seed = 123456789) 
+    inline KOCMIRes permutation_test_mean(
+        const std::vector<double>& diffs,
+        size_t nboots = 10000,
+        uint64_t seed = 123456789) 
     {
         std::vector<double> vec;
         vec.reserve(diffs.size());
@@ -53,10 +54,11 @@ namespace kocmi
                 sum += v;
             }
         }
-
+        
+        KOCMIRes result;
         // If all values are NaN
         if (vec.empty()) {
-            return std::numeric_limits<double>::quiet_NaN();
+            return KOCMIRes;
         }
         const size_t n = vec.size();
 
