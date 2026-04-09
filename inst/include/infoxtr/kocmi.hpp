@@ -22,7 +22,7 @@ namespace kocmi
     using DiscVec = std::vector<uint64_t>;
     using DiscMat = std::vector<std::vector<uint64_t>>;
     using ContVec = std::vector<double>;
-    using DiscMat = std::vector<std::vector<double>>;
+    using ContMat = std::vector<std::vector<double>>;
 
     /***********************************************************
      * Result structure
@@ -36,6 +36,8 @@ namespace kocmi
     /***********************************************************
      * Utilities
      ***********************************************************/
+
+    
 
     /*****************************************************************
      * Knockoff Conditional Mutual Information for Continuous Data
