@@ -72,6 +72,7 @@ namespace kocmi
         {
             observed_sdval += (v - observed_mean) * (v - observed_mean);
         }
+
         result.t_stat = observed_mean / std::sqrt(observed_sdval / static_cast<double>(n - 1));
 
         /*
@@ -135,6 +136,10 @@ namespace kocmi
         for (size_t f : perm_flags) {
             perm_sum += f;
         }
+        
+        result.p_value = static_cast<double>(perm_sum) / static_cast<double>(nboots);
+
+        return result;
     }
 
     
