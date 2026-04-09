@@ -124,22 +124,44 @@ namespace kocmi
         std::vector<size_t> perm_flags(nboots, 0);
 
         // Perform permutation
-        for (size_t b = 0; b < nboots; ++b) 
+        if (threads <= 1)
         {
-            double perm_sum = 0.0;
-            std::mt19937_64& rng = rng_pool[b];
-
-            for (size_t i = 0; i < n; ++i) 
+            for (size_t b = 0; b < nboots; ++b) 
             {
-                int sign = sign_dist(rng) ? 1 : -1;
-                perm_sum += vec[i] * sign;
+                double perm_sum = 0.0;
+                std::mt19937_64& rng = rng_pool[b];
+
+                for (size_t i = 0; i < n; ++i) 
+                {
+                    int sign = sign_dist(rng) ? 1 : -1;
+                    perm_sum += vec[i] * sign;
+                }
+
+                double perm_stat = std::abs(perm_sum / static_cast<double>(n));
+
+                perm_flags[b] = (perm_stat >= observed_stat) ? 1 : 0;
             }
-
-            double perm_stat = std::abs(perm_sum / static_cast<double>(n));
-
-            perm_flags[b] = (perm_stat >= observed_stat) ? 1 : 0;
         }
+        else 
+        {
+            RcppThread::parallelFor(0, nboots, [&](size_t b) {
 
+                double perm_sum = 0.0;
+                std::mt19937_64& rng = rng_pool[b];
+
+                for (size_t i = 0; i < n; ++i) 
+                {
+                    int sign = sign_dist(rng) ? 1 : -1;
+                    perm_sum += vec[i] * sign;
+                }
+
+                double perm_stat = std::abs(perm_sum / static_cast<double>(n));
+
+                perm_flags[b] = (perm_stat >= observed_stat) ? 1 : 0;
+
+            }, threads);
+        }
+        
         // Compute p-value
         size_t perm_count = 0;
         for (size_t f : perm_flags) {
