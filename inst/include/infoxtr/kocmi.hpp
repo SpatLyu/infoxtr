@@ -173,6 +173,91 @@ namespace kocmi
         return result;
     }
 
+    inline double cmi(
+        const ContVec& target,
+        const ContVec& interact,
+        const ContMat& conds,
+        size_t k = 3,
+        size_t alg = 0)
+    {
+        ContMat xyz = conds;
+        xyz.insert(xyz.end(), target.begin(), target.end());
+        xyz.insert(xyz.end(), interact.begin(), interact.end());
+
+        ContMat xy = target;
+        xy.insert(xy.end(), interact.begin(), interact.end());
+
+        ContMat xz = conds;
+        xz.insert(xz.end(), target.begin(), target.end());
+
+        std::vector<size_t> yz = conds;
+        yz.insert(yz.end(), interact.begin(), interact.end());
+
+        auto d_xyz = infoxtr::distance::distance(xyz,"maximum",true,false);
+        auto d_xz  = infoxtr::distance::distance(xz,"maximum",true,false);
+        auto d_yz  = infoxtr::distance::distance(yz,"maximum",true,false);
+        auto d_z   = infoxtr::distance::distance(conds,"maximum",true,false);
+
+        const size_t n = d_xyz.size();
+
+        double sum = 0.0;
+
+        for (size_t i = 0; i < n; ++i)
+        {   
+            auto& row = d_xyz[i];
+            row[i] = std::numeric_limits<double>::quiet_NaN();
+
+            row.erase(
+                std::remove_if(
+                    row.begin(),
+                    row.end(),
+                    [](double v){ return std::isnan(v); }),
+                row.end());
+
+            if (row.size() < k)
+                throw std::runtime_error("k larger than valid neighbor count");
+
+            std::nth_element(row.begin(),row.begin()+k-1,row.end());
+
+            double eps = row[k-1];
+            // double eps = std::max(row[k-1], 1e-15);
+
+            size_t nxz = 0, nyz = 0, nz = 0;
+
+            for (size_t j = 0; j < n; ++j)
+            {
+                if (i == j) continue;
+
+                if (alg == 0)
+                {
+                    if (!std::isnan(d_xz[i][j]) && d_xz[i][j] < eps) nxz++;
+                    if (!std::isnan(d_yz[i][j]) && d_yz[i][j] < eps) nyz++;
+                    if (!std::isnan(d_z[i][j])  && d_z[i][j]  < eps) nz++;
+                }
+                else
+                {
+                    if (!std::isnan(d_xz[i][j]) && d_xz[i][j] <= eps) nxz++;
+                    if (!std::isnan(d_yz[i][j]) && d_yz[i][j] <= eps) nyz++;
+                    if (!std::isnan(d_z[i][j])  && d_z[i][j]  <= eps) nz++;    
+                } 
+            }
+
+            if (alg == 0)
+                sum += infoxtr::numericutils::digamma(nxz+1)
+                     + infoxtr::numericutils::digamma(nyz+1)
+                     - infoxtr::numericutils::digamma(nz+1);
+            else
+                sum += infoxtr::numericutils::digamma(nxz)
+                     + infoxtr::numericutils::digamma(nyz)
+                     - infoxtr::numericutils::digamma(nz);
+        }
+
+        double cmival = infoxtr::numericutils::digamma(k) - sum / n;
+        if (alg == 1) cmival -= 1.0 / k;
+
+        return cmival;
+    }
+
     
 
     /*****************************************************************
@@ -188,6 +273,9 @@ namespace kocmi
         size_t alg = 0,
         size_t threads = 1,
         double base = 2.0)
+    {
+
+    }
 
      /*****************************************************************
      * Knockoff Conditional Mutual Information for Discrete Data
