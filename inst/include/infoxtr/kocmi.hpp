@@ -19,6 +19,10 @@ namespace infoxtr
 
 namespace kocmi 
 {
+    using DiscVec = std::vector<uint64_t>;
+    using DiscMat = std::vector<std::vector<uint64_t>>;
+    using ContVec = std::vector<double>;
+    using DiscMat = std::vector<std::vector<double>>;
 
 } // namespace kocmi
 
