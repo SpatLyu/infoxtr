@@ -69,28 +69,61 @@ namespace kocmi
          * we adopted a strategy of pre-constructing an RNG pool to compute permutation statistics.
          * The pre-constructed RNG pool is initialized independently using the user-provided seed.
         */
-        std::mt19937_64 rng(seed);
+        // std::mt19937_64 rng(seed);
+        // std::uniform_int_distribution<int> sign_dist(0, 1);
+
+        // size_t count = 0;
+
+        // for (size_t b = 0; b < nboots; ++b) {
+
+        //     double perm_sum = 0.0;
+
+        //     for (size_t i = 0; i < n; ++i) {
+        //         int sign = sign_dist(rng) ? 1 : -1;
+        //         perm_sum += vec[i] * sign;
+        //     }
+
+        //     double perm_stat = std::abs(perm_sum / static_cast<double>(n));
+
+        //     if (perm_stat >= observed_stat) {
+        //         ++count;
+        //     }
+        // }
+        
+        // Prebuild 64-bit RNG pool for reproducibility
+        std::vector<std::mt19937_64> rng_pool(nboots);
+        for (size_t b = 0; b < nboots; ++b) 
+        {
+            std::seed_seq seq{static_cast<uint64_t>(seed), static_cast<uint64_t>(b)};
+            rng_pool[b] = std::mt19937_64(seq);
+        }
+
         std::uniform_int_distribution<int> sign_dist(0, 1);
 
-        size_t count = 0;
+        std::vector<size_t> perm_flags(nboots, 0);
 
-        for (size_t b = 0; b < nboots; ++b) {
-
+        // Perform permutation
+        for (size_t b = 0; b < nboots; ++b) 
+        {
             double perm_sum = 0.0;
+            std::mt19937_64& rng = rng_pool[b];
 
-            for (size_t i = 0; i < n; ++i) {
+            for (size_t i = 0; i < n; ++i) 
+            {
                 int sign = sign_dist(rng) ? 1 : -1;
                 perm_sum += vec[i] * sign;
             }
 
             double perm_stat = std::abs(perm_sum / static_cast<double>(n));
 
-            if (perm_stat >= observed_stat) {
-                ++count;
-            }
+            perm_flags[b] = (perm_stat >= observed_stat) ? 1 : 0;
         }
 
-        return static_cast<double>(count) / static_cast<double>(nboots);
+        // Compute p-value
+        size_t perm_count = 0;
+        for (size_t f : perm_flags) {
+            perm_sum += f;
+        }
     }
 
     
