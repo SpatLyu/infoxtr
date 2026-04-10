@@ -95,6 +95,21 @@ Rcpp::List RcppKOCMI(const Rcpp::NumericMatrix& mat,
     infoxtr::kocmi::KOCMIRes res;
    
     if (type == "cont")
+    {
+        res = infoxtr::kocmi::kocmi(
+            tg_std, ag_std, cg_mat, km, nkm,
+            static_cast<size_t>(std::abs(nboots)),
+            static_cast<size_t>(std::abs(k)),
+            static_cast<size_t>(std::abs(alg)),
+            static_cast<size_t>(std::abs(threads)),
+            static_cast<uint64_t>(std::abs(seed)),
+            contain_null
+        );
+    }
+    else  
+    {
+
+    }
     
 
     // Construct discrete data matrix
