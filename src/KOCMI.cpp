@@ -10,13 +10,18 @@
 Rcpp::List RcppKOCMI(const Rcpp::NumericMatrix& mat,
                      const Rcpp::IntegerVector& target,
                      const Rcpp::IntegerVector& agent,
+                     const Rcpp::IntegerVector& conds,
                      const Rcpp::NumericMatrix& knockoff,
                      Rcpp::Nullable<Rcpp::NumericMatrix> null_knockoff= R_NilValue,
-                     int n = 5,
+                     const std::string& type = "cont",
+                     int nboots = 10000,
+                     int k = 5,
+                     int alg = 0,
                      int threads = 1,
+                     int seed = 123456789,
                      double base = 2.0,
                      const std::string& method = "equal",
-                     Rcpp::Nullable<Rcpp::NumericMatrix> nb = R_NilValue)
+                     bool contain_null = true)
 {   
     const size_t n_cols = static_cast<size_t>(mat.ncol());
     const size_t n_obs = static_cast<size_t>(mat.nrow());
