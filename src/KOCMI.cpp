@@ -3,6 +3,7 @@
 #include <limits>
 #include <string>
 #include <numeric>
+#include <cstdint>
 #include <algorithm>
 #include "infoxtr.h"
 
@@ -107,7 +108,46 @@ Rcpp::List RcppKOCMI(const Rcpp::NumericMatrix& mat,
         );
     }
     else  
-    {
+    {  
+        std::vector<uint64_t> tg_vec = infoxtr::discretize::discretize(
+            tg_std, method, static_cast<size_t>(std::abs(k))
+        );
+
+        std::vector<uint64_t> ag_vec = infoxtr::discretize::discretize(
+            ag_std, method, static_cast<size_t>(std::abs(k))
+        );
+
+        std::vector<std::vector<uint64_t>> cg_discm(
+            cg.size(), std::vector<uint64_t>(n_obs)
+        );
+        for (size_t j = 0; j < cg.size(); ++j)
+        {   
+            cg_discm[j] = infoxtr::discretize::discretize(
+                cg_mat[j], method, static_cast<size_t>(std::abs(k))
+            );    
+        }
+
+        std::vector<std::vector<uint64_t>> kdiscm(
+            km.size(), std::vector<uint64_t>(n_obs)
+        );
+        for (size_t j = 0; j < km.size(); ++j)
+        {   
+            kdiscm[j] = infoxtr::discretize::discretize(
+                km[j], method, static_cast<size_t>(std::abs(k))
+            );    
+        }
+
+        std::vector<std::vector<uint64_t>> nkdiscm(
+            nkm.size(), std::vector<uint64_t>(n_obs)
+        );
+        for (size_t j = 0; j < nkm.size(); ++j)
+        {   
+            nkdiscm[j] = infoxtr::discretize::discretize(
+                nkm[j], method, static_cast<size_t>(std::abs(k))
+            );    
+        }
+
+        
 
     }
     
@@ -126,47 +166,12 @@ Rcpp::List RcppKOCMI(const Rcpp::NumericMatrix& mat,
     pm[0] = infoxtr::discretize::discretize(
         vec, method, static_cast<size_t>(std::abs(n))
     );
-    
-    // Generate lagged values for agent variables
-    std::vector<std::vector<double>> lagged_values;
 
-    std::vector<std::vector<double>> cppMat(
-        n_obs, std::vector<double>(ag.size())
-    );
-    for (size_t j = 0; j < ag.size(); ++j)
-    {   
-        for (size_t r = 0; r < n_obs; ++r)
-        {
-            cppMat[r][j] = mat(r, ag[j]);
-        }
-    }
-
-    if (nb.isNotNull()) 
-    {
-        // Convert Rcpp::List to std::vector<std::vector<size_t>>
-        std::vector<std::vector<size_t>> nb_std = infoxtr::convert::nb2std(nb.get());
-        lagged_values = infoxtr::lagg::lagg(
-            cppMat, nb_std, static_cast<size_t>(std::abs(lag)), false);
-    } 
-    else if (nrows.isNotNull())
-    {
-        lagged_values = infoxtr::lagg::lagg(
-            cppMat, 
-            static_cast<size_t>(std::abs(Rcpp::as<int>(nrows))), 
-            static_cast<size_t>(std::abs(lag)), false);
-    }
-    else  
-    {
-        lagged_values = infoxtr::lagg::lagg(
-            cppMat, static_cast<size_t>(std::abs(lag)), false);
-    }
 
     // Discrete lagged values for agent variables
     for (size_t j = 0; j < lagged_values.size(); ++j)
     {   
-        pm[j + 1] = infoxtr::discretize::discretize(
-            lagged_values[j], method, static_cast<size_t>(std::abs(n))
-        );
+        
     }
 
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
