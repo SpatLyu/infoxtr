@@ -147,8 +147,13 @@ Rcpp::List RcppKOCMI(const Rcpp::NumericMatrix& mat,
             );    
         }
 
-        
-
+        res = infoxtr::kocmi::kocmi(
+            tg_vec, ag_cev, cg_discm, kdiscm, nkdiscm,
+            static_cast<size_t>(std::abs(nboots)),
+            static_cast<size_t>(std::abs(threads)),
+            static_cast<uint64_t>(std::abs(seed)),
+            base, contain_null
+        );
     }
     
 
