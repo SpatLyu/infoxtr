@@ -48,6 +48,7 @@
 #include "infoxtr/ksginfo.hpp"
 #include "infoxtr/transferentropy.hpp"
 #include "infoxtr/surd.hpp"
+#include "infoxtr/kocmi.hpp"
 
 // ============================================================
 // Convenience Converters (Inline helpers for R/C++ interop)
