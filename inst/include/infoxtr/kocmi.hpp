@@ -354,8 +354,65 @@ namespace kocmi
      /*****************************************************************
      * Knockoff Conditional Mutual Information for Discrete Data
      *****************************************************************/
+    inline KOCMIRes kocmi(
+        const DiscVec& target,
+        const DiscVec& agent,
+        const DiscMat& conds,
+        const DiscMat& knockoff,
+        const DiscMat& null_knockoff,
+        size_t nboots = 10000,
+        size_t threads = 1,
+        uint64_t seed = 123456789,
+        bool contain_null = true,
+        double base = 2.0)
+    { 
+        const size_t monte_size = knockoff.size();
+        if (contain_null && monte_size != null_knockoff.size())
+            throw std::invalid_argument("The sizes between agent_knockoff and all_knockoff should be same");
 
+        if (threads == 0) threads = 1;
+        size_t hw = std::thread::hardware_concurrency();
+        if (hw > 0) threads = std::min(threads, hw);
 
+        double cmi_val = std::numeric_limits<double>::quiet_NaN();
+        if (!contain_null) cmi_val = cmi(target, agent, conds, base);
+        
+        std::vector<double> diffs(monte_size, std::numeric_limits<double>::quiet_NaN());
+
+        if (threads <= 1)
+        {
+            for (size_t mi = 0; mi < monte_size; ++mi)
+            { 
+                double cmi_knockoff = cmi(target, knockoff[mi], base);
+
+                if (contain_null)
+                {
+                    diffs[mi] = cmi(target, null_knockoff[mi], base) - cmi_knockoff;
+                }
+                else 
+                {
+                    diffs[mi] = cmi_val - cmi_knockoff;
+                }
+            } 
+        } 
+        else  
+        {
+            RcppThread::parallelFor(0, monte_size, [&](size_t mi) {
+                double cmi_knockoff = cmi(target, knockoff[mi], base);
+
+                if (contain_null)
+                {
+                    diffs[mi] = cmi(target, null_knockoff[mi], base) - cmi_knockoff;
+                }
+                else 
+                {
+                    diffs[mi] = cmi_val - cmi_knockoff;
+                }
+            }, threads);
+        }
+        
+        return permutation_test_mean(diffs, nboots, threads, seed);
+    }
 
 } // namespace kocmi
 
