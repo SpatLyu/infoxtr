@@ -18,7 +18,7 @@ Rcpp::NumericVector RcppKOCMI(
     Rcpp::Nullable<Rcpp::NumericMatrix> null_knockoff = R_NilValue,
     const std::string& type = "cont",
     int nboots = 10000,
-    int k = 5,
+    int k = 3,
     int alg = 0,
     int threads = 1,
     int seed = 123456789,
