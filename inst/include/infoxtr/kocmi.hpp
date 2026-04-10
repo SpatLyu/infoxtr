@@ -317,19 +317,37 @@ namespace kocmi
         
         std::vector<double> diffs(monte_size, std::numeric_limits<double>::quiet_NaN());
 
-        for (size_t mi = 0; mi < monte_size; ++mi)
-        { 
-            double cmi_knockoff = cmi(target, knockoff[mi], conds, k, alg);
+        if (threads <= 1)
+        {
+            for (size_t mi = 0; mi < monte_size; ++mi)
+            { 
+                double cmi_knockoff = cmi(target, knockoff[mi], conds, k, alg);
 
-            if (contain_null)
-            {
-                diffs[mi] = cmi(target, null_knockoff[mi], conds, k, alg) - cmi_knockoff;
-            }
-            else 
-            {
-                diffs[mi] = cmi_val - cmi_knockoff;
-            }
+                if (contain_null)
+                {
+                    diffs[mi] = cmi(target, null_knockoff[mi], conds, k, alg) - cmi_knockoff;
+                }
+                else 
+                {
+                    diffs[mi] = cmi_val - cmi_knockoff;
+                }
+            } 
         } 
+        else  
+        {
+            RcppThread::parallelFor(0, monte_size, [&](size_t mi) {
+                double cmi_knockoff = cmi(target, knockoff[mi], conds, k, alg);
+
+                if (contain_null)
+                {
+                    diffs[mi] = cmi(target, null_knockoff[mi], conds, k, alg) - cmi_knockoff;
+                }
+                else 
+                {
+                    diffs[mi] = cmi_val - cmi_knockoff;
+                }
+            }, threads);
+        }
         
         return permutation_test_mean(diffs, nboots, threads, seed);
     }
