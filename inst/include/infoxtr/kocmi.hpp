@@ -305,7 +305,9 @@ namespace kocmi
     { 
         const size_t monte_size = knockoff.size();
         if (contain_null && monte_size != null_knockoff.size())
-            throw std::invalid_argument("The sizes between agent_knockoff and all_knockoff should be same");
+            throw std::invalid_argument(
+                "[KOCMI] The size of `monte_size` and `null_knockoff` should be the same"
+            );
 
         if (threads == 0) threads = 1;
         size_t hw = std::thread::hardware_concurrency();
@@ -368,7 +370,9 @@ namespace kocmi
     { 
         const size_t monte_size = knockoff.size();
         if (contain_null && monte_size != null_knockoff.size())
-            throw std::invalid_argument("The sizes between agent_knockoff and all_knockoff should be same");
+            throw std::invalid_argument(
+                "[KOCMI] The size of `monte_size` and `null_knockoff` should be the same"
+            );
 
         if (threads == 0) threads = 1;
         size_t hw = std::thread::hardware_concurrency();
