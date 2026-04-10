@@ -301,7 +301,6 @@ namespace kocmi
         size_t alg = 0,
         size_t threads = 1,
         uint64_t seed = 123456789,
-        double base = 2.0,
         bool contain_null = true)
     { 
         const size_t monte_size = knockoff.size();
