@@ -257,7 +257,7 @@ namespace kocmi
         const DiscMat& conds,
         double base = 2.0)
     {   
-        ContMat mat = conds;
+        DiscMat mat = conds;
         mat.push_back(target);  
         mat.push_back(interact);  
 
@@ -383,11 +383,11 @@ namespace kocmi
         {
             for (size_t mi = 0; mi < monte_size; ++mi)
             { 
-                double cmi_knockoff = cmi(target, knockoff[mi], base);
+                double cmi_knockoff = cmi(target, knockoff[mi], conds, base);
 
                 if (contain_null)
                 {
-                    diffs[mi] = cmi(target, null_knockoff[mi], base) - cmi_knockoff;
+                    diffs[mi] = cmi(target, null_knockoff[mi], conds, base) - cmi_knockoff;
                 }
                 else 
                 {
@@ -398,11 +398,11 @@ namespace kocmi
         else  
         {
             RcppThread::parallelFor(0, monte_size, [&](size_t mi) {
-                double cmi_knockoff = cmi(target, knockoff[mi], base);
+                double cmi_knockoff = cmi(target, knockoff[mi], conds, base);
 
                 if (contain_null)
                 {
-                    diffs[mi] = cmi(target, null_knockoff[mi], base) - cmi_knockoff;
+                    diffs[mi] = cmi(target, null_knockoff[mi], conds, base) - cmi_knockoff;
                 }
                 else 
                 {
