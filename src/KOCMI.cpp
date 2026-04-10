@@ -156,7 +156,9 @@ Rcpp::NumericVector RcppKOCMI(
             contain_null, base
         );
     }
-    
 
-    
+    return Rcpp::NumericVector::create(
+        Rcpp::Named("t_stat") = res.t_stat,
+        Rcpp::Named("p_value") = res.p_value
+    );
 }
