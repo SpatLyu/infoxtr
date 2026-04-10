@@ -268,6 +268,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppKOCMI
+Rcpp::NumericVector RcppKOCMI(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target, const Rcpp::IntegerVector& agent, const Rcpp::IntegerVector& conds, const Rcpp::NumericMatrix& knockoff, Rcpp::Nullable<Rcpp::NumericMatrix> null_knockoff, const std::string& type, int nboots, int k, int alg, int threads, int seed, double base, const std::string& method, bool contain_null);
+RcppExport SEXP _infoxtr_RcppKOCMI(SEXP matSEXP, SEXP targetSEXP, SEXP agentSEXP, SEXP condsSEXP, SEXP knockoffSEXP, SEXP null_knockoffSEXP, SEXP typeSEXP, SEXP nbootsSEXP, SEXP kSEXP, SEXP algSEXP, SEXP threadsSEXP, SEXP seedSEXP, SEXP baseSEXP, SEXP methodSEXP, SEXP contain_nullSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type agent(agentSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type conds(condsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type knockoff(knockoffSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::NumericMatrix> >::type null_knockoff(null_knockoffSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type type(typeSEXP);
+    Rcpp::traits::input_parameter< int >::type nboots(nbootsSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type alg(algSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< bool >::type contain_null(contain_nullSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppKOCMI(mat, target, agent, conds, knockoff, null_knockoff, type, nboots, k, alg, threads, seed, base, method, contain_null));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppGenLatticeLag
 Rcpp::NumericMatrix RcppGenLatticeLag(const Rcpp::NumericMatrix& mat, const Rcpp::List& nb, int lag);
 RcppExport SEXP _infoxtr_RcppGenLatticeLag(SEXP matSEXP, SEXP nbSEXP, SEXP lagSEXP) {
@@ -399,6 +423,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_infoxtr_RcppDiscTE", (DL_FUNC) &_infoxtr_RcppDiscTE, 9},
     {"_infoxtr_RcppContTE", (DL_FUNC) &_infoxtr_RcppContTE, 10},
     {"_infoxtr_RcppDiscSURD", (DL_FUNC) &_infoxtr_RcppDiscSURD, 5},
+    {"_infoxtr_RcppKOCMI", (DL_FUNC) &_infoxtr_RcppKOCMI, 15},
     {"_infoxtr_RcppGenLatticeLag", (DL_FUNC) &_infoxtr_RcppGenLatticeLag, 3},
     {"_infoxtr_RcppGenGridLag", (DL_FUNC) &_infoxtr_RcppGenGridLag, 3},
     {"_infoxtr_RcppGenTSLag", (DL_FUNC) &_infoxtr_RcppGenTSLag, 2},
