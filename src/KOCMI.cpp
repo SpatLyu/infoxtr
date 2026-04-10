@@ -9,21 +9,22 @@
 
 // Wrapper function to quantify interventional causality by knockoff operation
 // [[Rcpp::export(rng = false)]]
-Rcpp::List RcppKOCMI(const Rcpp::NumericMatrix& mat,
-                     const Rcpp::IntegerVector& target,
-                     const Rcpp::IntegerVector& agent,
-                     const Rcpp::IntegerVector& conds,
-                     const Rcpp::NumericMatrix& knockoff,
-                     Rcpp::Nullable<Rcpp::NumericMatrix> null_knockoff = R_NilValue,
-                     const std::string& type = "cont",
-                     int nboots = 10000,
-                     int k = 5,
-                     int alg = 0,
-                     int threads = 1,
-                     int seed = 123456789,
-                     double base = 2.0,
-                     const std::string& method = "equal",
-                     bool contain_null = true)
+Rcpp::NumericVector RcppKOCMI(
+    const Rcpp::NumericMatrix& mat,
+    const Rcpp::IntegerVector& target,
+    const Rcpp::IntegerVector& agent,
+    const Rcpp::IntegerVector& conds,
+    const Rcpp::NumericMatrix& knockoff,
+    Rcpp::Nullable<Rcpp::NumericMatrix> null_knockoff = R_NilValue,
+    const std::string& type = "cont",
+    int nboots = 10000,
+    int k = 5,
+    int alg = 0,
+    int threads = 1,
+    int seed = 123456789,
+    double base = 2.0,
+    const std::string& method = "equal",
+    bool contain_null = true)
 {   
     if (contain_null || !null_knockoff.isNotNull())
     {
