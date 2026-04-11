@@ -46,7 +46,7 @@ or \code{"cont"} for continuous mutual information (KSG estimator).}
 \item{nboots}{(optional) Number of permutations used in the sign-flipping permutation
 test for evaluating the significance of the mean information difference.}
 
-\item{k}{(optional) For \verb{type = "cont}, the number of nearest neighbors used by
+\item{k}{(optional) For \code{type = "cont"}, the number of nearest neighbors used by
 the continuous conditional mutual information estimator.
 For \code{type = "disc"}, the number of bins used for discretization.}
 
@@ -74,4 +74,7 @@ A named numeric vector.
 }
 \description{
 Knockoff Conditional Mutual Information
+}
+\references{
+Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11.
 }
