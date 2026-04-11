@@ -34,7 +34,8 @@
 #' Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11.
 #'
 #' @examples
-#' 
+#' popd_df = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+#' infoxtr::surd(popd_df, 3, 2:3)
 #' 
 kocmi = \(data, target, agent, conds, knockoff, null_knockoff = NULL,
           type = c("cont", "disc"), nboots = 1e4, k = 3, threads = 1,
