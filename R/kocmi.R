@@ -23,10 +23,10 @@
 #' @param contain_null (optional) Logical. If `TRUE`, the test statistic is
 #'   computed using knockoffs generated under the null model (provided in
 #'   `null_knockoff`). In this case the difference is defined as
-#'   \eqn{I(Y; X_null | Z) - I(Y; X_knockoff | Z)}.
+#'   \eqn{I(Y; X_{null} | Z) - I(Y; X_{knockoff} | Z)}.
 #'   If `FALSE`, the original conditional mutual information
 #'   \eqn{I(Y; X | Z)} is used instead and compared against the knockoff
-#'   estimates \eqn{I(Y; X_knockoff | Z)}.
+#'   estimates \eqn{I(Y; X_{knockoff} | Z)}.
 #'
 #' @returns A named numeric vector.
 #' @export
