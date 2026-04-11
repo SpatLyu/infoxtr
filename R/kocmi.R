@@ -3,18 +3,19 @@
 #' Knockoff Conditional Mutual Information
 #'
 #' @param conds Integer vector of column indices for the conditioning variables.
-#' @param knockoff A matrix or data frame containing knockoff realizations
-#'   constructed for the `agent` variable while keeping the `target`
-#'   variable unchanged. Each row corresponds to one Monte Carlo knockoff
-#'   sample generated using the remaining variables except the target.
-#' @param null_knockoff (optional) A matrix or data frame containing knockoff
-#'   realizations generated under the null setting where all variables are
-#'   jointly used to construct knockoffs. Each row represents one Monte Carlo
-#'   sample. If `contain_null = FALSE`, this argument can be `NULL`.
-#' @param type (optional) Estimation method:
-#'   `"disc"` for discrete entropy or `"cont"` for continuous entropy (KSG estimator).
-#' @param nboots
-##' @param k For `type = "cont`, the number of nearest neighbors used by
+#' @param knockoff Knockoff realizations constructed for the `agent` variable
+#'   while keeping the `target` variable unchanged. Each column corresponds to
+#'   one Monte Carlo knockoff sample generated using the remaining variables
+#'   except the target.
+#' @param null_knockoff (optional) Knockoff realizations generated under the
+#'   null setting where all variables are jointly used to construct knockoffs.
+#'   Each column represents one Monte Carlo sample. If `contain_null = FALSE`,
+#'   this argument can be `NULL`.
+#' @param type (optional) Estimation method: `"disc"` for discrete mutual information
+#'   or `"cont"` for continuous mutual information (KSG estimator).
+#' @param nboots (optional) Number of permutations used in the sign-flipping permutation
+#'   test for evaluating the significance of the mean information difference.
+##' @param k (optional) For `type = "cont`, the number of nearest neighbors used by
 #'   the continuous conditional mutual information estimator.
 #'   For `type = "disc"`, the number of bins used for discretization.
 #' @param seed (optional) Random seed used for permutation test.
