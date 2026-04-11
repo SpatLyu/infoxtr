@@ -35,7 +35,8 @@
 #'
 #' @examples
 #' popd_df = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
-#' infoxtr::surd(popd_df, 3, 2:3)
+#' popd_df
+#' # infoxtr::kocmi(popd_df, 3, 6, c(4,5,7))
 #' 
 kocmi = \(data, target, agent, conds, knockoff, null_knockoff = NULL,
           type = c("cont", "disc"), nboots = 1e4, k = 3, threads = 1,
