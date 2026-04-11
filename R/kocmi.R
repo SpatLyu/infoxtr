@@ -16,7 +16,7 @@
 #'   or `"cont"` for continuous mutual information (KSG estimator).
 #' @param nboots (optional) Number of permutations used in the sign-flipping permutation
 #'   test for evaluating the significance of the mean information difference.
-##' @param k (optional) For `type = "cont`, the number of nearest neighbors used by
+##' @param k (optional) For `type = "cont"`, the number of nearest neighbors used by
 #'   the continuous conditional mutual information estimator.
 #'   For `type = "disc"`, the number of bins used for discretization.
 #' @param seed (optional) Random seed used for permutation test.
@@ -30,6 +30,8 @@
 #'
 #' @returns A named numeric vector.
 #' @export
+#' @references 
+#' Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11.
 #'
 #' @examples
 #' 
