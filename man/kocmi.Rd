@@ -22,6 +22,12 @@ kocmi(
 )
 }
 \arguments{
+\item{data}{Observation data.}
+
+\item{target}{Integer vector of column indices for the target variables.}
+
+\item{agent}{Integer vector of column indices for the source (agent) variables.}
+
 \item{conds}{Integer vector of column indices for the conditioning variables.}
 
 \item{knockoff}{Knockoff realizations constructed for the \code{agent} variable
@@ -44,7 +50,16 @@ test for evaluating the significance of the mean information difference.}
 the continuous conditional mutual information estimator.
 For \code{type = "disc"}, the number of bins used for discretization.}
 
+\item{threads}{(optional) Number of threads used.}
+
 \item{seed}{(optional) Random seed used for permutation test.}
+
+\item{base}{(optional) Logarithm base of the entropy.
+Defaults to \code{exp(1)} (nats). Use \code{2} for bits or \code{10} for dits.}
+
+\item{method}{(optional) Discretization method. One of
+\code{"sd"}, \code{"equal"}, \code{"geometric"}, \code{"quantile"},
+\verb{"natural("jenks")"}, or \code{"headtail"("headtails")}.}
 
 \item{contain_null}{(optional) Logical. If \code{TRUE}, the test statistic is
 computed using knockoffs generated under the null model (provided in
