@@ -234,13 +234,13 @@ namespace kocmi
             rng_pool[b] = std::mt19937_64(seq);
         }
 
-        std::uniform_int_distribution<int> sign_dist(0, 1);
-
         std::vector<size_t> perm_flags(nboots, 0);
 
         // Perform permutation
         if (threads <= 1)
-        {
+        {   
+            std::uniform_int_distribution<int> sign_dist(0, 1);
+
             for (size_t b = 0; b < nboots; ++b) 
             {
                 double perm_sum = 0.0;
@@ -263,6 +263,8 @@ namespace kocmi
 
                 double perm_sum = 0.0;
                 std::mt19937_64& rng = rng_pool[b];
+
+                std::uniform_int_distribution<int> sign_dist(0, 1);
 
                 for (size_t i = 0; i < n; ++i) 
                 {
