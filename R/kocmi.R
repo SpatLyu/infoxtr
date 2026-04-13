@@ -1,6 +1,8 @@
 #' KOCMI
 #'
 #' Knockoff Conditional Mutual Information
+#' 
+#' @note `kocmi` only support numeric data.
 #'
 #' @inheritParams surd
 #' @param conds Integer vector of column indices for the conditioning variables.
