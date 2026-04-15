@@ -145,7 +145,7 @@ tibble::as_tibble(res_cvds)
 
 The SURD results are shown in the figure below:
 
-```{r fig_surd_cvds,fig.width=10,fig.height=3,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. SURD decomposition results between different air pollutants and cardiovascular diseases.")}
+```{r fig_surd_cvds,fig.width=6.5,fig.height=2.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. SURD decomposition results between different air pollutants and cardiovascular diseases.")}
 utils_plot_surd(res_cvds)
 ```
 
@@ -164,7 +164,7 @@ res_popd = infoxtr::surd(popd_sf, 1, 2:5,
 tibble::as_tibble(res_popd)
 ```
 
-```{r fig_surd_popd,fig.width=10,fig.height=3,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. SURD decomposition results between population density and its Drivers.")}
+```{r fig_surd_popd,fig.width=6.5,fig.height=2.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. SURD decomposition results between population density and its Drivers.")}
 utils_plot_surd(res_popd)
 ```
 
@@ -181,7 +181,7 @@ res_npp = infoxtr::surd(npp,1, 2:5,
 tibble::as_tibble(res_npp)
 ```
 
-```{r fig_surd_npp,fig.width=10,fig.height=3,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 4**. SURD decomposition results between climatic and topographic factors and npp.")}
+```{r fig_surd_npp,fig.width=6.5,fig.height=2.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 4**. SURD decomposition results between climatic and topographic factors and npp.")}
 utils_plot_surd(res_npp)
 ```
 
