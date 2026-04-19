@@ -30,6 +30,57 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
                    static_cast<int>(n_cols));
     }
     tg_idx -= 1; // to 0-based
+
+    std::vector<size_t> ag_raw = Rcpp::as<std::vector<size_t>>(agent);
+    for (auto& idx : ag_raw) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Agent index %d out of bounds [1, %d]",
+                    static_cast<int>(idx),
+                    static_cast<int>(n_cols));
+        }
+        idx -= 1;
+    }
+    size_t nag_raw = ag_raw.size();
+
+    // 
+    std::vector<int> bin_vec = Rcpp::as<std::vector<int>>(bin);
+    std::vector<std::string> method_vec = Rcpp::as<std::vector<std::string>>(method);
+
+    // expanded (target + agents)
+    std::vector<size_t> bin_expanded(nag_raw + 1);
+    std::vector<std::string> method_expanded(nag_raw + 1);
+
+    // ---- bin ----
+    if (bin_vec.size() == 1) {
+        std::fill(bin_expanded.begin(), bin_expanded.end(),
+                static_cast<size_t>(std::abs(bin_vec[0])));
+    } else if (bin_vec.size() == 2) {
+        bin_expanded[0] = std::abs(bin_vec[0]);
+        std::fill(bin_expanded.begin() + 1, bin_expanded.end(),
+                static_cast<size_t>(std::abs(bin_vec[1])));
+    } else {
+        bin_expanded[0] = std::abs(bin_vec[0]);
+        for (size_t i = 1; i < nag_raw + 1; ++i) {
+            size_t idx = (i - 1) % (bin_vec.size() - 1);
+            bin_expanded[i] = std::abs(bin_vec[idx + 1]);
+        }
+    }
+
+    // ---- method ----
+    if (method_vec.size() == 1) {
+        std::fill(method_expanded.begin(), method_expanded.end(),
+                method_vec[0]);
+    } else if (method_vec.size() == 2) {
+        method_expanded[0] = method_vec[0];
+        std::fill(method_expanded.begin() + 1, method_expanded.end(),
+                method_vec[1]);
+    } else {
+        method_expanded[0] = method_vec[0];
+        for (size_t i = 1; i < nag_raw + 1; ++i) {
+            size_t idx = (i - 1) % (method_vec.size() - 1);
+            method_expanded[i] = method_vec[idx + 1];
+        }
+    }
     
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
     for (auto& idx : ag) {
