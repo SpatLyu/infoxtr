@@ -141,7 +141,7 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
         vec[r] = mat(r, tg_idx);
     }
     pm[0] = infoxtr::discretize::discretize(
-        vec, method, static_cast<size_t>(std::abs(n))
+        vec, method_expanded[0], bin_expanded[0]
     );
     
     // Generate lagged values for agent variables
