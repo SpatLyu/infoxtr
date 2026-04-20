@@ -47,7 +47,7 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     std::vector<size_t> bin_vec = Rcpp::as<std::vector<size_t>>(bin);
     std::vector<std::string> method_vec = Rcpp::as<std::vector<std::string>>(method);
 
-    // Expanded (target + agents)
+    // Expand bin and method (target + agents)
     std::vector<size_t> bin_expanded(nag_raw + 1);
     std::vector<std::string> method_expanded(nag_raw + 1);
 
@@ -90,7 +90,7 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     }
 
     // Create ordering index
-    std::vector<size_t> order(ag_raw.size());
+    std::vector<size_t> order(ag_raw.size(), 0);
     std::iota(order.begin(), order.end(), 0);
 
     // Sort indices by ag_raw
