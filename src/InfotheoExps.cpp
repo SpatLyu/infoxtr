@@ -524,8 +524,10 @@ Rcpp::List RcppDiscSURD(SEXP mat,
     infoxtr::surd::DiscMat m = infoxtr::convert::pat_r2std(mat, false);
 
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
-        m, static_cast<size_t>(std::abs(max_order)),
-        static_cast<size_t>(std::abs(threads)), base, normalize);
+        m, 
+        static_cast<size_t>(std::abs(max_order)),
+        static_cast<size_t>(std::abs(threads)), 
+        std::abs(base), normalize);
 
     std::vector<std::string> names;
     std::vector<std::string> types;
