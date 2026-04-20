@@ -189,8 +189,10 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     }
 
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
-        pm, static_cast<size_t>(std::abs(max_order)),
-        static_cast<size_t>(std::abs(threads)), base, normalize);
+        pm, 
+        static_cast<size_t>(std::abs(max_order)),
+        static_cast<size_t>(std::abs(threads)), 
+        std::abs(base), normalize);
 
     std::vector<std::string> names;
     std::vector<std::string> types;
