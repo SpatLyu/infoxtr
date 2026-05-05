@@ -1,14 +1,20 @@
 /********************************************************************************
  * File: numericutils.hpp
  *
- * Utility functions for safe and consistent floating-point operations.
- *
  * Provides helper functions for:
  *   - Floating-point comparison with combined relative and absolute tolerance.
  *   - Portable numeric constants (epsilon and tolerance).
  *   - Special mathematical functions such as the digamma function ψ(x).
+ *   - Basic statistical utilities (mean, quantiles).
  *
- * Intended for scientific computation where double precision stability matters.
+ * Statistical features:
+ *   mean(vec)
+ *
+ *   quantile(vec, probs)
+ *       Computes sample quantiles using R's Type 7 method:
+ *           h = 1 + (n - 1) * p
+ *
+ *       Supports multiple probability inputs and linear interpolation.
  *
  * Author: Wenbo Lyu (Github: @SpatLyu)
  * License: GPL-3
