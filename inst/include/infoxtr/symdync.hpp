@@ -167,7 +167,7 @@ namespace symdync
      * @param pat2 Second pattern space.
      * @return     Vector containing positive and negative proportions.
      */
-    inline std::vector<double> countSignProp(
+    inline std::vector<double> pairprop(
         const std::vector<std::vector<uint8_t>>& pat1,
         const std::vector<std::vector<uint8_t>>& pat2
     )
