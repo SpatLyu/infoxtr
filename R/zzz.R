@@ -1,4 +1,3 @@
 .onLoad = function(...) {
-  loadNamespace("sf")
-  loadNamespace("terra")
+  if (requireNamespace("Rcpp", quietly = TRUE)) loadNamespace("Rcpp")
 }
