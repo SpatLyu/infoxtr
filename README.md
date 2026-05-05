@@ -55,4 +55,4 @@ devtools::install_github("stscl/infoxtr",
 
 Kraskov, A., Stögbauer, H., Grassberger, P., 2004. Estimating mutual information. Physical Review E 69. https://doi.org/10.1103/physreve.69.066138.
 
-
+Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11. https://doi.org/10.1126/sciadv.adu6464.
