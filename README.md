@@ -53,4 +53,6 @@ devtools::install_github("stscl/infoxtr",
 
 ## References
 
+Kraskov, A., Stögbauer, H., Grassberger, P., 2004. Estimating mutual information. Physical Review E 69. https://doi.org/10.1103/physreve.69.066138.
+
 
