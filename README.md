@@ -19,14 +19,9 @@
 ***Information**-Theoretic Measures for Revealing Variable
 **Interactions***
 
-*infoxtr* is an R package for analyzing variable interactions using
-information-theoretic measures. Originally tailored for time series, its
-methods extend seamlessly to spatial cross-sectional data. Powered by a
-pure C++ engine with a lightweight R interface, the package also exposes
-its headers for direct integration into other R packages.
+*infoxtr* is an R package for analyzing variable interactions using information-theoretic measures. Originally tailored for time series, its methods extend seamlessly to spatial cross-sectional data. Powered by a pure C++ engine with a lightweight R interface, the package also exposes its headers for direct integration into other R packages.
 
-> *Refer to the package documentation <https://stscl.github.io/infoxtr/>
-> for more detailed information.*
+> *Refer to the package documentation <https://stscl.github.io/infoxtr/> for more detailed information.*
 
 ## Installation
 
@@ -36,8 +31,7 @@ its headers for direct integration into other R packages.
 install.packages("infoxtr", dep = TRUE)
 ```
 
-- Install binary version from
-  [R-universe](https://stscl.r-universe.dev/infoxtr) with:
+- Install binary version from [R-universe](https://stscl.r-universe.dev/infoxtr) with:
 
 ``` r
 install.packages("infoxtr",
@@ -46,8 +40,7 @@ install.packages("infoxtr",
                  dep = TRUE)
 ```
 
-- Install from source code on [GitHub](https://github.com/stscl/infoxtr)
-  with:
+- Install from source code on [GitHub](https://github.com/stscl/infoxtr) with:
 
 ``` r
 if (!requireNamespace("devtools")) {
