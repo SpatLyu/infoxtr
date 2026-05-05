@@ -53,6 +53,8 @@ devtools::install_github("stscl/infoxtr",
 
 ## References
 
+Schreiber, T., 2000. Measuring Information Transfer. Physical Review Letters 85, 461–464. https://doi.org/10.1103/physrevlett.85.461.
+
 Kraskov, A., Stogbauer, H., Grassberger, P., 2004. Estimating mutual information. Physical Review E 69. https://doi.org/10.1103/physreve.69.066138.
 
 Martinez-Sanchez, A., Arranz, G., Lozano-Duran, A., 2024. Decomposing causality into its synergistic, unique, and redundant components. Nature Communications 15. https://doi.org/10.1038/s41467-024-53373-4.
