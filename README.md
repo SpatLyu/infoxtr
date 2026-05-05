@@ -50,3 +50,7 @@ devtools::install_github("stscl/infoxtr",
                          build_vignettes = TRUE,
                          dep = TRUE)
 ```
+
+## References
+
+
