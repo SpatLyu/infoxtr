@@ -16,8 +16,7 @@
 
 <a href="https://stscl.github.io/infoxtr/"><img src="man/figures/infoxtr.png" align="right" hspace="5" vspace="0" width="15%" alt="infoxtr website: https://stscl.github.io/infoxtr/"/></a>
 
-***Information**-Theoretic Measures for Revealing Variable
-**Interactions***
+***Information**-Theoretic Measures for Revealing Variable **Interactions***
 
 *infoxtr* is an R package for analyzing variable interactions using information-theoretic measures. Originally tailored for time series, its methods extend seamlessly to spatial cross-sectional data. Powered by a pure C++ engine with a lightweight R interface, the package also exposes its headers for direct integration into other R packages.
 
