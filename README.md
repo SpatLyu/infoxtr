@@ -53,9 +53,9 @@ devtools::install_github("stscl/infoxtr",
 
 ## References
 
-Kraskov, A., Stögbauer, H., Grassberger, P., 2004. Estimating mutual information. Physical Review E 69. https://doi.org/10.1103/physreve.69.066138.
+Kraskov, A., Stogbauer, H., Grassberger, P., 2004. Estimating mutual information. Physical Review E 69. https://doi.org/10.1103/physreve.69.066138.
 
-Martínez-Sánchez, Á., Arranz, G., Lozano-Durán, A., 2024. Decomposing causality into its synergistic, unique, and redundant components. Nature Communications 15. https://doi.org/10.1038/s41467-024-53373-4.
+Martinez-Sanchez, A., Arranz, G., Lozano-Duran, A., 2024. Decomposing causality into its synergistic, unique, and redundant components. Nature Communications 15. https://doi.org/10.1038/s41467-024-53373-4.
 
 Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11. https://doi.org/10.1126/sciadv.adu6464.
 
