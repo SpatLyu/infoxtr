@@ -301,7 +301,8 @@ namespace symdync
         const std::vector<std::vector<uint8_t>>& pat2
     )
     {
-        if (pat1.size() != pat2.size()) {
+        if (pat1.size() != pat2.size()) 
+        {
             throw std::invalid_argument("Pattern spaces must have same number of rows.");
         }
 
@@ -311,40 +312,44 @@ namespace symdync
 
         const size_t n_rows = pat1.size();
 
-        for (size_t i = 0; i < n_rows; ++i) {
-
+        for (size_t i = 0; i < n_rows; ++i) 
+        {
             const auto& row1 = pat1[i];
             const auto& row2 = pat2[i];
 
             // Skip rows that represent invalid pattern {0}
             if ((row1.size() == 1 && row1[0] == 0) ||
-                (row2.size() == 1 && row2[0] == 0)) {
+                (row2.size() == 1 && row2[0] == 0)) 
+            {
                 continue;
             }
 
-            if (row1.size() != row2.size()) {
+            if (row1.size() != row2.size()) 
+            {
                 throw std::invalid_argument("Pattern rows must have same length.");
             }
 
             const size_t n_cols = row1.size();
 
-            for (size_t j = 0; j < n_cols; ++j) {
-
+            for (size_t j = 0; j < n_cols; ++j) 
+            {
                 uint8_t s1 = row1[j];
                 uint8_t s2 = row2[j];
 
                 // Only count non-zero pairs
-                if (s1 != 0 && s2 != 0) {
-
+                if (s1 != 0 && s2 != 0) 
+                {
                     ++pat_tot;
 
                     // Positive agreement
-                    if (s1 == s2) {
+                    if (s1 == s2) 
+                    {
                         ++pos_tot;
                     }
                     // Negative agreement
                     else if ((s1 == 1 && s2 == 3) ||
-                            (s1 == 3 && s2 == 1)) {
+                            (s1 == 3 && s2 == 1)) 
+                    {
                         ++neg_tot;
                     }
                 }
@@ -353,11 +358,14 @@ namespace symdync
 
         std::vector<double> result(2);
 
-        if (pat_tot == 0) {
+        if (pat_tot == 0) 
+        {
             double nan = std::numeric_limits<double>::quiet_NaN();
             result[0] = nan;
             result[1] = nan;
-        } else {
+        } 
+        else 
+        {
             result[0] = static_cast<double>(pos_tot) / static_cast<double>(pat_tot);
             result[1] = static_cast<double>(neg_tot) / static_cast<double>(pat_tot);
         }
