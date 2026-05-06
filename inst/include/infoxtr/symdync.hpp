@@ -135,10 +135,16 @@ namespace symdync
         bool relative = false,
         bool na_rm = true
     ) {
+        if (mat.empty()) 
+        {
+            throw std::invalid_argument("Input matrix must not be empty.");
+        }
+
         const size_t n_rows = mat.size();
         const size_t n_cols = mat[0].size();
 
-        if (n_cols < 2) {
+        if (n_cols < 2) 
+        {
             throw std::invalid_argument("State space matrix must have at least 2 columns.");
         }
         const size_t out_cols = n_cols - 1;
@@ -155,7 +161,8 @@ namespace symdync
 
             bool has_nan = false;
 
-            for (size_t j = 0; j < out_cols; ++j) {
+            for (size_t j = 0; j < out_cols; ++j) 
+            {
                 double diff = row[j + 1] - row[j];
 
                 // Compute relative change if requested
@@ -163,17 +170,21 @@ namespace symdync
                     diff /= row[j];
                 }
 
-                if (std::isnan(diff)) {
+                if (std::isnan(diff)) 
+                {
                     pat.push_back(static_cast<uint8_t>(0));
                     has_nan = true;
                 } 
-                else if (infoxtr::numericutils::doubleNearlyEqual(diff, 0.0)) {
+                else if (infoxtr::numericutils::doubleNearlyEqual(diff, 0.0)) 
+                {
                     pat.push_back(static_cast<uint8_t>(2));
                 } 
-                else if (diff > 0.0) {
+                else if (diff > 0.0) 
+                {
                     pat.push_back(static_cast<uint8_t>(3));
                 } 
-                else { // diff < 0
+                else 
+                { // diff < 0
                     pat.push_back(static_cast<uint8_t>(1));
                 }
             }
