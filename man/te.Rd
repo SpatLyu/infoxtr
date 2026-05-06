@@ -52,3 +52,6 @@ set.seed(42)
 infoxtr::te(matrix(stats::rnorm(100,1,10),ncol=2),1,2)
 
 }
+\references{
+Schreiber, T., 2000. Measuring Information Transfer. Physical Review Letters 85, 461–464.
+}
