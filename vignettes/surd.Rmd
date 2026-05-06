@@ -293,7 +293,7 @@ tibble::as_tibble(res_npp)
 utils_plot_surd(res_npp)
 ```
 
-![**Figure 4**. SURD decomposition results between climatic and topographic factors and npp.](man/figures/surd/fig_surd_npp-1.png)
+![**Figure 4**. SURD decomposition results between climatic and topographic factors and npp.](../man/figures/surd/fig_surd_npp-1.png)
 
 ---
 
