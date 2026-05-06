@@ -122,8 +122,6 @@ namespace symdync
         return patterns;
     }
 
-    #include <algorithm>
-
     /**
      * Encodes embeddings into compact identifiers using 
      * lexicographic ordering  and deduplication.
