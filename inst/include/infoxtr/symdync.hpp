@@ -143,8 +143,8 @@ namespace symdync
         }
 
         const size_t out_cols = n_cols - 1;
-        std::vector<std::vector<uint8_t>> patterns;
-        patterns.reserve(n_rows);
+        std::vector<std::vector<uint8_t>> patterns(n_rows, std::vector<uint8_t>{0});
+        std::vector<uint64_t> labels(patterns.size(), 0);
 
         for (size_t i = 0; i < n_rows; ++i) {
             const auto& row = mat[i];
@@ -183,8 +183,6 @@ namespace symdync
                 patterns.emplace_back(std::move(pat));
             }
         }
-
-        std::vector<uint64_t> labels(patterns.size(), 0);
 
         // Step 1: collect non-{0} patterns
         std::vector<std::vector<uint8_t>> unique_patterns;
