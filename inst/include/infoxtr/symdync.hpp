@@ -193,8 +193,7 @@ namespace symdync
         );
         
         std::vector<uint64_t> labels(patterns.size(), 0);
-
-        // Step 4: assign IDs via binary search
+        // Assign IDs via binary search
         for (size_t i = 0; i < patterns.size(); ++i) {
             const auto& pat = patterns[i];
 
