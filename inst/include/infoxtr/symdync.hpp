@@ -122,6 +122,63 @@ namespace symdync
         return patterns;
     }
 
+    #include <algorithm>
+
+    /**
+    * Symbolize using sort + unique (no hash map)
+    */
+    inline std::vector<uint64_t> symbolize(
+        const std::vector<std::vector<double>>& mat,
+        bool relative = false,
+        bool na_rm = true
+    ) {
+        auto patterns = sympat(mat, relative, na_rm);
+
+        std::vector<uint64_t> labels(patterns.size(), 0);
+
+        // Step 1: collect non-{0} patterns
+        std::vector<std::vector<uint8_t>> unique_patterns;
+        unique_patterns.reserve(patterns.size());
+
+        for (const auto& pat : patterns) {
+            if (!(pat.size() == 1 && pat[0] == 0)) {
+                unique_patterns.push_back(pat);
+            }
+        }
+
+        // Step 2: sort
+        std::sort(unique_patterns.begin(), unique_patterns.end());
+
+        // Step 3: unique
+        unique_patterns.erase(
+            std::unique(unique_patterns.begin(), unique_patterns.end()),
+            unique_patterns.end()
+        );
+
+        // Step 4: assign IDs via binary search
+        for (size_t i = 0; i < patterns.size(); ++i) {
+            const auto& pat = patterns[i];
+
+            // special case
+            if (pat.size() == 1 && pat[0] == 0) {
+                labels[i] = 0;
+                continue;
+            }
+
+            auto it = std::lower_bound(
+                unique_patterns.begin(),
+                unique_patterns.end(),
+                pat
+            );
+
+            labels[i] = static_cast<uint64_t>(
+                std::distance(unique_patterns.begin(), it) + 1
+            );
+        }
+
+        return labels;
+    }
+
     /**
      * Compute sign agreement proportions between two pattern spaces.
      *
