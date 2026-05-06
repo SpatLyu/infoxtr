@@ -142,11 +142,12 @@ namespace symdync
             throw std::invalid_argument("State space matrix must have at least 2 columns.");
         }
         const size_t out_cols = n_cols - 1;
-        
+
         std::vector<std::vector<uint8_t>> patterns(n_rows, std::vector<uint8_t>{0});
         std::vector<uint64_t> labels(patterns.size(), 0);
 
-        for (size_t i = 0; i < n_rows; ++i) {
+        for (size_t i = 0; i < n_rows; ++i) 
+        {
             const auto& row = mat[i];
             std::vector<uint8_t> pat;
             pat.reserve(out_cols);
@@ -176,11 +177,9 @@ namespace symdync
                 }
             }
 
-            // Handle row-level NA removal
-            if (na_rm && has_nan) {
-                patterns.emplace_back(std::vector<uint8_t>{0});
-            } else {
-                patterns.emplace_back(std::move(pat));
+            if (!has_nan || !na_rm)
+            {
+                patterns[i] = std::move(pat);
             }
         }
 
