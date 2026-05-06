@@ -125,8 +125,13 @@ namespace symdync
     #include <algorithm>
 
     /**
-    * Symbolize using sort + unique (no hash map)
-    */
+     * Encodes embeddings into compact identifiers using 
+     * lexicographic ordering  and deduplication.
+     *
+     * Encoding scheme:
+     *   - {0}                  -> 0   (reserved for NA / undefined patterns)
+     *   - unique pattern #k    -> k   (k ∈ [1, n_unique], lexicographic order)
+     */
     inline std::vector<uint64_t> symbolize(
         const std::vector<std::vector<double>>& mat,
         bool relative = false,
