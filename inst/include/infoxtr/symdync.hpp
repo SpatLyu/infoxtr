@@ -1,21 +1,30 @@
-/********************************************************************************************************
+/********************************************************************************************
  * File: symdync.hpp
  *
  * High-performance symbolic dynamics utilities for pattern-based causal analysis.
  *
- * Provides lightweight functions for:
- *   - Transforming continuous state space data into discrete symbolic patterns.
- *   - Computing signature spaces via absolute or relative successive differences.
- *   - Encoding symbolic patterns with compact uint8 representation.
- *   - Quantifying sign agreement proportions between pattern sequences.
- *   - Constructing causal heatmaps and classifying interactions as positive, negative, dark, or null.
+ * This module provides a lightweight and deterministic framework for transforming
+ * continuous state space data into discrete symbolic representations, enabling
+ * efficient downstream analysis such as pattern comparison, dependence assessment,
+ * and causal structure inference.
  *
- * Designed for large-scale, high-frequency time series and spatial cross-sectional data
- * where memory efficiency, deterministic indexing, and cache-friendly access patterns are critical.
+ * Core functionalities:
+ *
+ *   - Symbolic embedding (sympat):
+ *       Converts continuous trajectories into discrete symbolic patterns based on
+ *       successive differences (absolute or relative), using a compact 4-symbol alphabet.
+ *
+ *   - Pattern encoding (symbolize):
+ *       Maps symbolic patterns into unique integer identifiers via lexicographic
+ *       ordering and deduplication, producing a dense and reproducible index space.
+ *
+ *   - Pattern agreement metrics (pairprop):
+ *       Quantifies directional consistency between symbolic pattern spaces by measuring
+ *       positive and negative sign agreement proportions.
  *
  * Author: Wenbo Lyu (Github: @SpatLyu)
  * License: GPL-3
- *******************************************************************************************************/
+ ********************************************************************************************/
 
 #ifndef INFOXTR_SYMDYNC_HPP
 #define INFOXTR_SYMDYNC_HPP
@@ -205,11 +214,13 @@ namespace symdync
         
         std::vector<uint64_t> labels(patterns.size(), 0);
         // Assign IDs via binary search
-        for (size_t i = 0; i < patterns.size(); ++i) {
+        for (size_t i = 0; i < patterns.size(); ++i) 
+        {
             const auto& pat = patterns[i];
 
             // special case
-            if (pat.size() == 1 && pat[0] == 0) {
+            if (pat.size() == 1 && pat[0] == 0)
+            {
                 labels[i] = 0;
                 continue;
             }
