@@ -73,16 +73,18 @@ namespace symdync
     inline std::vector<std::vector<uint8_t>> sympat(
         const std::vector<std::vector<double>>& mat,
         bool relative = false,
-        bool na_rm = true
-    ) {
-        if (mat.empty()) {
+        bool na_rm = true) 
+    {
+        if (mat.empty()) 
+        {
             throw std::invalid_argument("Input matrix must not be empty.");
         }
 
         const size_t n_rows = mat.size();
         const size_t n_cols = mat[0].size();
 
-        if (n_cols < 2) {
+        if (n_cols < 2) 
+        {
             throw std::invalid_argument("State space matrix must have at least 2 columns.");
         }
 
@@ -90,29 +92,36 @@ namespace symdync
         std::vector<std::vector<uint8_t>> patterns;
         patterns.reserve(n_rows);
 
-        for (size_t i = 0; i < n_rows; ++i) {
+        for (size_t i = 0; i < n_rows; ++i) 
+        {
             const auto& row = mat[i];
             std::vector<uint8_t> pat;
             pat.reserve(out_cols);
 
             bool has_nan = false;
 
-            for (size_t j = 0; j < out_cols; ++j) {
+            for (size_t j = 0; j < out_cols; ++j) 
+            {
                 double diff = row[j + 1] - row[j];
 
                 // Compute relative change if requested
-                if (relative && !std::isnan(diff) && !infoxtr::numericutils::doubleNearlyEqual(row[j], 0.0)) {
+                if (relative && !std::isnan(diff) && 
+                    !infoxtr::numericutils::doubleNearlyEqual(row[j], 0.0)) 
+                {
                     diff /= row[j];
                 }
 
-                if (std::isnan(diff)) {
+                if (std::isnan(diff)) 
+                {
                     pat.push_back(static_cast<uint8_t>(0));
                     has_nan = true;
                 } 
-                else if (infoxtr::numericutils::doubleNearlyEqual(diff, 0.0)) {
+                else if (infoxtr::numericutils::doubleNearlyEqual(diff, 0.0)) 
+                {
                     pat.push_back(static_cast<uint8_t>(2));
                 } 
-                else if (diff > 0.0) {
+                else if (diff > 0.0) 
+                {
                     pat.push_back(static_cast<uint8_t>(3));
                 } 
                 else { // diff < 0
@@ -121,7 +130,8 @@ namespace symdync
             }
 
             // Handle row-level NA removal
-            if (na_rm && has_nan) {
+            if (na_rm && has_nan) 
+            {
                 patterns.emplace_back(std::vector<uint8_t>{0});
             } else {
                 patterns.emplace_back(std::move(pat));
