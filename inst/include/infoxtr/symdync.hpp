@@ -144,7 +144,8 @@ namespace symdync
         const size_t out_cols = n_cols - 1;
 
         std::vector<std::vector<uint8_t>> patterns(n_rows, std::vector<uint8_t>{0});
-        std::vector<uint64_t> labels(patterns.size(), 0);
+        std::vector<std::vector<uint8_t>> unique_patterns;
+        unique_patterns.reserve(patterns.size());
 
         for (size_t i = 0; i < n_rows; ++i) 
         {
@@ -178,29 +179,20 @@ namespace symdync
             }
 
             if (!has_nan || !na_rm)
-            {
+            {   
+                unique_patterns.push_back(pat);
                 patterns[i] = std::move(pat);
             }
         }
 
-        // Step 1: collect non-{0} patterns
-        std::vector<std::vector<uint8_t>> unique_patterns;
-        unique_patterns.reserve(patterns.size());
-
-        for (const auto& pat : patterns) {
-            if (!(pat.size() == 1 && pat[0] == 0)) {
-                unique_patterns.push_back(pat);
-            }
-        }
-
-        // Step 2: sort
+        // Sort + clean patterns
         std::sort(unique_patterns.begin(), unique_patterns.end());
-
-        // Step 3: unique
         unique_patterns.erase(
             std::unique(unique_patterns.begin(), unique_patterns.end()),
             unique_patterns.end()
         );
+        
+        std::vector<uint64_t> labels(patterns.size(), 0);
 
         // Step 4: assign IDs via binary search
         for (size_t i = 0; i < patterns.size(); ++i) {
