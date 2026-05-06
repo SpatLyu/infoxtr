@@ -152,8 +152,8 @@ namespace symdync
     inline std::vector<uint64_t> symbolize(
         const std::vector<std::vector<double>>& mat,
         bool relative = false,
-        bool na_rm = true
-    ) {
+        bool na_rm = true) 
+    {
         if (mat.empty()) 
         {
             throw std::invalid_argument("Input matrix must not be empty.");
@@ -185,7 +185,9 @@ namespace symdync
                 double diff = row[j + 1] - row[j];
 
                 // Compute relative change if requested
-                if (relative && !std::isnan(diff) && !infoxtr::numericutils::doubleNearlyEqual(row[j], 0.0)) {
+                if (relative && !std::isnan(diff) && 
+                    !infoxtr::numericutils::doubleNearlyEqual(row[j], 0.0)) 
+                {
                     diff /= row[j];
                 }
 
@@ -208,10 +210,10 @@ namespace symdync
                 }
             }
 
-            if (!has_nan || !na_rm)
+            if (!na_rm || !has_nan)
             {   
-                unique_patterns.push_back(pat);
                 patterns[i] = std::move(pat);
+                unique_patterns.push_back(patterns[i]);
             }
         }
 
