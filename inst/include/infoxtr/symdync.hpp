@@ -122,7 +122,7 @@ namespace symdync
         return patterns;
     }
 
-    /**
+    /*
      * Encodes embeddings into compact identifiers using 
      * lexicographic ordering  and deduplication.
      *
@@ -141,8 +141,8 @@ namespace symdync
         if (n_cols < 2) {
             throw std::invalid_argument("State space matrix must have at least 2 columns.");
         }
-
         const size_t out_cols = n_cols - 1;
+        
         std::vector<std::vector<uint8_t>> patterns(n_rows, std::vector<uint8_t>{0});
         std::vector<uint64_t> labels(patterns.size(), 0);
 
