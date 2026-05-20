@@ -510,7 +510,7 @@ namespace distance
         const std::vector<std::vector<double>>& mat,
         const std::vector<size_t>& lib,
         const std::vector<size_t>& pred,
-        std::string method = "euclidean",
+        const std::string& method = "euclidean",
         bool na_rm = true,
         bool byrow = true)
     {
