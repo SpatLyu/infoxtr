@@ -1,4 +1,4 @@
-/*******************************************************************
+/*****************************************************************************************
  *  File: lagg.hpp
  *
  *  Lagged aggregation utilities for matrices.
@@ -44,9 +44,21 @@
  *      lagg(mat, lag, byrow)
  *          Temporal lag for time series
  *
+ * Parameter Constraints
+ * 
+ *     Lattice graphs
+ *         large lag values beyond the graph diameter have no additional effect.
+ *         The algorithm automatically stops when no further neighbors are reachable.
+ * 
+ *     Regular grids
+ *         lag must not exceed the maximum grid dimension
+ * 
+ *     Time series
+ *         lag must be smaller than the number of observations
+ *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
- *******************************************************************/
+ *****************************************************************************************/
 
 #ifndef INFOXTR_LAGG_HPP
 #define INFOXTR_LAGG_HPP
@@ -55,7 +67,6 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
-#include <unordered_set>
 #include <stdexcept>
 #include <cstddef>
 
@@ -89,6 +100,9 @@ namespace lagg
         bool byrow = true
     )
     {
+        if (mat.empty())
+            throw std::invalid_argument("Input matrix is empty.");
+
         const size_t n = nb.size();
         const size_t p = mat.front().size();
 
@@ -182,7 +196,10 @@ namespace lagg
         size_t lag = 1,
         bool byrow = true
     )
-    {
+    {   
+        if (mat.empty())
+            throw std::invalid_argument("Input matrix is empty.");
+
         const size_t N = mat.size();
         const size_t p = mat.front().size();
 
@@ -190,6 +207,9 @@ namespace lagg
             throw std::invalid_argument("Invalid grid dimensions.");
 
         const size_t ncols = N / nrows;
+
+        if (lag > std::max(nrows, ncols))
+            throw std::invalid_argument("lag too large for grid dimensions.");
 
         Matrix out;
         if (byrow)
@@ -275,9 +295,15 @@ namespace lagg
         size_t lag = 1,
         bool byrow = true
     )
-    {
+    {   
+        if (mat.empty())
+            throw std::invalid_argument("Input matrix is empty.");
+
         const size_t n = mat.size();
         const size_t p = mat.front().size();
+
+        if (lag >= n)
+            throw std::invalid_argument("lag must be smaller than number of observations.");
         
         Matrix out;
         if (byrow)
