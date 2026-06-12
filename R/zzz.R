@@ -1,4 +1,4 @@
 .onLoad = function(...) {
-  loadNamespace("sf")
-  loadNamespace("terra")
+  if (requireNamespace("sf", quietly = TRUE)) loadNamespace("sf")
+  if (requireNamespace("terra", quietly = TRUE)) loadNamespace("terra")
 }
