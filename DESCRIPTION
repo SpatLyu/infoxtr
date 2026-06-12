@@ -9,6 +9,8 @@ Authors@R:
 Description: Implements information-theoretic measures to explore variable interactions, including KSG mutual information estimation for continuous variables from Kraskov et al. (2004) <doi:10.1103/PhysRevE.69.066138>, knockoff conditional mutual information described in Zhang & Chen (2025) <doi:10.1126/sciadv.adu6464>, synergistic-unique-redundant decomposition introduced by Martinez-Sanchez et al. (2024) <doi:10.1038/s41467-024-53373-4>, allowing detection of complex and diverse relationships among variables.
 License: GPL-3
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
 URL: https://stscl.github.io/infoxtr/, https://github.com/stscl/infoxtr
 BugReports: https://github.com/stscl/infoxtr/issues
 Depends: 
@@ -30,5 +32,3 @@ Suggests:
     spEDM,
     tEDM
 VignetteBuilder: knitr
-Config/roxygen2/markdown: TRUE
-Config/roxygen2/version: 8.0.0
