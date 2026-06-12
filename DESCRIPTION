@@ -10,7 +10,6 @@ Description: Implements information-theoretic measures to explore variable inter
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 URL: https://stscl.github.io/infoxtr/, https://github.com/stscl/infoxtr
 BugReports: https://github.com/stscl/infoxtr/issues
 Depends: 
@@ -32,3 +31,4 @@ Suggests:
     spEDM,
     tEDM
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0
