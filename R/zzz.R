@@ -1,5 +1,3 @@
 .onLoad = function(...) {
-  loadNamespace("Rcpp")
-  # if (requireNamespace("sf", quietly = TRUE)) loadNamespace("sf")
-  # if (requireNamespace("terra", quietly = TRUE)) loadNamespace("terra")
+  if (requireNamespace("Rcpp", quietly = TRUE)) loadNamespace("Rcpp")
 }
