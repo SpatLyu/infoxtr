@@ -42,7 +42,7 @@ install.packages("infoxtr",
 - Install from source code on [GitHub](https://github.com/stscl/infoxtr) with:
 
 ``` r
-if (!requireNamespace("devtools")) {
+if (!requireNamespace("devtools", quietly = TRUE)) {
     install.packages("devtools")
 }
 devtools::install_github("stscl/infoxtr",
