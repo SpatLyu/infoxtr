@@ -63,7 +63,7 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     } 
     else 
     {
-        for (size_t i = 0; i < nag_raw + 1; ++i) 
+        for (size_t i = 0; i < nag_raw; ++i) 
         {
             size_t idx = i % lag_vec.size();
             lag_expanded[i] = lag_vec[idx];
