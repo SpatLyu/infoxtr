@@ -44,13 +44,31 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
         idx -= 1;
     }
     size_t nag_raw = ag_raw.size();
-
+    
+    std::vector<size_t> lag_vec = Rcpp::as<std::vector<size_t>>(lag);
     std::vector<size_t> bin_vec = Rcpp::as<std::vector<size_t>>(bin);
     std::vector<std::string> method_vec = Rcpp::as<std::vector<std::string>>(method);
+    
+    // Expand lag (length of agents)
+    std::vector<size_t> lag_expanded(nag_raw);
 
-    // Expand bin and method (target + agents)
+    // Expand bin and method (length of target + length of agents)
     std::vector<size_t> bin_expanded(nag_raw + 1);
     std::vector<std::string> method_expanded(nag_raw + 1);
+
+    // ---- lag ----
+    if (lag_vec.size() == 1) 
+    {
+        std::fill(lag_expanded.begin(), lag_expanded.end(), lag_vec[0]);
+    } 
+    else 
+    {
+        for (size_t i = 0; i < nag_raw + 1; ++i) 
+        {
+            size_t idx = i % lag_vec.size();
+            lag_expanded[i] = lag_vec[idx];
+        }
+    }
 
     // ---- bin ----
     if (bin_vec.size() == 1) 
