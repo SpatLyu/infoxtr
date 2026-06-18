@@ -37,8 +37,8 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
     {
         if (idx < 1 || idx > n_cols) {
             Rcpp::stop("Agent index %d out of bounds [1, %d]",
-                    static_cast<int>(idx),
-                    static_cast<int>(n_cols));
+                       static_cast<int>(idx),
+                       static_cast<int>(n_cols));
         }
         idx -= 1;
     }
