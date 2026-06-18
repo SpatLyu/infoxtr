@@ -42,12 +42,10 @@ install.packages("infoxtr",
 - Install from source code on [GitHub](https://github.com/stscl/infoxtr) with:
 
 ``` r
-if (!requireNamespace("devtools", quietly = TRUE)) {
-    install.packages("devtools")
+if (!requireNamespace("pak", quietly = TRUE)) {
+    install.packages("pak")
 }
-devtools::install_github("stscl/infoxtr",
-                         build_vignettes = TRUE,
-                         dep = TRUE)
+pak::pak("stscl/infoxtr", dependencies = TRUE)
 ```
 
 ## References
