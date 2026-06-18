@@ -122,18 +122,21 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
 
     // Apply ordering
     std::vector<size_t> ag_sorted;
+    std::vector<size_t> lag_sorted;
     std::vector<size_t> bin_sorted;
     std::vector<std::string> method_sorted;
 
     for (size_t idx : order) 
     {
         ag_sorted.push_back(ag_raw[idx]);
+        lag_sorted.push_back(lag_expanded[idx]);
         bin_sorted.push_back(bin_expanded[idx + 1]);
         method_sorted.push_back(method_expanded[idx + 1]);
     }
 
     // Deduplicate while keeping alignment
     std::vector<size_t> ag;
+    std::vector<size_t> lag_final;
     std::vector<size_t> bin_final;
     std::vector<std::string> method_final;
 
@@ -142,6 +145,7 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
         if (i == 0 || ag_sorted[i] != ag_sorted[i - 1]) 
         {
             ag.push_back(ag_sorted[i]);
+            lag_final.push_back(lag_sorted[i]);
             bin_final.push_back(bin_sorted[i]);
             method_final.push_back(method_sorted[i]);
         }
