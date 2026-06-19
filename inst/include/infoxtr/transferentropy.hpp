@@ -156,7 +156,7 @@ namespace transferentropy
         size_t ag_lag = lag_single ? ag.size() : ag.size() * lag_q;
         size_t N = n_obs - t0;
         DiscMat pm(tg.size() + ag_lag + tg_lag,
-                   std::vector<uint64_t>(N,0));
+                   std::vector<uint64_t>(N, 0));
         
         // Y_present
         for (size_t i = 0; i < tg.size(); ++i)
