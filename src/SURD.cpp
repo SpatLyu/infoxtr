@@ -189,6 +189,20 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
         );
     }
 
+    // Remove leading lagged NA (time series only)
+    if (nb.isNull() && nrows.isNull())
+    {
+        size_t lag_abs = static_cast<size_t>(std::abs(lag));
+
+        if (lag_abs > 0 && lag_abs < n_obs)
+        {
+            for (auto& vec : pm)
+            {
+                vec.erase(vec.begin(), vec.begin() + lag_abs);
+            }
+        }
+    }
+
     infoxtr::surd::SURDRes res = infoxtr::surd::surd(
         pm, 
         static_cast<size_t>(std::abs(max_order)),
