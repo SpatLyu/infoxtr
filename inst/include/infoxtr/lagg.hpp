@@ -275,9 +275,15 @@ namespace lagg
         size_t lag = 1,
         bool byrow = true
     )
-    {
+    {   
+        if (mat.empty())
+            throw std::invalid_argument("Input matrix is empty.");
+
         const size_t n = mat.size();
         const size_t p = mat.front().size();
+
+        if (lag >= n)
+            throw std::invalid_argument("lag must be smaller than number of observations.");
         
         Matrix out;
         if (byrow)
