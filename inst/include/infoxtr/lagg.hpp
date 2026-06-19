@@ -182,7 +182,10 @@ namespace lagg
         size_t lag = 1,
         bool byrow = true
     )
-    {
+    {   
+        if (mat.empty())
+            throw std::invalid_argument("Input matrix is empty.");
+
         const size_t N = mat.size();
         const size_t p = mat.front().size();
 
@@ -190,6 +193,9 @@ namespace lagg
             throw std::invalid_argument("Invalid grid dimensions.");
 
         const size_t ncols = N / nrows;
+
+        if (lag > std::max(nrows, ncols))
+            throw std::invalid_argument("lag too large for grid dimensions.");
 
         Matrix out;
         if (byrow)
