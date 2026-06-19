@@ -67,7 +67,6 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
-#include <unordered_set>
 #include <stdexcept>
 #include <cstddef>
 
