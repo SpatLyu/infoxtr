@@ -44,6 +44,17 @@
  *      lagg(mat, lag, byrow)
  *          Temporal lag for time series
  *
+ * Parameter Constraints
+ * 
+ *     Lattice graphs
+ *         large lag values beyond the graph diameter have no effect
+ * 
+ *     Regular grids
+ *         lag must not exceed the maximum grid dimension
+ * 
+ *     Time series
+ *         lag must be smaller than the number of observations
+ *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
  *******************************************************************/
@@ -94,9 +105,6 @@ namespace lagg
 
         const size_t n = nb.size();
         const size_t p = mat.front().size();
-
-        if (lag > n - 1)
-            throw std::invalid_argument("lag larger than neighborhood diameter will have no effect.");
 
         Matrix out;
         if (byrow)
