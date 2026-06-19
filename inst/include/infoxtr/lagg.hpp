@@ -1,4 +1,4 @@
-/*******************************************************************
+/*****************************************************************************************
  *  File: lagg.hpp
  *
  *  Lagged aggregation utilities for matrices.
@@ -47,7 +47,8 @@
  * Parameter Constraints
  * 
  *     Lattice graphs
- *         large lag values beyond the graph diameter have no effect
+ *         large lag values beyond the graph diameter have no additional effect.
+ *         The algorithm automatically stops when no further neighbors are reachable.
  * 
  *     Regular grids
  *         lag must not exceed the maximum grid dimension
@@ -57,7 +58,7 @@
  *
  *  Author: Wenbo Lyu (Github: @SpatLyu)
  *  License: GPL-3
- *******************************************************************/
+ *****************************************************************************************/
 
 #ifndef INFOXTR_LAGG_HPP
 #define INFOXTR_LAGG_HPP
