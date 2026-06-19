@@ -89,8 +89,14 @@ namespace lagg
         bool byrow = true
     )
     {
+        if (mat.empty())
+            throw std::invalid_argument("Input matrix is empty.");
+
         const size_t n = nb.size();
         const size_t p = mat.front().size();
+
+        if (lag > n - 1)
+            throw std::invalid_argument("lag larger than neighborhood diameter will have no effect.");
 
         Matrix out;
         if (byrow)
