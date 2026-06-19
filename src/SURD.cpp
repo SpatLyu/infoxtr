@@ -44,11 +44,11 @@ Rcpp::List RcppSURD(const Rcpp::NumericMatrix& mat,
         idx -= 1;
     }
     size_t nag_raw = ag_raw.size();
-    
+
     std::vector<size_t> bin_vec = Rcpp::as<std::vector<size_t>>(bin);
     std::vector<std::string> method_vec = Rcpp::as<std::vector<std::string>>(method);
 
-    // Expand bin and method (length of target + length of agents)
+    // Expand bin and method (to match the combined length of the target and agents)
     std::vector<size_t> bin_expanded(nag_raw + 1);
     std::vector<std::string> method_expanded(nag_raw + 1);
 
