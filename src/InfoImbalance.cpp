@@ -26,15 +26,15 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
     const int n_valid = Mx.nrow() - h;
-    if (n_valid <= 0) {
-        Rcpp::stop("Prediction horizon 'h' (%d) is greater than or equal to the number of observations (%d). No valid data points remaining.", h, Mx.nrow());
+    if (n_valid <= 1) {
+        Rcpp::stop("Prediction horizon 'h' (%d) is too large for the given data (%d rows).", h, Mx.nrow());
     }
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
-        if (lib[i] >= 1 || lib[i] <= n_valid) {
+        if (lib[i] >= 1 && lib[i] <= n_valid) {
             lib_std.push_back(static_cast<size_t>(lib[i] - 1));
         }
     }
@@ -42,7 +42,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<size_t> pred_std;
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
-        if (pred[i] >= 1 || pred[i] <= n_valid) {
+        if (pred[i] >= 1 && pred[i] <= n_valid) {
             pred_std.push_back(static_cast<size_t>(pred[i] - 1));
         }
     }
@@ -602,7 +602,7 @@ double RcppInfoImbalanceGain(
     }
 
     size_t n_valid = mx.size(); 
-    if (static_cast<size_t>(std::abs(h)) >= n_valid) {
+    if (static_cast<size_t>(std::abs(h)) >= n_valid - 1) {
         Rcpp::stop("Prediction horizon 'h' (%d) is too large for the given data (%d rows).", h, static_cast<int>(n_valid));
     }
     n_valid -= h;
@@ -612,7 +612,7 @@ double RcppInfoImbalanceGain(
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
         size_t single_lib = static_cast<size_t>(lib[i]);
-        if (single_lib > lag || single_lib <= n_valid) {
+        if (single_lib > lag && single_lib <= n_valid) {
             lib_std.push_back(single_lib - 1);
         }
     }
@@ -621,7 +621,7 @@ double RcppInfoImbalanceGain(
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
         size_t single_pred = static_cast<size_t>(pred[i]);
-        if (single_pred > lag || single_pred <= n_valid) {
+        if (single_pred > lag && single_pred <= n_valid) {
             pred_std.push_back(single_pred - 1);
         }
     }
