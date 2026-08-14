@@ -34,19 +34,17 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
-        if (lib[i] < 1 || lib[i] > n_valid) {
-            Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+        if (lib[i] >= 1 || lib[i] <= n_valid) {
+            lib_std.push_back(static_cast<size_t>(lib[i] - 1));
         }
-        lib_std.push_back(static_cast<size_t>(lib[i] - 1));
     }
 
     std::vector<size_t> pred_std;
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
-        if (pred[i] < 1 || pred[i] > n_valid) {
-            Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+        if (pred[i] >= 1 || pred[i] <= n_valid) {
+            pred_std.push_back(static_cast<size_t>(pred[i] - 1));
         }
-        pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
     
     return Rcpp::wrap(
@@ -413,7 +411,6 @@ double RcppInfoImbalanceGain(
     // 7. Convert alpha
     // =========================================================================
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
-
 
     // =========================================================================
     // 8. Generate shadow manifolds

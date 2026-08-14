@@ -1,5 +1,9 @@
 # infoxtr 0.3
 
+### new
+
+* Enact `infoimbalance` R API support for infomation imbalance gain method (#87).
+
 ### breaking changes
 
 * Remove leading lag-induced NA values in `surd` time-series implementation (#83).
