@@ -101,7 +101,7 @@ namespace transferentropy
     /***********************************************************
      * Transfer Entropy for Discrete Data
      ***********************************************************/
-    inline double transferentropy(
+    inline double transferEntropy(
         const DiscMat& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& agent,
@@ -220,7 +220,7 @@ namespace transferentropy
     /***********************************************************
      * Transfer Entropy for Continuous Data
      ***********************************************************/
-    inline double transferentropy(
+    inline double transferEntropy(
         const ContMat& mat,
         const std::vector<size_t>& target,
         const std::vector<size_t>& agent,
