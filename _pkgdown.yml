@@ -38,7 +38,7 @@ reference:
 - subtitle: Information flow
   contents:
   - te
-  - infoimbalance
+  - imbalance_gain
   - surd
 
 - title: Knockoff-based interaction testing
