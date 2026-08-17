@@ -60,7 +60,7 @@
  *      Delta(X -> Y)
  *          = 2 / N sum_p r^Y_{p|X},
  *
- * where N is the number of prediction points.
+ * where N is the number of library points.
  *
  * A small Information Imbalance indicates that points that are close in
  * X space also tend to be close in Y space. A larger value indicates weaker
@@ -523,7 +523,7 @@ namespace infoimbalance
         // Information Imbalance:
         //
         //     II(X -> Y)
-        //       = 2 / Npred
+        //       = 2 / Nlib
         //         * mean_i[
         //             mean_{j in NN_k^X(i)} r^Y_ij
         //           ]
@@ -534,7 +534,7 @@ namespace infoimbalance
         const double mean_rank =
             rank_sum / static_cast<double>(Npred);
 
-        return 2.0 / static_cast<double>(Npred) * mean_rank;
+        return 2.0 / static_cast<double>(Nlib) * mean_rank;
     }
     
     inline std::vector<double> imbalanceGain(
@@ -826,7 +826,7 @@ namespace infoimbalance
             //
             //     II = 2 / N * mean(conditional ranks)
             //
-            // where N corresponds to the number of prediction points.
+            // where N corresponds to the number of library points.
             //
             // This is the direct generalization of the R implementation,
             // with ranks computed over the supplied library.
@@ -835,7 +835,7 @@ namespace infoimbalance
                 rank_sum / static_cast<double>(Npred);
 
             out[ia] =
-                2.0 / static_cast<double>(Npred) * mean_rank;
+                2.0 / static_cast<double>(Nlib) * mean_rank;
         }
 
         return out;
