@@ -9,7 +9,7 @@ info_imbalance(
   my,
   lib = NULL,
   pred = NULL,
-  k = 3,
+  k = 1,
   threads = 1,
   method = "euclidean"
 )

@@ -20,7 +20,7 @@
 #' infoxtr::info_imbalance(mx, my)
 #' 
 info_imbalance = \(mx, my, lib = NULL, pred = NULL,
-                   k = 3, threads = 1, method = "euclidean") {
+                   k = 1, threads = 1, method = "euclidean") {
   if (is.null(lib)) lib = seq_len(nrow(mx))
   if (is.null(pred)) pred = lib
   return(RcppInfoImbalance(as.matrix(mx), as.matrix(my), 
