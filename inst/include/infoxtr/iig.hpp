@@ -117,15 +117,15 @@ namespace iig
     inline std::vector<double> infoimbalance(
         const ContMat& Mx,
         const ContMat& My,
+        const std::vector<double>& alpha,  
         const std::vector<size_t>& lib,
         const std::vector<size_t>& pred,
-        double alpha = 1.0,  
         size_t k = 1,  
         size_t h = 0,
         size_t threads = 1,
         const std::string& method = "euclidean")
     {
-        
+
     }
 
     
