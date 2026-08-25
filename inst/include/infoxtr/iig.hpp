@@ -167,6 +167,11 @@ namespace iig
 
                 const size_t q = lib[il];
 
+                if (p == q) {
+                    distances[il] = std::numeric_limits<double>::quiet_NaN();
+                    continue;
+                }
+
                 distances[il] =
                     infoxtr::distance::distance(
                         My[p], My[q], method, true);
