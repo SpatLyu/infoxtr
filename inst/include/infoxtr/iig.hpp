@@ -357,6 +357,25 @@ namespace iig
                     [&](const Candidate& lhs,
                         const Candidate& rhs) {
 
+                        const bool lhs_finite =
+                            std::isfinite(lhs.distance);
+
+                        const bool rhs_finite =
+                            std::isfinite(rhs.distance);
+
+                        // Non-finite distances are always placed after finite
+                        // distances, corresponding to na.last = TRUE.
+                        if (lhs_finite != rhs_finite) {
+                            return lhs_finite;
+                        }
+
+                        // Both distances are non-finite.
+                        // Use the library index as the deterministic tie breaker.
+                        if (!lhs_finite && !rhs_finite) {
+                            return lib[lhs.lib_pos] < lib[rhs.lib_pos];
+                        }
+
+                        // Both distances are finite.
                         if (lhs.distance < rhs.distance) {
                             return true;
                         }
@@ -365,6 +384,7 @@ namespace iig
                             return false;
                         }
 
+                        // Equal distances are ordered by library index.
                         return lib[lhs.lib_pos] < lib[rhs.lib_pos];
                     });
 
