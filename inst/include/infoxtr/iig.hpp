@@ -166,7 +166,8 @@ namespace iig
         std::vector<std::vector<double>> y_rank(
             Npred, std::vector<double>(Nlib));
 
-        for (size_t ip = 0; ip < Npred; ++ip) {
+        RcppThread::parallelFor(
+            size_t(0), Npred, [&](size_t ip) {
 
             const size_t p = pred[ip];
 
@@ -280,7 +281,8 @@ namespace iig
             //         y_rank[ip][il] = static_cast<double>(Nlib);
             //     }
             // }
-        }
+
+        }, threads);
 
         // ------------------------------------------------------------------
         // Compute information imbalance for each alpha.
