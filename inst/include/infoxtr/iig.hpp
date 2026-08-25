@@ -173,6 +173,9 @@ namespace iig
             }
 
             // Sort indices according to Y-space distance.
+            // Finite distances come first; NA/NaN/Inf distances are moved
+            // to the end, corresponding to R's na.last = TRUE.
+            // For finite ties, library indices provide a deterministic ordering.
             std::vector<size_t> order(Nlib);
             std::iota(order.begin(), order.end(), size_t(0));
 
@@ -180,25 +183,64 @@ namespace iig
                 order.begin(),
                 order.end(),
                 [&](size_t a, size_t b) {
+
+                    const bool a_finite = std::isfinite(distances[a]);
+                    const bool b_finite = std::isfinite(distances[b]);
+
+                    // Missing/non-finite distances are placed last.
+                    if (a_finite != b_finite) {
+                        return a_finite;
+                    }
+
+                    // Both are non-finite: keep a deterministic order.
+                    if (!a_finite && !b_finite) {
+                        return lib[a] < lib[b];
+                    }
+
+                    // Both are finite.
                     if (distances[a] < distances[b]) {
                         return true;
                     }
+
                     if (distances[a] > distances[b]) {
                         return false;
                     }
+
                     return lib[a] < lib[b];
                 });
 
             // Assign average ranks for tied distances.
+            // All non-finite distances form the final tie group, corresponding
+            // to na.last = TRUE in R.
             size_t pos = 0;
 
             while (pos < Nlib) {
 
                 size_t end = pos + 1;
 
-                while (end < Nlib &&
-                    distances[order[end]] == distances[order[pos]]) {
-                    ++end;
+                const bool current_finite =
+                    std::isfinite(distances[order[pos]]);
+
+                while (end < Nlib) {
+
+                    const bool next_finite =
+                        std::isfinite(distances[order[end]]);
+
+                    // Non-finite distances are all treated as one final tie group.
+                    if (!current_finite && !next_finite) {
+                        ++end;
+                        continue;
+                    }
+
+                    // Finite distances are tied only when their values are equal.
+                    if (current_finite &&
+                        next_finite &&
+                        distances[order[end]] == distances[order[pos]]) {
+                        ++end;
+                        continue;
+                    }
+
+                    break;
                 }
 
                 // R rank() uses 1-based ranks.
