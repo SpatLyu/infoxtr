@@ -131,6 +131,10 @@ namespace iig
                                        std::numeric_limits<double>::quiet_NaN());
         }
 
+        if (Mx.empty() || My.empty()) {
+            throw std::invalid_argument("Mx and My must not be empty.");
+        }
+
         if (Mx.size() != My.size()) {
             throw std::invalid_argument(
                 "Mx and My must contain the same number of observations.");
