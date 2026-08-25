@@ -240,7 +240,7 @@ namespace iig
                     // Finite distances are tied only when their values are equal.
                     if (current_finite &&
                         next_finite &&
-                        distances[order[end]] == distances[order[pos]]) {
+                        infoxtr::numericutils::doubleNearlyEqual(distances[order[end]], distances[order[pos]])) {
                         ++end;
                         continue;
                     }
