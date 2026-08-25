@@ -117,15 +117,243 @@ namespace iig
     inline std::vector<double> infoimbalance(
         const ContMat& Mx,
         const ContMat& My,
-        const std::vector<double>& alpha,  
+        const std::vector<double>& alpha,
         const std::vector<size_t>& lib,
         const std::vector<size_t>& pred,
-        size_t k = 1,  
-        size_t h = 0,
-        size_t threads = 1,
+        size_t k = 1,
         const std::string& method = "euclidean")
     {
+        const size_t Npred = pred.size();
+        const size_t Nlib  = lib.size();
 
+        if (Npred == 0 || Nlib == 0 || k == 0) {
+            return std::vector<double>(alpha.size(),
+                                    std::numeric_limits<double>::quiet_NaN());
+        }
+
+        if (Mx.size() != My.size()) {
+            throw std::invalid_argument(
+                "Mx and My must contain the same number of observations.");
+        }
+
+        if (k > Nlib) {
+            k = Nlib;
+        }
+
+        const size_t dimX = Mx[0].size();
+        const size_t dimY = My[0].size();
+
+        // ------------------------------------------------------------------
+        // Compute the ranks in the Y space.
+        //
+        // For each prediction point, distances to all library points are
+        // ranked increasingly. Ties receive their average rank, following
+        // R's rank(..., ties.method = "average").
+        //
+        // If the prediction point is also in the library, its own rank is
+        // explicitly set to the largest rank, corresponding to the Inf
+        // diagonal used in the R implementation.
+        // ------------------------------------------------------------------
+        std::vector<std::vector<double>> y_rank(
+            Npred, std::vector<double>(Nlib));
+
+        for (size_t ip = 0; ip < Npred; ++ip) {
+
+            const size_t p = pred[ip];
+
+            std::vector<double> distances(Nlib);
+
+            for (size_t il = 0; il < Nlib; ++il) {
+
+                const size_t q = lib[il];
+
+                distances[il] =
+                    infoxtr::distance::distance(
+                        My[p], My[q], method, true);
+            }
+
+            // Sort indices according to Y-space distance.
+            std::vector<size_t> order(Nlib);
+            std::iota(order.begin(), order.end(), size_t(0));
+
+            std::sort(
+                order.begin(),
+                order.end(),
+                [&](size_t a, size_t b) {
+                    if (distances[a] < distances[b]) {
+                        return true;
+                    }
+                    if (distances[a] > distances[b]) {
+                        return false;
+                    }
+                    return lib[a] < lib[b];
+                });
+
+            // Assign average ranks for tied distances.
+            size_t pos = 0;
+
+            while (pos < Nlib) {
+
+                size_t end = pos + 1;
+
+                while (end < Nlib &&
+                    distances[order[end]] == distances[order[pos]]) {
+                    ++end;
+                }
+
+                // R rank() uses 1-based ranks.
+                const double rank =
+                    0.5 * (
+                        static_cast<double>(pos + 1) +
+                        static_cast<double>(end)
+                    );
+
+                for (size_t j = pos; j < end; ++j) {
+                    y_rank[ip][order[j]] = rank;
+                }
+
+                pos = end;
+            }
+
+            // Equivalent to diag(rank_matrix_Y) <- Inf in the R code.
+            //
+            // When the prediction sample is also contained in lib, its
+            // rank is forced to the largest possible rank.
+            for (size_t il = 0; il < Nlib; ++il) {
+                if (lib[il] == p) {
+                    y_rank[ip][il] = static_cast<double>(Nlib);
+                }
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // Compute information imbalance for each alpha.
+        // ------------------------------------------------------------------
+        std::vector<double> out(alpha.size());
+
+        for (size_t ia = 0; ia < alpha.size(); ++ia) {
+
+            const double a = alpha[ia];
+
+            double rank_sum = 0.0;
+
+            // --------------------------------------------------------------
+            // For every prediction point, find its k nearest neighbours
+            // in A = (alpha * X, Y).
+            // --------------------------------------------------------------
+            for (size_t ip = 0; ip < Npred; ++ip) {
+
+                const size_t p = pred[ip];
+
+                struct Candidate {
+                    size_t lib_pos;
+                    double distance;
+                };
+
+                std::vector<Candidate> candidates;
+                candidates.reserve(Nlib);
+
+                for (size_t il = 0; il < Nlib; ++il) {
+
+                    const size_t q = lib[il];
+
+                    // The R implementation sets the diagonal distance to
+                    // NA before ranking and subsequently replaces its rank
+                    // with Inf. Thus, when pred and lib overlap, the point
+                    // itself must not be selected as a neighbour.
+                    if (q == p) {
+                        continue;
+                    }
+
+                    std::vector<double> vec_p;
+                    std::vector<double> vec_q;
+
+                    vec_p.reserve(dimX + dimY);
+                    vec_q.reserve(dimX + dimY);
+
+                    for (size_t d = 0; d < dimX; ++d) {
+                        vec_p.push_back(a * Mx[p][d]);
+                        vec_q.push_back(a * Mx[q][d]);
+                    }
+
+                    for (size_t d = 0; d < dimY; ++d) {
+                        vec_p.push_back(My[p][d]);
+                        vec_q.push_back(My[q][d]);
+                    }
+
+                    const double d =
+                        infoxtr::distance::distance(
+                            vec_p, vec_q, method, true);
+
+                    candidates.push_back({il, d});
+                }
+
+                // ----------------------------------------------------------
+                // Select the k nearest neighbours.
+                //
+                // Distance is the primary ordering criterion. If several
+                // library points have exactly the same distance, their
+                // original library indices determine the ordering.
+                // This reproduces a deterministic tie-breaking rule for
+                // the partial selection.
+                // ----------------------------------------------------------
+                const size_t nk = std::min(k, candidates.size());
+
+                if (nk == 0) {
+                    continue;
+                }
+
+                std::partial_sort(
+                    candidates.begin(),
+                    candidates.begin() + nk,
+                    candidates.end(),
+                    [&](const Candidate& lhs,
+                        const Candidate& rhs) {
+
+                        if (lhs.distance < rhs.distance) {
+                            return true;
+                        }
+
+                        if (lhs.distance > rhs.distance) {
+                            return false;
+                        }
+
+                        return lib[lhs.lib_pos] < lib[rhs.lib_pos];
+                    });
+
+                // ----------------------------------------------------------
+                // Average the corresponding ranks in Y.
+                // ----------------------------------------------------------
+                double conditional_rank = 0.0;
+
+                for (size_t j = 0; j < nk; ++j) {
+                    conditional_rank +=
+                        y_rank[ip][candidates[j].lib_pos];
+                }
+
+                conditional_rank /= static_cast<double>(nk);
+
+                rank_sum += conditional_rank;
+            }
+
+            // --------------------------------------------------------------
+            // Information imbalance:
+            //
+            //     II = 2 / N * mean(conditional ranks)
+            //
+            // where N corresponds to the number of prediction points.
+            //
+            // This is the direct generalization of the R implementation,
+            // with ranks computed over the supplied library.
+            // --------------------------------------------------------------
+            const double mean_rank =
+                rank_sum / static_cast<double>(Npred);
+
+            out[ia] =
+                2.0 / static_cast<double>(Npred) * mean_rank;
+        }
+
+        return out;
     }
 
     
