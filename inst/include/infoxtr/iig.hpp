@@ -128,7 +128,7 @@ namespace iig
 
         if (Npred == 0 || Nlib == 0 || k == 0) {
             return std::vector<double>(alpha.size(),
-                                    std::numeric_limits<double>::quiet_NaN());
+                                       std::numeric_limits<double>::quiet_NaN());
         }
 
         if (Mx.size() != My.size()) {
