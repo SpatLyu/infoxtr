@@ -121,6 +121,7 @@ namespace iig
         const std::vector<size_t>& lib,
         const std::vector<size_t>& pred,
         size_t k = 1,
+        size_t threads = 1,
         const std::string& method = "euclidean")
     {
         const size_t Npred = pred.size();
@@ -143,6 +144,10 @@ namespace iig
         if (k > Nlib) {
             k = Nlib;
         }
+
+        if (threads == 0) threads = 1;
+        size_t hw = std::thread::hardware_concurrency();
+        if (hw > 0) threads = std::min(threads, hw);
 
         const size_t dimX = Mx[0].size();
         const size_t dimY = My[0].size();
