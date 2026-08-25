@@ -266,15 +266,15 @@ namespace iig
                 pos = end;
             }
 
-            // Equivalent to diag(rank_matrix_Y) <- Inf in the R code.
-            //
-            // When the prediction sample is also contained in lib, its
-            // rank is forced to the largest possible rank.
-            for (size_t il = 0; il < Nlib; ++il) {
-                if (lib[il] == p) {
-                    y_rank[ip][il] = static_cast<double>(Nlib);
-                }
-            }
+            // // Equivalent to diag(rank_matrix_Y) <- Inf in the R code.
+            // //
+            // // When the prediction sample is also contained in lib, its
+            // // rank is forced to the largest possible rank.
+            // for (size_t il = 0; il < Nlib; ++il) {
+            //     if (lib[il] == p) {
+            //         y_rank[ip][il] = static_cast<double>(Nlib);
+            //     }
+            // }
         }
 
         // ------------------------------------------------------------------
