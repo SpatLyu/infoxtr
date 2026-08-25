@@ -293,13 +293,14 @@ namespace iig
 
             const double a = alpha[ia];
 
-            double rank_sum = 0.0;
+            std::vector<double> rank_sums(Npred, 0.0);
 
             // --------------------------------------------------------------
             // For every prediction point, find its k nearest neighbours
             // in A = (alpha * X, Y).
             // --------------------------------------------------------------
-            for (size_t ip = 0; ip < Npred; ++ip) {
+            RcppThread::parallelFor(
+                size_t(0), Npred, [&](size_t ip) {
 
                 const size_t p = pred[ip];
 
@@ -398,8 +399,11 @@ namespace iig
 
                 conditional_rank /= static_cast<double>(nk);
 
-                rank_sum += conditional_rank;
-            }
+                rank_sums[ip] = conditional_rank;
+            }, threads);
+
+            const double rank_sum = 
+                std::accumulate(rank_sums.begin(), rank_sums.end(), 0.0);
 
             // --------------------------------------------------------------
             // Information imbalance:
