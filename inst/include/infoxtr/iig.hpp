@@ -304,38 +304,25 @@ namespace iig
                 std::vector<Candidate> candidates;
                 candidates.reserve(Nlib);
 
-                for (size_t il = 0; il < Nlib; ++il) {
+                std::vector<double> vec_p(dimX + dimY);
+                std::vector<double> vec_q(dimX + dimY);
 
+                for (size_t d = 0; d < dimX; ++d) vec_p[d] = a * Mx[p][d];
+                for (size_t d = 0; d < dimY; ++d) vec_p[dimX + d] = My[p][d];
+
+                for (size_t il = 0; il < Nlib; ++il) {
                     const size_t q = lib[il];
 
                     // The R implementation sets the diagonal distance to
                     // NA before ranking and subsequently replaces its rank
                     // with Inf. Thus, when pred and lib overlap, the point
                     // itself must not be selected as a neighbour.
-                    if (q == p) {
-                        continue;
-                    }
+                    if (q == p) continue;
 
-                    std::vector<double> vec_p;
-                    std::vector<double> vec_q;
+                    for (size_t d = 0; d < dimX; ++d) vec_q[d] = a * Mx[q][d];
+                    for (size_t d = 0; d < dimY; ++d) vec_q[dimX + d] = My[q][d];
 
-                    vec_p.reserve(dimX + dimY);
-                    vec_q.reserve(dimX + dimY);
-
-                    for (size_t d = 0; d < dimX; ++d) {
-                        vec_p.push_back(a * Mx[p][d]);
-                        vec_q.push_back(a * Mx[q][d]);
-                    }
-
-                    for (size_t d = 0; d < dimY; ++d) {
-                        vec_p.push_back(My[p][d]);
-                        vec_q.push_back(My[q][d]);
-                    }
-
-                    const double d =
-                        infoxtr::distance::distance(
-                            vec_p, vec_q, method, true);
-
+                    const double d = infoxtr::distance::distance(vec_p, vec_q, method, true);
                     candidates.push_back({il, d});
                 }
 
