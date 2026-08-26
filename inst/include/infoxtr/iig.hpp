@@ -4,125 +4,157 @@
  * Information Imbalance Gain (IIG)
  * -----------------------------------
  *
- * This module implements the information imbalance framework for quantifying
- * the degree to which neighbourhood structure in one representation is
- * preserved in another representation.
+ * This module implements the Information Imbalance framework for comparing
+ * the information content of distance spaces through distance ranks.
  *
- * Given two representations X and Y, the method identifies nearest neighbours
- * in a combined space
+ * Information Imbalance is a rank based statistical measure that evaluates
+ * whether pairs of points that are close according to one distance space
+ * remain close according to another distance space. It therefore provides a
+ * model free way to compare neighbourhood information without specifying an
+ * underlying dynamical or statistical model.
+ *
+ * Given two representations X and Y, the method constructs a combined
+ * distance space
  *
  *      A = (alpha * X, Y)
  *
- * and evaluates their corresponding ranks in the Y space. The resulting
- * information imbalance measures how strongly the neighbourhood structure
- * induced by X and Y is associated.
+ * and evaluates how informative the neighbourhood structure in A is with
+ * respect to the distance space defined by Y.
  *
  * ---------------------------------------------------------------------------
  * Algorithm overview
  * ---------------------------------------------------------------------------
  *
- * Let X and Y denote two multivariate representations with the same number
- * of observations. For a prediction set P and a library set L, the algorithm
- * proceeds as follows:
+ * Let X and Y denote two multivariate representations of the same set of
+ * observations. Let P denote the prediction set and L the library set from
+ * which neighbours are selected. The algorithm proceeds as follows:
  *
- * 1. Y-space rank construction
+ * 1. Distance rank construction in Y
  *
- *      For each prediction point p in P, compute distances from Y_p to all
- *      library points Y_q, q in L.
+ *      For each prediction point p in P, distances between Y_p and all
+ *      library points Y_q, q in L, are computed and ranked increasingly.
  *
- *      The distances are ranked increasingly using average ranks for tied
- *      distances, following the convention of R's rank() with
- *      ties.method = "average".
+ *      The resulting rank r^Y_{pq} measures the position of point q in the
+ *      distance space defined by Y, with rank 1 corresponding to the nearest
+ *      neighbour.
  *
- *      Missing or non-finite distances are placed after valid distances.
- *      If p is also contained in the library, its self-distance is treated
- *      as missing and therefore cannot affect the nearest-neighbour search.
+ *      Tied distances receive their average rank, following the convention
+ *      of R's rank(..., ties.method = "average").
  *
- * 2. Combined-space neighbourhood construction
+ * 2. Construction of the combined distance space
  *
- *      For each scaling parameter alpha, construct the combined representation
+ *      For each scaling parameter alpha, a combined representation is defined
+ *      as
  *
  *          A = (alpha * X, Y).
  *
- *      For every prediction point p, identify its k nearest neighbours among
- *      the library points in A.
+ *      The parameter alpha controls the relative contribution of X to the
+ *      combined distance space.
  *
- *      The prediction point itself is excluded when the prediction and library
- *      sets overlap.
+ * 3. Nearest-neighbour selection
  *
- *      Neighbours are selected using partial sorting. Distance is the primary
- *      criterion, while the original library index provides a deterministic
+ *      For every prediction point p, the k nearest library points are
+ *      identified according to the distance in A.
+ *
+ *      The corresponding ranks of these neighbours in the Y distance space
+ *      are then retrieved. The prediction point itself is excluded when the
+ *      prediction and library sets overlap.
+ *
+ *      Neighbours are selected using partial sorting. Equal distances are
+ *      resolved using the original library index as a deterministic
  *      tie-breaking rule.
  *
- * 3. Conditional Y-space ranks
+ * 4. Conditional distance rank
  *
- *      For each prediction point, retrieve the Y-space ranks corresponding to
- *      its k nearest neighbours in A and compute their mean:
+ *      For each prediction point, the ranks in Y of its k nearest neighbours
+ *      in A are averaged:
  *
- *          r_p = (1 / k) sum_j rank_Y(p, NN_j^A)
+ *          r^Y_{p|A}
+ *              = (1 / k) sum_j r^Y_{p,NN_j^A}.
  *
- *      This quantity measures how close the neighbours selected in A are to
- *      the prediction point in the Y space.
+ *      This quantity measures how well local proximity in the A distance
+ *      space is preserved in the Y distance space.
  *
- * 4. Information imbalance
+ * 5. Information Imbalance
  *
- *      The information imbalance is computed as
+ *      The Information Imbalance is obtained by averaging the conditional
+ *      distance ranks across prediction points:
  *
- *          II = 2 / N * mean_p(r_p)
+ *          Delta(A -> Y)
+ *              = 2 / N sum_p r^Y_{p|A}.
  *
- *      where N is the number of prediction points.
+ *      Smaller values indicate that points identified as close in A also tend
+ *      to be close in Y, implying that A contains information about the
+ *      distance structure of Y.
  *
- *      Smaller values indicate stronger preservation of neighbourhood
- *      structure between the two representations, whereas larger values
- *      indicate greater neighbourhood mismatch.
+ *      Larger values indicate weaker correspondence between the two distance
+ *      spaces and therefore greater information imbalance.
  *
- * 5. Scaling analysis
+ *      The parameter k specifies the number of neighbours used in the
+ *      comparison and provides a generalized form of the nearest-neighbour
+ *      Information Imbalance.
  *
- *      When multiple values of alpha are supplied, the information imbalance
- *      is evaluated independently for each alpha. This allows the relative
- *      contribution of the X and Y components to the neighbourhood structure
- *      to be examined.
+ * 6. Scaling analysis
+ *
+ *      When multiple values of alpha are supplied, the Information Imbalance
+ *      is evaluated independently for each value. This allows the information
+ *      contribution of X to the distance structure to be examined as the
+ *      relative weight of X is varied.
  *
  * ---------------------------------------------------------------------------
- * Missing values and ties
+ * Distance ranks
  * ---------------------------------------------------------------------------
  *
- * Distances that are NaN or otherwise non-finite are placed after valid
- * distances during ranking and neighbour selection, following the intended
- * na.last = TRUE behaviour of the reference R implementation.
+ * The method operates on ranks rather than raw distances. This makes the
+ * comparison invariant to monotonic transformations of the distance values
+ * and avoids requiring the two distance spaces to share a common numerical
+ * scale.
  *
- * Tied Y-space distances receive average ranks. When selecting nearest
- * neighbours in the combined space, equal distances are ordered according
- * to the original library index to ensure deterministic results.
+ * For a prediction point p, the rank of library point q in a distance space
+ * is determined by ordering distances from the smallest to the largest.
+ * Tied distances receive average ranks.
+ *
+ * Missing or non-finite distances are placed after valid distances, following
+ * the intended na.last = TRUE behaviour of the reference R implementation.
+ *
+ * ---------------------------------------------------------------------------
+ * Library and prediction sets
+ * ---------------------------------------------------------------------------
+ *
+ * The implementation allows the library and prediction sets to be specified
+ * independently. This provides a flexible formulation for applications in
+ * which only a subset of observations is used to construct the local distance
+ * structure while another subset is used for evaluation.
+ *
+ * When the prediction and library sets overlap, the prediction point itself
+ * is excluded from the nearest-neighbour search, consistent with the
+ * leave-self-out convention used in distance-rank based neighbourhood
+ * comparisons.
  *
  * ---------------------------------------------------------------------------
  * Parallel computation
  * ---------------------------------------------------------------------------
  *
- * Prediction points are processed independently using RcppThread. Both the
- * Y-space rank construction and the nearest-neighbour calculations are
- * parallelized across prediction points.
+ * Calculations for different prediction points are independent and are
+ * parallelized using RcppThread.
  *
- * Per-prediction intermediate results are stored independently and aggregated
- * after parallel execution to avoid data races.
+ * The construction of Y-space distance ranks and the evaluation of
+ * nearest-neighbour ranks in the combined space are both parallelized across
+ * prediction points. Per-prediction results are stored independently and
+ * aggregated after parallel execution to avoid data races.
  *
  * ---------------------------------------------------------------------------
  * Input data format
  * ---------------------------------------------------------------------------
  *
- *   Mx       : Matrix-like container of X representations.
- *   My       : Matrix-like container of Y representations.
+ *   Mx       : Matrix-like container containing the X representations.
+ *   My       : Matrix-like container containing the Y representations.
  *   alpha    : Scaling parameters applied to X.
  *   lib      : Indices of observations eligible as library neighbours.
  *   pred     : Indices of prediction observations.
- *   k        : Number of nearest neighbours.
+ *   k        : Number of nearest neighbours used in the rank comparison.
  *   threads  : Number of threads used for parallel computation.
- *   method   : Distance metric used for neighbourhood construction.
- *
- * Output:
- *
- *   A vector containing the information imbalance corresponding to each
- *   value of alpha.
+ *   method   : Distance metric used to construct the distance spaces.
  *
  * Author: Wenbo Lyu (Github: @SpatLyu)
  * License: GPL-3
