@@ -19,7 +19,8 @@ Rcpp::NumericVector RcppInfoImbalance(
     int threads = 1,
     const std::string& method = "euclidean")
 {
-    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
+    std::vector<std::vector<double>> mx = infoxtr::convert::mat_r2std(Mx, true);
+    std::vector<std::vector<double>> my = infoxtr::convert::mat_r2std(My, true);
 
     std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
