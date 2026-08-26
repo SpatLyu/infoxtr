@@ -21,9 +21,8 @@ Rcpp::NumericVector RcppInfoImbalance(
 {
     std::vector<std::vector<double>> mx = infoxtr::convert::mat_r2std(Mx, true);
     std::vector<std::vector<double>> my = infoxtr::convert::mat_r2std(My, true);
-
-    std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
-    std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
+    
+    std::vector<double> as = Rcpp::as<std::vector<double>>(alpha);
 
     const int n_obs = Mx.nrow(); 
 
