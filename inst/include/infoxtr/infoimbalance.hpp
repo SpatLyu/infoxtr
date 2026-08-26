@@ -501,16 +501,28 @@ namespace infoimbalance
         size_t k = 1,
         size_t threads = 1,
         const std::string& method = "euclidean")
-    {
-        std::vector<double> alpha_ext = alpha;
+    {   
+        std::vector<double> alpha_ext;
+        alpha_ext.reserve(alpha.size() + 1);
+
+        for (double a : alpha) {
+            if (std::isfinite(a) && a >= 0.0) {
+                alpha_ext.push_back(a);
+            }
+        }
+
+        // Always include alpha = 0 as the baseline.
         alpha_ext.push_back(0.0);
+
         std::sort(alpha_ext.begin(), alpha_ext.end());
 
         std::vector<double> unique_alpha;
         if (!alpha_ext.empty()) {
             unique_alpha.push_back(alpha_ext[0]);
+
             for (size_t i = 1; i < alpha_ext.size(); ++i) {
-                if (!infoxtr::numericutils::doubleNearlyEqual(alpha_ext[i], unique_alpha.back())) {
+                if (!infoxtr::numericutils::doubleNearlyEqual(
+                        alpha_ext[i], unique_alpha.back())) {
                     unique_alpha.push_back(alpha_ext[i]);
                 }
             }
