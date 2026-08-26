@@ -104,6 +104,10 @@ double RcppInfoImbalanceGain(
 
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
+    // Generate shadow manifolds for target/agent variables
+    std::vector<std::vector<double>> mx;
+    std::vector<std::vector<double>> my;
+
     const int n_obs = Mx.nrow(); 
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
