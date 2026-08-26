@@ -320,10 +320,8 @@ namespace iig
                 for (size_t il = 0; il < Nlib; ++il) {
                     const size_t q = lib[il];
 
-                    // The R implementation sets the diagonal distance to
-                    // NA before ranking and subsequently replaces its rank
-                    // with Inf. Thus, when pred and lib overlap, the point
-                    // itself must not be selected as a neighbour.
+                    // Exclude the prediction point itself when pred and lib overlap,
+                    // consistent with the NA diagonal used in the R implementation.
                     if (q == p) continue;
 
                     for (size_t d = 0; d < dimX; ++d) vec_q[d] = a * Mx[q][d];
