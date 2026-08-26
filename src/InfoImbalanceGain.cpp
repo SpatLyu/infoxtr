@@ -9,16 +9,15 @@
 
 // Wrapper function to calculate information imbalance with all coordinates data
 // [[Rcpp::export(rng = false)]]
-double RcppInfoImbalance(const Rcpp::NumericMatrix& mat,
-                  const Rcpp::IntegerVector& target,
-                  const Rcpp::IntegerVector& agent,
-                  int lag_p = 3,
-                  int lag_q = 3,
-                  int k = 3, 
-                  int alg = 0,
-                  double base = 2.0,
-                  bool normalize = false,
-                  bool lag_single = false)
+Rcpp::NumericVector RcppInfoImbalance(
+    const Rcpp::NumericMatrix& Mx,
+    const Rcpp::NumericMatrix& My,
+    const Rcpp::NumericVector& alpha,
+    const Rcpp::IntegerVector& lib,
+    const Rcpp::IntegerVector& pred,
+    int k,
+    int threads = 1,
+    const std::string& method = "euclidean")
 {
     std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
 
