@@ -63,7 +63,9 @@ double RcppInfoImbalanceGain(
     int h = 0,
     int k = 3,
     int threads = 1,
-    const std::string& method = "euclidean")
+    const std::string& method = "euclidean",
+    Rcpp::Nullable<Rcpp::List> nb = R_NilValue,
+    Rcpp::Nullable<int> nrows = R_NilValue)
 {
     std::vector<std::vector<double>> mx = infoxtr::convert::mat_r2std(Mx, true);
     std::vector<std::vector<double>> my = infoxtr::convert::mat_r2std(My, true);
