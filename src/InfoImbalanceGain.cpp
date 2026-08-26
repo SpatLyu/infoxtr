@@ -67,8 +67,28 @@ double RcppInfoImbalanceGain(
     Rcpp::Nullable<Rcpp::List> nb = R_NilValue,
     Rcpp::Nullable<int> nrows = R_NilValue)
 {
-    std::vector<std::vector<double>> mx = infoxtr::convert::mat_r2std(Mx, true);
-    std::vector<std::vector<double>> my = infoxtr::convert::mat_r2std(My, true);
+    std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
+
+    std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
+    std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
+
+    const size_t n_cols = m.size();
+    for (auto& idx : tg) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Target index %d out of bounds [1, %d]", 
+                       static_cast<int>(idx), 
+                       static_cast<int>(n_cols));
+        }
+        idx -= 1;  // to 0-based
+    }
+    for (auto& idx : ag) {
+        if (idx < 1 || idx > n_cols) {
+            Rcpp::stop("Interact index %d out of bounds [1, %d]", 
+                       static_cast<int>(idx), 
+                       static_cast<int>(n_cols));
+        }
+        idx -= 1;  // to 0-based
+    }
 
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
