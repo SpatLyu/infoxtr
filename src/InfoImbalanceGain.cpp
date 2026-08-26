@@ -60,6 +60,9 @@ double RcppInfoImbalanceGain(
     const Rcpp::NumericVector& alpha,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
+    const Rcpp::IntegerVector& E = Rcpp::IntegerVector::create(3),
+    const Rcpp::IntegerVector& tau = Rcpp::IntegerVector::create(1),
+    int style = 1,
     int h = 0,
     int k = 3,
     int threads = 1,
@@ -107,6 +110,26 @@ double RcppInfoImbalanceGain(
     // Generate shadow manifolds for target/agent variables
     std::vector<std::vector<double>> mx;
     std::vector<std::vector<double>> my;
+
+    if (nb.isNotNull()) 
+    {
+        // Convert Rcpp::List to std::vector<std::vector<size_t>>
+        std::vector<std::vector<size_t>> nb_std = infoxtr::convert::nb2std(nb.get());
+        lagged_values = infoxtr::lagg::lagg(
+            cppMat, nb_std, static_cast<size_t>(std::abs(lag)), false);
+    } 
+    else if (nrows.isNotNull())
+    {
+        lagged_values = infoxtr::lagg::lagg(
+            cppMat, 
+            static_cast<size_t>(std::abs(Rcpp::as<int>(nrows))), 
+            static_cast<size_t>(std::abs(lag)), false);
+    }
+    else  
+    {
+        lagged_values = infoxtr::lagg::lagg(
+            cppMat, static_cast<size_t>(std::abs(lag)), false);
+    }
 
     const int n_obs = Mx.nrow(); 
 
