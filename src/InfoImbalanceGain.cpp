@@ -45,7 +45,7 @@ Rcpp::NumericVector RcppInfoImbalance(
         pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
     
-    return infoxtr::infoimbalance::Infoimbalance(
+    return infoxtr::infoimbalance::infoImbalance(
                 mx, my, alpha_std, lib_std, pred_std,
                 static_cast<size_t>(std::abs(k)), 
                 static_cast<size_t>(std::abs(threads)), method);
@@ -73,7 +73,7 @@ double RcppInfoImbalanceGain(
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
 
     const size_t n_cols = m.size();
-    
+
     for (auto& idx : tg) {
         if (idx < 1 || idx > n_cols) {
             Rcpp::stop("Target index %d out of bounds [1, %d]", 
@@ -125,7 +125,7 @@ double RcppInfoImbalanceGain(
         pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
     
-    return infoxtr::infoimbalance::Infoimbalance(
+    return infoxtr::infoimbalance::infoImbalanceGain(
                 mx, my, alpha_std, lib_std, pred_std,
                 static_cast<size_t>(std::abs(k)), 
                 static_cast<size_t>(std::abs(threads)), method);
