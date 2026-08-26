@@ -160,8 +160,8 @@
  * License: GPL-3
  ******************************************************************************/
 
-#ifndef INFOXTR_IIG_HPP
-#define INFOXTR_IIG_HPP
+#ifndef INFOXTR_INFOIMBALANCE_HPP
+#define INFOXTR_INFOIMBALANCE_HPP
 
 #include <vector>
 #include <cmath>
@@ -179,7 +179,7 @@
 namespace infoxtr 
 {
 
-namespace iig
+namespace infoimbalance
 {
     
     using ContMat = std::vector<std::vector<double>>;
@@ -553,8 +553,8 @@ namespace iig
         return (first_val - min_val) / first_val;
     }
     
-} // namespace iig
+} // namespace infoimbalance
 
 }
 
-#endif // INFOXTR_IIG_HPP
+#endif // INFOXTR_INFOIMBALANCE_HPP
