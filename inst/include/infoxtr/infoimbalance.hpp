@@ -413,7 +413,7 @@ namespace infoimbalance
                 const size_t nk = std::min(k, candidates.size());
 
                 if (nk == 0) {
-                    continue;
+                    return;
                 }
 
                 std::partial_sort(
