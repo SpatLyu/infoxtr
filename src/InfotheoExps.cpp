@@ -464,7 +464,7 @@ double RcppDiscTE(SEXP mat,
         idx -= 1;  // to 0-based
     }
 
-    return infoxtr::transferentropy::transferentropy(
+    return infoxtr::transferentropy::transferEntropy(
                 m, tg, ag, 
                 static_cast<size_t>(std::abs(lag_p)), 
                 static_cast<size_t>(std::abs(lag_q)), 
@@ -507,7 +507,7 @@ double RcppContTE(const Rcpp::NumericMatrix& mat,
         idx -= 1;  // to 0-based
     }
     
-    return infoxtr::transferentropy::transferentropy(
+    return infoxtr::transferentropy::transferEntropy(
                 m, tg, ag, 
                 static_cast<size_t>(std::abs(lag_p)), 
                 static_cast<size_t>(std::abs(lag_q)), 
