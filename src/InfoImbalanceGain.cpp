@@ -21,8 +21,8 @@ Rcpp::NumericVector RcppInfoImbalance(
 {
     std::vector<std::vector<double>> mx = infoxtr::convert::mat_r2std(Mx, true);
     std::vector<std::vector<double>> my = infoxtr::convert::mat_r2std(My, true);
-    
-    std::vector<double> as = Rcpp::as<std::vector<double>>(alpha);
+
+    std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
     const int n_obs = Mx.nrow(); 
 
@@ -45,11 +45,8 @@ Rcpp::NumericVector RcppInfoImbalance(
         pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
     
-    return infoxtr::transferentropy::transferEntropy(
-                m, tg, ag, 
-                static_cast<size_t>(std::abs(lag_p)), 
-                static_cast<size_t>(std::abs(lag_q)), 
+    return infoxtr::infoimbalance::Infoimbalance(
+                mx, my, alpha_std, lib_std, pred_std,
                 static_cast<size_t>(std::abs(k)), 
-                static_cast<size_t>(std::abs(alg)), 
-                std::abs(base), normalize, lag_single);
+                static_cast<size_t>(std::abs(threads)), method);
 }
