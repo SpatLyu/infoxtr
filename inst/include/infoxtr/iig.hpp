@@ -2,89 +2,127 @@
  * File: iig.hpp
  *
  * Information Imbalance Gain (IIG)
- * -------------------------------------------------
+ * -----------------------------------
  *
- * This module implements the SURD framework for decomposing the mutual
- * information between a target variable and multiple source variables into
- * interpretable components:
+ * This module implements the information imbalance framework for quantifying
+ * the degree to which neighbourhood structure in one representation is
+ * preserved in another representation.
  *
- *   Redundant information
- *       Information simultaneously provided by multiple sources.
+ * Given two representations X and Y, the method identifies nearest neighbours
+ * in a combined space
  *
- *   Unique information
- *       Information provided exclusively by a single source.
+ *      A = (alpha * X, Y)
  *
- *   Synergistic information
- *       Information that only emerges when variables are considered jointly.
- *
- *   Information leak
- *       Remaining uncertainty in the target after conditioning on all sources.
+ * and evaluates their corresponding ranks in the Y space. The resulting
+ * information imbalance measures how strongly the neighbourhood structure
+ * induced by X and Y is associated.
  *
  * ---------------------------------------------------------------------------
  * Algorithm overview
  * ---------------------------------------------------------------------------
  *
- * Let Y denote the target variable and X = {X1, X2, ..., Xn} the source
- * variables. The algorithm proceeds in the following stages:
+ * Let X and Y denote two multivariate representations with the same number
+ * of observations. For a prediction set P and a library set L, the algorithm
+ * proceeds as follows:
  *
- * 1. Subset enumeration
+ * 1. Y-space rank construction
  *
- *      Generate all subsets of source variables up to order max_order.
- *      Each subset represents a candidate information channel.
+ *      For each prediction point p in P, compute distances from Y_p to all
+ *      library points Y_q, q in L.
  *
- * 2. Joint distribution construction
+ *      The distances are ranked increasingly using average ranks for tied
+ *      distances, following the convention of R's rank() with
+ *      ties.method = "average".
  *
- *      A joint state table is constructed for the full variable set using
- *      the joint entropy utilities in infotheo.hpp.
+ *      Missing or non-finite distances are placed after valid distances.
+ *      If p is also contained in the library, its self-distance is treated
+ *      as missing and therefore cannot affect the nearest-neighbour search.
  *
- * 3. Conditional pointwise mutual information
+ * 2. Combined-space neighbourhood construction
  *
- *      For each target state s, compute pointwise mutual information
+ *      For each scaling parameter alpha, construct the combined representation
  *
- *          I_s(X_set ; Y)
+ *          A = (alpha * X, Y).
  *
- *      for every subset X_set using grouped projections of the joint
- *      state table.
+ *      For every prediction point p, identify its k nearest neighbours among
+ *      the library points in A.
  *
- *      Mutual information is accumulated as:
+ *      The prediction point itself is excluded when the prediction and library
+ *      sets overlap.
  *
- *          I(X_set ; Y) = sum_s p(s) * I_s(X_set ; Y)
+ *      Neighbours are selected using partial sorting. Distance is the primary
+ *      criterion, while the original library index provides a deterministic
+ *      tie-breaking rule.
  *
- * 4. Monotonic SURD filtering
+ * 3. Conditional Y-space ranks
  *
- *      Subsets are sorted by their pointwise mutual information values.
- *      A monotonic constraint is enforced so that higher-order subsets
- *      cannot contain less information than the maximum of lower-order
- *      subsets. Violations are clipped to zero.
+ *      For each prediction point, retrieve the Y-space ranks corresponding to
+ *      its k nearest neighbours in A and compute their mean:
  *
- * 5. Information layer decomposition
+ *          r_p = (1 / k) sum_j rank_Y(p, NN_j^A)
  *
- *      A ladder-style decomposition is applied to the sorted values.
- *      Incremental differences between successive layers determine
- *      the information contributions.
+ *      This quantity measures how close the neighbours selected in A are to
+ *      the prediction point in the Y space.
  *
- *          delta_i = max(I_i - I_{i-1}, 0)
+ * 4. Information imbalance
  *
- *      Contributions are classified as:
+ *      The information imbalance is computed as
  *
- *          |subset| = 1   → redundant / unique layer
- *          |subset| > 1   → synergistic layer
+ *          II = 2 / N * mean_p(r_p)
  *
- * 6. Aggregation across target states
+ *      where N is the number of prediction points.
  *
- *      Contributions are weighted by p(s) and accumulated across
- *      target states.
+ *      Smaller values indicate stronger preservation of neighbourhood
+ *      structure between the two representations, whereas larger values
+ *      indicate greater neighbourhood mismatch.
  *
- * 7. Information leak
+ * 5. Scaling analysis
  *
- *      Remaining uncertainty in the target is measured as
+ *      When multiple values of alpha are supplied, the information imbalance
+ *      is evaluated independently for each alpha. This allows the relative
+ *      contribution of the X and Y components to the neighbourhood structure
+ *      to be examined.
  *
- *          H(Y | X_all) / H(Y)
+ * ---------------------------------------------------------------------------
+ * Missing values and ties
+ * ---------------------------------------------------------------------------
  *
- * Input data format:
+ * Distances that are NaN or otherwise non-finite are placed after valid
+ * distances during ranking and neighbour selection, following the intended
+ * na.last = TRUE behaviour of the reference R implementation.
  *
- *   Row 0  : target variable
- *   Row 1+ : source variables
+ * Tied Y-space distances receive average ranks. When selecting nearest
+ * neighbours in the combined space, equal distances are ordered according
+ * to the original library index to ensure deterministic results.
+ *
+ * ---------------------------------------------------------------------------
+ * Parallel computation
+ * ---------------------------------------------------------------------------
+ *
+ * Prediction points are processed independently using RcppThread. Both the
+ * Y-space rank construction and the nearest-neighbour calculations are
+ * parallelized across prediction points.
+ *
+ * Per-prediction intermediate results are stored independently and aggregated
+ * after parallel execution to avoid data races.
+ *
+ * ---------------------------------------------------------------------------
+ * Input data format
+ * ---------------------------------------------------------------------------
+ *
+ *   Mx       : Matrix-like container of X representations.
+ *   My       : Matrix-like container of Y representations.
+ *   alpha    : Scaling parameters applied to X.
+ *   lib      : Indices of observations eligible as library neighbours.
+ *   pred     : Indices of prediction observations.
+ *   k        : Number of nearest neighbours.
+ *   threads  : Number of threads used for parallel computation.
+ *   method   : Distance metric used for neighbourhood construction.
+ *
+ * Output:
+ *
+ *   A vector containing the information imbalance corresponding to each
+ *   value of alpha.
  *
  * Author: Wenbo Lyu (Github: @SpatLyu)
  * License: GPL-3
