@@ -53,12 +53,14 @@ Rcpp::NumericVector RcppInfoImbalance(
 
 // Wrapper function to calculate information imbalance gain
 // [[Rcpp::export(rng = false)]]
-Rcpp::NumericVector RcppInfoImbalanceGain(
-    const Rcpp::NumericMatrix& Mx,
-    const Rcpp::NumericMatrix& My,
+double RcppInfoImbalanceGain(
+    const Rcpp::NumericMatrix& mat,
+    const Rcpp::IntegerVector& target,
+    const Rcpp::IntegerVector& agent,
     const Rcpp::NumericVector& alpha,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
+    int h = 0,
     int k = 3,
     int threads = 1,
     const std::string& method = "euclidean")
