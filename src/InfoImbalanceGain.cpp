@@ -73,6 +73,7 @@ double RcppInfoImbalanceGain(
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
 
     const size_t n_cols = m.size();
+    
     for (auto& idx : tg) {
         if (idx < 1 || idx > n_cols) {
             Rcpp::stop("Target index %d out of bounds [1, %d]", 
@@ -81,6 +82,12 @@ double RcppInfoImbalanceGain(
         }
         idx -= 1;  // to 0-based
     }
+    std::sort(tg.begin(), tg.end());
+    tg.erase(
+        std::unique(tg.begin(), tg.end()),
+        tg.end()
+    );
+
     for (auto& idx : ag) {
         if (idx < 1 || idx > n_cols) {
             Rcpp::stop("Interact index %d out of bounds [1, %d]", 
@@ -89,6 +96,11 @@ double RcppInfoImbalanceGain(
         }
         idx -= 1;  // to 0-based
     }
+    std::sort(ag.begin(), ag.end());
+    ag.erase(
+        std::unique(ag.begin(), ag.end()),
+        ag.end()
+    );
 
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
