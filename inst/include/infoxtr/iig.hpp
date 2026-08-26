@@ -432,9 +432,56 @@ namespace iig
         size_t threads = 1,
         const std::string& method = "euclidean")
     {
+        std::vector<double> alpha_ext = alpha;
+        alpha_ext.push_back(0.0);
+        std::sort(alpha_ext.begin(), alpha_ext.end());
+
+        std::vector<double> unique_alpha;
+        if (!alpha_ext.empty()) {
+            unique_alpha.push_back(alpha_ext[0]);
+            for (size_t i = 1; i < alpha_ext.size(); ++i) {
+                if (!infoxtr::numericutils::doubleNearlyEqual(alpha_ext[i], unique_alpha.back())) {
+                    unique_alpha.push_back(alpha_ext[i]);
+                }
+            }
+        }
+
+        if (unique_alpha.empty()) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+
+        std::vector<double> ii_vals = infoImbalance(
+            Mx, My, unique_alpha, lib, pred, k, threads, method
+        );
+
+        if (ii_vals.empty()) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+
+        double min_val = std::numeric_limits<double>::infinity();
+        bool has_valid = false;
         
+        for (double v : ii_vals) {
+            if (std::isfinite(v)) {
+                if (!has_valid || v < min_val) {
+                    min_val = v;
+                    has_valid = true;
+                }
+            }
+        }
+
+        if (!has_valid) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+
+        double first_val = ii_vals[0];
+        
+        if (!std::isfinite(first_val) || infoxtr::numericutils::doubleNearlyEqual(first_val, 0.0)) {
+            return std::numeric_limits<double>::quiet_NaN(); 
+        }
+
+        return (first_val - min_val) / first_val;
     }
-    
     
 } // namespace iig
 
