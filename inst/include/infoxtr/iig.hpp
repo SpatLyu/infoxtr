@@ -114,7 +114,7 @@ namespace iig
     
     using ContMat = std::vector<std::vector<double>>;
 
-    inline std::vector<double> infoimbalance(
+    inline std::vector<double> infoImbalance(
         const ContMat& Mx,
         const ContMat& My,
         const std::vector<double>& alpha,
@@ -422,6 +422,18 @@ namespace iig
         return out;
     }
 
+    inline double infoImbalanceGain(
+        const ContMat& Mx,
+        const ContMat& My,
+        const std::vector<double>& alpha,
+        const std::vector<size_t>& lib,
+        const std::vector<size_t>& pred,
+        size_t k = 1,
+        size_t threads = 1,
+        const std::string& method = "euclidean")
+    {
+        
+    }
     
     
 } // namespace iig
