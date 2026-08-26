@@ -197,62 +197,30 @@ double RcppInfoImbalanceGain(
     //       agent uses R-style recycling if necessary.
     // ----------------------------------------------------------------------------
 
-    const size_t nt_raw =
-        target_raw.size();
+    const size_t nt_raw = target_raw.size();
+    const size_t na_raw = agent_raw.size();
+    const size_t nE = E_std.size();
 
-    const size_t na_raw =
-        agent_raw.size();
-
-    const size_t nE =
-        E_std.size();
-
-
-    std::vector<int> E_target_raw(
-        nt_raw
-    );
-
-    std::vector<int> tau_target_raw(
-        nt_raw
-    );
-
-    std::vector<int> E_agent_raw(
-        na_raw
-    );
-
-    std::vector<int> tau_agent_raw(
-        na_raw
-    );
-
+    std::vector<int> E_target_raw(nt_raw);
+    std::vector<int> tau_target_raw(nt_raw);
+    std::vector<int> E_agent_raw(na_raw);
+    std::vector<int> tau_agent_raw(na_raw);
 
     // ----------------------------------------------------------------------------
     // Case 1: one E / tau value
     // ----------------------------------------------------------------------------
 
-    if (nE == 1)
-    {
-        for (size_t i = 0;
-            i < nt_raw;
-            ++i)
-        {
-            E_target_raw[i] =
-                E_std[0];
-
-            tau_target_raw[i] =
-                tau_std[0];
+    if (nE == 1) {
+        for (size_t i = 0; i < nt_raw; ++i) {
+            E_target_raw[i] = E_std[0];
+            tau_target_raw[i] = tau_std[0];
         }
 
-        for (size_t i = 0;
-            i < na_raw;
-            ++i)
-        {
-            E_agent_raw[i] =
-                E_std[0];
-
-            tau_agent_raw[i] =
-                tau_std[0];
+        for (size_t i = 0; i < na_raw; ++i) {
+            E_agent_raw[i] = E_std[0];
+            tau_agent_raw[i] = tau_std[0];
         }
     }
-
 
     // ----------------------------------------------------------------------------
     // Case 2: two E / tau values
@@ -261,31 +229,17 @@ double RcppInfoImbalanceGain(
     //     second -> agent
     // ----------------------------------------------------------------------------
 
-    else if (nE == 2)
-    {
-        for (size_t i = 0;
-            i < nt_raw;
-            ++i)
-        {
-            E_target_raw[i] =
-                E_std[0];
-
-            tau_target_raw[i] =
-                tau_std[0];
+    else if (nE == 2) {
+        for (size_t i = 0; i < nt_raw; ++i) {
+            E_target_raw[i] = E_std[0];
+            tau_target_raw[i] = tau_std[0];
         }
 
-        for (size_t i = 0;
-            i < na_raw;
-            ++i)
-        {
-            E_agent_raw[i] =
-                E_std[1];
-
-            tau_agent_raw[i] =
-                tau_std[1];
+        for (size_t i = 0; i < na_raw; ++i) {
+            E_agent_raw[i] = E_std[1];
+            tau_agent_raw[i] = tau_std[1];
         }
     }
-
 
     // ----------------------------------------------------------------------------
     // Case 3: three or more E / tau values
