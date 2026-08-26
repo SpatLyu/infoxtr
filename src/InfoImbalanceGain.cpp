@@ -15,7 +15,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     const Rcpp::NumericVector& alpha,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
-    int k,
+    int k = 3,
     int threads = 1,
     const std::string& method = "euclidean")
 {
