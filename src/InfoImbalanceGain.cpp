@@ -25,22 +25,25 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
     std::vector<size_t> ag = Rcpp::as<std::vector<size_t>>(agent);
 
-    const size_t n_cols = m.size();
-    for (auto& idx : tg) {
-        if (idx < 1 || idx > n_cols) {
-            Rcpp::stop("Target index %d out of bounds [1, %d]", 
-                       static_cast<int>(idx), 
-                       static_cast<int>(n_cols));
+    const int n_obs = Mx.nrow(); 
+
+    // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
+    std::vector<size_t> lib_std;
+    lib_std.reserve(lib.size());
+    for (int i = 0; i < lib.size(); ++i) {
+        if (lib[i] < 1 || lib[i] > n_obs) {
+            Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
         }
-        idx -= 1;  // to 0-based
+        lib_std.push_back(static_cast<size_t>(lib[i] - 1));
     }
-    for (auto& idx : ag) {
-        if (idx < 1 || idx > n_cols) {
-            Rcpp::stop("Interact index %d out of bounds [1, %d]", 
-                       static_cast<int>(idx), 
-                       static_cast<int>(n_cols));
+
+    std::vector<size_t> pred_std;
+    pred_std.reserve(pred.size());
+    for (int i = 0; i < pred.size(); ++i) {
+        if (pred[i] < 1 || pred[i] > n_obs) {
+            Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
         }
-        idx -= 1;  // to 0-based
+        pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
     
     return infoxtr::transferentropy::transferEntropy(
