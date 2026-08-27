@@ -472,10 +472,52 @@ double RcppInfoImbalanceGain(
             }
         }
     } else if (nrows.isNotNull()) {
-        lagged_values = infoxtr::lagg::lagg(
-            cppMat, 
-            static_cast<size_t>(std::abs(Rcpp::as<int>(nrows))), 
-            static_cast<size_t>(std::abs(lag)), false);
+        // Agent variables -> Mx
+        for (size_t i = 0; i < ag.size(); ++i) {
+            const size_t var = ag[i];
+
+            std::vector<std::vector<double>> emb =
+                infoxtr::embed::embed(
+                    infoxtr::embed::gridVec2Mat(m[var], static_cast<size_t>(std::abs(Rcpp::as<int>(nrows)))),
+                    E_agent[i], tau_agent[i], style
+                );
+
+            if (mx.empty()) {
+                mx = emb;
+            } else {
+                for (size_t r = 0; r < mx.size(); ++r)
+                {
+                    mx[r].insert(
+                        mx[r].end(),
+                        emb[r].begin(),
+                        emb[r].end()
+                    );
+                }
+            }
+        }
+
+        // Target variables -> My
+        for (size_t i = 0; i < tg.size(); ++i) {
+            const size_t var = tg[i];
+
+            std::vector<std::vector<double>> emb =
+                infoxtr::embed::embed(
+                    infoxtr::embed::gridVec2Mat(m[var], static_cast<size_t>(std::abs(Rcpp::as<int>(nrows)))),
+                    E_target[i], tau_target[i], style
+                );
+
+            if (my.empty()) {
+                my = emb;
+            } else {
+                for (size_t r = 0; r < my.size(); ++r) {
+                    my[r].insert(
+                        my[r].end(),
+                        emb[r].begin(),
+                        emb[r].end()
+                    );
+                }
+            }
+        }
     } else {
         lagged_values = infoxtr::lagg::lagg(
             cppMat, static_cast<size_t>(std::abs(lag)), false);
