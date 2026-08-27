@@ -263,61 +263,33 @@ double RcppInfoImbalanceGain(
             tau_target_raw[i] = tau_std[j];
         }
 
-
         // ------------------------------------------------------------------------
         // Agent pool
         // ------------------------------------------------------------------------
-
         std::vector<int> E_agent_pool;
         std::vector<int> tau_agent_pool;
 
         // Remaining front values after target has consumed nt_raw values.
-        if (n_front > nt_raw)
-        {
-            for (size_t i = nt_raw;
-                i < n_front;
-                ++i)
-            {
-                E_agent_pool.push_back(
-                    E_std[i]
-                );
-
-                tau_agent_pool.push_back(
-                    tau_std[i]
-                );
+        if (n_front > nt_raw) {
+            for (size_t i = nt_raw; i < n_front; ++i) {
+                E_agent_pool.push_back(E_std[i]);
+                tau_agent_pool.push_back(tau_std[i]);
             }
         }
 
-
         // Last value is always reserved for agent.
-        E_agent_pool.push_back(
-            E_std[nE - 1]
-        );
-
-        tau_agent_pool.push_back(
-            tau_std[nE - 1]
-        );
-
+        E_agent_pool.push_back(E_std[nE - 1]);
+        tau_agent_pool.push_back(tau_std[nE - 1]);
 
         // ------------------------------------------------------------------------
         // Agent with R-style recycling
         // ------------------------------------------------------------------------
+        const size_t n_agent_pool = E_agent_pool.size();
 
-        const size_t n_agent_pool =
-            E_agent_pool.size();
-
-        for (size_t i = 0;
-            i < na_raw;
-            ++i)
-        {
-            const size_t j =
-                i % n_agent_pool;
-
-            E_agent_raw[i] =
-                E_agent_pool[j];
-
-            tau_agent_raw[i] =
-                tau_agent_pool[j];
+        for (size_t i = 0; i < na_raw; ++i) {
+            const size_t j = i % n_agent_pool;
+            E_agent_raw[i] = E_agent_pool[j];
+            tau_agent_raw[i] = tau_agent_pool[j];
         }
     }
 
