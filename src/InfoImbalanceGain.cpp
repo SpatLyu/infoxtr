@@ -621,7 +621,7 @@ double RcppInfoImbalanceGain(
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
-        if (lib[i] <= lag || lib[i] > n_obs) {
+        if (lib[i] > lag || lib[i] <= n_obs) {
             lib_std.push_back(static_cast<size_t>(lib[i] - 1));
         }
     }
@@ -629,7 +629,7 @@ double RcppInfoImbalanceGain(
     std::vector<size_t> pred_std;
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
-        if (pred[i] < lag || pred[i] > n_obs) {
+        if (pred[i] > lag || pred[i] <= n_obs) {
             pred_std.push_back(static_cast<size_t>(pred[i] - 1));
         }
     }
