@@ -454,8 +454,8 @@ double RcppInfoImbalanceGain(
                 infoxtr::embed::embed(
                     m[var],
                     nb_std,
-                    E_target[i]
-                    tau_target[i]
+                    E_target[i],
+                    tau_target[i],
                     static_cast<size_t>(std::abs(style))
                 );
 
@@ -552,8 +552,8 @@ double RcppInfoImbalanceGain(
             std::vector<std::vector<double>> emb =
                 infoxtr::embed::embed(
                     m[var],
-                    E_target[i]
-                    tau_target[i]
+                    E_target[i],
+                    tau_target[i],
                     static_cast<size_t>(std::abs(style))
                 );
 
@@ -583,7 +583,7 @@ double RcppInfoImbalanceGain(
             mx.resize(n_keep);
             my.erase(
                 my.begin(),
-                my.begin() + static_cast<std::ptrdiff_t>(h_std)
+                my.begin() + h_std
             );
         }
     }
