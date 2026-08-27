@@ -145,7 +145,7 @@ double RcppInfoImbalanceGain(
     // 3. Check indices and convert R 1-based -> C++ 0-based
     // ----------------------------------------------------------------------------
     for (size_t i = 0; i < target_raw.size(); ++i) {
-        if (target_raw[i] < 1 || target_raw[i] > n_cols){
+        if (target_raw[i] < 1 || target_raw[i] > n_cols) {
             Rcpp::stop(
                 "Target index %d out of bounds [1, %d].",
                 static_cast<int>(i + 1),
@@ -156,8 +156,7 @@ double RcppInfoImbalanceGain(
     }
 
     for (size_t i = 0; i < agent_raw.size(); ++i) {
-        if (agent_raw[i] < 1 || agent_raw[i] > n_cols)
-        {
+        if (agent_raw[i] < 1 || agent_raw[i] > n_cols) {
             Rcpp::stop(
                 "Agent index %d out of bounds [1, %d].",
                 static_cast<int>(i + 1),
