@@ -570,6 +570,33 @@ double RcppInfoImbalanceGain(
             }
         }
     }
+  
+    // Remove leading lagged NA (time series only)
+    size_t lag = 0;
+    if (nb.isNull() && nrows.isNull()) {
+        const size_t E_max =
+            *std::max_element(
+                E_std.begin(),
+                E_std.end()
+            );
+
+        const size_t tau_max =
+            *std::max_element(
+                tau_std.begin(),
+                tau_std.end()
+            );
+
+        if (tau_max == 0) {
+            // 0, 1, ..., E_max - 1
+            lag = static_cast<size_t>(E_max - 1);
+        } else if (style == 0) {
+            // 0, tau, 2*tau, ..., (E-1)*tau
+            lag = static_cast<size_t>((E_max - 1) * tau_max);
+        } else {
+            // tau, 2*tau, ..., E*tau
+            lag = static_cast<size_t>(E_max * tau_max);
+        }
+    }
 
     const int n_obs = mx.size(); 
 
