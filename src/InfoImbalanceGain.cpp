@@ -569,6 +569,23 @@ double RcppInfoImbalanceGain(
                 }
             }
         }
+
+        // ---------------------------------------------------------------------
+        // Apply h.
+        //
+        // Mx = rows [0, n-h)
+        // My = rows [h, n)
+        // ---------------------------------------------------------------------
+        const size_t h_std = static_cast<size_t>(std::abs(h));
+
+        if (h_std < mx.size()) {
+            const size_t n_keep = mx.size() - h_std;
+            mx.resize(n_keep);
+            my.erase(
+                my.begin(),
+                my.begin() + static_cast<std::ptrdiff_t>(h_std)
+            );
+        }
     }
   
     // Remove leading lagged NA (time series only)
