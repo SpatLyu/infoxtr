@@ -45,10 +45,11 @@ Rcpp::NumericVector RcppInfoImbalance(
         pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
     
-    return infoxtr::infoimbalance::infoImbalance(
-                mx, my, alpha_std, lib_std, pred_std,
-                static_cast<size_t>(std::abs(k)), 
-                static_cast<size_t>(std::abs(threads)), method);
+    return Rcpp::wrap(
+        infoxtr::infoimbalance::infoImbalance(
+            mx, my, alpha_std, lib_std, pred_std,
+            static_cast<size_t>(std::abs(k)), 
+            static_cast<size_t>(std::abs(threads)), method));
 }
 
 // Wrapper function to calculate information imbalance gain
