@@ -87,11 +87,9 @@ double RcppInfoImbalanceGain(
     // The corresponding E / tau entries are carried together with each variable.
     // ============================================================================
 
-
     // ----------------------------------------------------------------------------
     // 1. Convert E and tau
     // ----------------------------------------------------------------------------
-
     std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
     std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
@@ -125,13 +123,10 @@ double RcppInfoImbalanceGain(
         }
     }
 
-
     // ----------------------------------------------------------------------------
     // 2. Raw target / agent
     // ----------------------------------------------------------------------------
-
     std::vector<size_t> target_raw = Rcpp::as<std::vector<size_t>>(target);
-
     std::vector<size_t> agent_raw = Rcpp::as<std::vector<size_t>>(agent);
 
     if (target_raw.empty()) {
@@ -146,11 +141,9 @@ double RcppInfoImbalanceGain(
         );
     }
 
-
     // ----------------------------------------------------------------------------
     // 3. Check indices and convert R 1-based -> C++ 0-based
     // ----------------------------------------------------------------------------
-
     for (size_t i = 0; i < target_raw.size(); ++i) {
         if (target_raw[i] < 1 || target_raw[i] > n_cols){
             Rcpp::stop(
@@ -161,7 +154,6 @@ double RcppInfoImbalanceGain(
         }
         target_raw[i] -= 1;
     }
-
 
     for (size_t i = 0; i < agent_raw.size(); ++i) {
         if (agent_raw[i] < 1 || agent_raw[i] > n_cols)
@@ -174,7 +166,6 @@ double RcppInfoImbalanceGain(
         }
         agent_raw[i] -= 1;
     }
-
 
     // ----------------------------------------------------------------------------
     // 4. Expand E / tau according to the ORIGINAL target / agent lengths
@@ -196,7 +187,6 @@ double RcppInfoImbalanceGain(
     //       the reserved last value is appended to agent;
     //       agent uses R-style recycling if necessary.
     // ----------------------------------------------------------------------------
-
     const size_t nt_raw = target_raw.size();
     const size_t na_raw = agent_raw.size();
     const size_t nE = E_std.size();
@@ -206,11 +196,10 @@ double RcppInfoImbalanceGain(
     std::vector<int> E_agent_raw(na_raw);
     std::vector<int> tau_agent_raw(na_raw);
 
-    // ----------------------------------------------------------------------------
-    // Case 1: one E / tau value
-    // ----------------------------------------------------------------------------
-
     if (nE == 1) {
+        // ----------------------------------------------------------------------------
+        // Case 1: one E / tau value
+        // ----------------------------------------------------------------------------
         for (size_t i = 0; i < nt_raw; ++i) {
             E_target_raw[i] = E_std[0];
             tau_target_raw[i] = tau_std[0];
@@ -220,16 +209,13 @@ double RcppInfoImbalanceGain(
             E_agent_raw[i] = E_std[0];
             tau_agent_raw[i] = tau_std[0];
         }
-    }
-
-    // ----------------------------------------------------------------------------
-    // Case 2: two E / tau values
-    //
-    //     first  -> target
-    //     second -> agent
-    // ----------------------------------------------------------------------------
-
-    else if (nE == 2) {
+    } else if (nE == 2) {
+        // ----------------------------------------------------------------------------
+        // Case 2: two E / tau values
+        //
+        //     first  -> target
+        //     second -> agent
+        // ----------------------------------------------------------------------------
         for (size_t i = 0; i < nt_raw; ++i) {
             E_target_raw[i] = E_std[0];
             tau_target_raw[i] = tau_std[0];
@@ -239,57 +225,42 @@ double RcppInfoImbalanceGain(
             E_agent_raw[i] = E_std[1];
             tau_agent_raw[i] = tau_std[1];
         }
-    }
-
-    // ----------------------------------------------------------------------------
-    // Case 3: three or more E / tau values
-    //
-    // Example:
-    //
-    //     E = c(2, 3, 4, 5)
-    //
-    //     last value:
-    //         5 -> reserved for agent
-    //
-    //     front:
-    //         2, 3, 4 -> target first
-    //
-    // If target has 2 variables:
-    //
-    //     target = 2, 3
-    //     agent pool = 4, 5
-    //
-    // If target has 5 variables:
-    //
-    //     target = 2, 3, 4, 2, 3
-    //     agent pool = 5
-    //
-    // If target consumes fewer front values, all remaining front values are
-    // transferred to the agent pool, followed by the final reserved value.
-    // ----------------------------------------------------------------------------
-
-    else
-    {
-        const size_t n_front =
-            nE - 1;
-
+    } else {
+        // ----------------------------------------------------------------------------
+        // Case 3: three or more E / tau values
+        //
+        // Example:
+        //
+        //     E = c(2, 3, 4, 5)
+        //
+        //     last value:
+        //         5 -> reserved for agent
+        //
+        //     front:
+        //         2, 3, 4 -> target first
+        //
+        // If target has 2 variables:
+        //
+        //     target = 2, 3
+        //     agent pool = 4, 5
+        //
+        // If target has 5 variables:
+        //
+        //     target = 2, 3, 4, 2, 3
+        //     agent pool = 5
+        //
+        // If target consumes fewer front values, all remaining front values are
+        // transferred to the agent pool, followed by the final reserved value.
+        // ----------------------------------------------------------------------------
+        const size_t n_front = nE - 1;
 
         // ------------------------------------------------------------------------
         // Target
         // ------------------------------------------------------------------------
-
-        for (size_t i = 0;
-            i < nt_raw;
-            ++i)
-        {
-            const size_t j =
-                i % n_front;
-
-            E_target_raw[i] =
-                E_std[j];
-
-            tau_target_raw[i] =
-                tau_std[j];
+        for (size_t i = 0; i < nt_raw; ++i) {
+            const size_t j = i % n_front;
+            E_target_raw[i] = E_std[j];
+            tau_target_raw[i] = tau_std[j];
         }
 
 
@@ -299,7 +270,6 @@ double RcppInfoImbalanceGain(
 
         std::vector<int> E_agent_pool;
         std::vector<int> tau_agent_pool;
-
 
         // Remaining front values after target has consumed nt_raw values.
         if (n_front > nt_raw)
