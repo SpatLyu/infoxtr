@@ -293,11 +293,9 @@ double RcppInfoImbalanceGain(
         }
     }
 
-
     // ============================================================================
     // 5. Bind variable index with its E / tau BEFORE sorting and deduplication
     // ============================================================================
-
     struct VarEmbedParam
     {
         size_t index;
@@ -306,16 +304,10 @@ double RcppInfoImbalanceGain(
         size_t original_position;
     };
 
-
     std::vector<VarEmbedParam> target_params;
-    target_params.reserve(
-        nt_raw
-    );
+    target_params.reserve(nt_raw);
 
-    for (size_t i = 0;
-        i < nt_raw;
-        ++i)
-    {
+    for (size_t i = 0; i < nt_raw; ++i) {
         target_params.push_back(
             {
                 target_raw[i],
@@ -326,16 +318,10 @@ double RcppInfoImbalanceGain(
         );
     }
 
-
     std::vector<VarEmbedParam> agent_params;
-    agent_params.reserve(
-        na_raw
-    );
+    agent_params.reserve(na_raw);
 
-    for (size_t i = 0;
-        i < na_raw;
-        ++i)
-    {
+    for (size_t i = 0; i < na_raw;  ++i) {
         agent_params.push_back(
             {
                 agent_raw[i],
@@ -346,14 +332,12 @@ double RcppInfoImbalanceGain(
         );
     }
 
-
     // ============================================================================
     // 6. Sort target / agent by variable index
     //
     // original_position is used as a secondary key so that duplicated variables
     // retain their original input order.
     // ============================================================================
-
     std::sort(
         target_params.begin(),
         target_params.end(),
@@ -368,7 +352,6 @@ double RcppInfoImbalanceGain(
                 b.original_position;
         }
     );
-
 
     std::sort(
         agent_params.begin(),
@@ -385,89 +368,40 @@ double RcppInfoImbalanceGain(
         }
     );
 
-
     // ============================================================================
     // 7. Remove duplicates while retaining the corresponding E / tau
     //
     // If the same variable occurs multiple times, the first occurrence in the
     // original input order is retained together with its E / tau.
     // ============================================================================
-
     std::vector<size_t> tg;
     std::vector<int> E_target;
     std::vector<int> tau_target;
 
-    tg.reserve(
-        target_params.size()
-    );
+    tg.reserve(target_params.size());
+    E_target.reserve(target_params.size());
+    tau_target.reserve(target_params.size());
 
-    E_target.reserve(
-        target_params.size()
-    );
-
-    tau_target.reserve(
-        target_params.size()
-    );
-
-
-    for (const auto& x : target_params)
-    {
-        if (!tg.empty() &&
-            tg.back() == x.index)
-        {
-            continue;
-        }
-
-        tg.push_back(
-            x.index
-        );
-
-        E_target.push_back(
-            x.E
-        );
-
-        tau_target.push_back(
-            x.tau
-        );
+    for (const auto& x : target_params) {
+        if (!tg.empty() && tg.back() == x.index) continue;
+        tg.push_back(x.index);
+        E_target.push_back(x.E);
+        tau_target.push_back(x.tau);
     }
-
 
     std::vector<size_t> ag;
     std::vector<int> E_agent;
     std::vector<int> tau_agent;
 
-    ag.reserve(
-        agent_params.size()
-    );
+    ag.reserve(agent_params.size());
+    E_agent.reserve( agent_params.size());
+    tau_agent.reserve(agent_params.size());
 
-    E_agent.reserve(
-        agent_params.size()
-    );
-
-    tau_agent.reserve(
-        agent_params.size()
-    );
-
-
-    for (const auto& x : agent_params)
-    {
-        if (!ag.empty() &&
-            ag.back() == x.index)
-        {
-            continue;
-        }
-
-        ag.push_back(
-            x.index
-        );
-
-        E_agent.push_back(
-            x.E
-        );
-
-        tau_agent.push_back(
-            x.tau
-        );
+    for (const auto& x : agent_params){
+        if (!ag.empty() && ag.back() == x.index) continue;
+        ag.push_back(x.index);
+        E_agent.push_back(x.E);
+        tau_agent.push_back(x.tau);
     }
 
     std::vector<size_t> tg = Rcpp::as<std::vector<size_t>>(target);
