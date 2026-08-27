@@ -616,22 +616,24 @@ double RcppInfoImbalanceGain(
         }
     }
 
-    const int n_obs = mx.size(); 
+    const size_t n_obs = mx.size(); 
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
-        if (lib[i] > lag || lib[i] <= n_obs) {
-            lib_std.push_back(static_cast<size_t>(lib[i] - 1));
+        size_t single_lib = static_cast<size_t>(lib[i]);
+        if (single_lib > lag || single_lib <= n_obs) {
+            lib_std.push_back(single_lib - 1);
         }
     }
 
     std::vector<size_t> pred_std;
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
-        if (pred[i] > lag || pred[i] <= n_obs) {
-            pred_std.push_back(static_cast<size_t>(pred[i] - 1));
+        size_t single_pred = static_cast<size_t>(pred[i]);
+        if (single_pred > lag || single_pred <= n_obs) {
+            pred_std.push_back(single_pred - 1);
         }
     }
     
