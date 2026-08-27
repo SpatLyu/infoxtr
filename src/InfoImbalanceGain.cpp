@@ -118,7 +118,7 @@ double RcppInfoImbalanceGain(
                 "All E values must be >= 2; "
                 "E[%d] = %d.",
                 static_cast<int>(i + 1),
-                static_cast<int>(E_std[i]),
+                static_cast<int>(E_std[i])
             );
         }
     }
