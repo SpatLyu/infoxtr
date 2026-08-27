@@ -403,28 +403,80 @@ double RcppInfoImbalanceGain(
         tau_agent.push_back(x.tau);
     }
 
+    // =========================================================================
+    // 7. Convert alpha
+    // =========================================================================
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
-    // Generate shadow manifolds for target/agent variables
+
+    // =========================================================================
+    // 8. Generate shadow manifolds
+    // =========================================================================
     std::vector<std::vector<double>> mx;
     std::vector<std::vector<double>> my;
 
-    if (nb.isNotNull()) 
-    {
+    if (nb.isNotNull()) {
         // Convert Rcpp::List to std::vector<std::vector<size_t>>
         std::vector<std::vector<size_t>> nb_std = infoxtr::convert::nb2std(nb.get());
-        lagged_values = infoxtr::lagg::lagg(
-            cppMat, nb_std, static_cast<size_t>(std::abs(lag)), false);
-    } 
-    else if (nrows.isNotNull())
-    {
+        
+        // Agent variables -> Mx
+        for (size_t i = 0; i < ag.size(); ++i) {
+            const size_t var = ag[i];
+
+            std::vector<std::vector<double>> emb =
+                infoxtr::embed::embed(
+                    m[var],
+                    nb_std,
+                    E_agent[i],
+                    tau_agent[i],
+                    style
+                );
+
+            if (mx.empty()) {
+                mx = emb;
+            } else {
+                for (size_t r = 0; r < mx.size(); ++r)
+                {
+                    mx[r].insert(
+                        mx[r].end(),
+                        emb[r].begin(),
+                        emb[r].end()
+                    );
+                }
+            }
+        }
+
+        // Target variables -> My
+        for (size_t i = 0; i < tg.size(); ++i) {
+            const size_t var = tg[i];
+
+            std::vector<std::vector<double>> emb =
+                infoxtr::embed::embed(
+                    m[var],
+                    nb_std,
+                    E_target[i]
+                    tau_target[i]
+                    style
+                );
+
+            if (my.empty()) {
+                my = emb;
+            } else {
+                for (size_t r = 0; r < my.size(); ++r) {
+                    my[r].insert(
+                        my[r].end(),
+                        emb[r].begin(),
+                        emb[r].end()
+                    );
+                }
+            }
+        }
+    } else if (nrows.isNotNull()) {
         lagged_values = infoxtr::lagg::lagg(
             cppMat, 
             static_cast<size_t>(std::abs(Rcpp::as<int>(nrows))), 
             static_cast<size_t>(std::abs(lag)), false);
-    }
-    else  
-    {
+    } else {
         lagged_values = infoxtr::lagg::lagg(
             cppMat, static_cast<size_t>(std::abs(lag)), false);
     }
