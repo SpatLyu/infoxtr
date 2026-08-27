@@ -429,7 +429,7 @@ double RcppInfoImbalanceGain(
                     nb_std,
                     E_agent[i],
                     tau_agent[i],
-                    style
+                    static_cast<size_t>(std::abs(style))
                 );
 
             if (mx.empty()) {
@@ -456,7 +456,7 @@ double RcppInfoImbalanceGain(
                     nb_std,
                     E_target[i]
                     tau_target[i]
-                    style
+                    static_cast<size_t>(std::abs(style))
                 );
 
             if (my.empty()) {
@@ -479,7 +479,7 @@ double RcppInfoImbalanceGain(
             std::vector<std::vector<double>> emb =
                 infoxtr::embed::embed(
                     infoxtr::embed::gridVec2Mat(m[var], static_cast<size_t>(std::abs(Rcpp::as<int>(nrows)))),
-                    E_agent[i], tau_agent[i], style
+                    E_agent[i], tau_agent[i], static_cast<size_t>(std::abs(style))
                 );
 
             if (mx.empty()) {
@@ -503,7 +503,7 @@ double RcppInfoImbalanceGain(
             std::vector<std::vector<double>> emb =
                 infoxtr::embed::embed(
                     infoxtr::embed::gridVec2Mat(m[var], static_cast<size_t>(std::abs(Rcpp::as<int>(nrows)))),
-                    E_target[i], tau_target[i], style
+                    E_target[i], tau_target[i], static_cast<size_t>(std::abs(style))
                 );
 
             if (my.empty()) {
@@ -528,7 +528,7 @@ double RcppInfoImbalanceGain(
                     m[var],
                     E_agent[i],
                     tau_agent[i],
-                    style
+                    static_cast<size_t>(std::abs(style))
                 );
 
             if (mx.empty()) {
@@ -554,7 +554,7 @@ double RcppInfoImbalanceGain(
                     m[var],
                     E_target[i]
                     tau_target[i]
-                    style
+                    static_cast<size_t>(std::abs(style))
                 );
 
             if (my.empty()) {
