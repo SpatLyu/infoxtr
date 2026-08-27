@@ -90,8 +90,8 @@ double RcppInfoImbalanceGain(
     // ----------------------------------------------------------------------------
     // 1. Convert E and tau
     // ----------------------------------------------------------------------------
-    std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
-    std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
+    std::vector<size_t> E_std = Rcpp::as<std::vector<size_t>>(E);
+    std::vector<size_t> tau_std = Rcpp::as<std::vector<size_t>>(tau);
 
     if (E_std.empty()) {
         Rcpp::stop(
@@ -118,7 +118,7 @@ double RcppInfoImbalanceGain(
                 "All E values must be >= 2; "
                 "E[%d] = %d.",
                 static_cast<int>(i + 1),
-                E_std[i]
+                static_cast<int>(E_std[i]),
             );
         }
     }
@@ -190,10 +190,10 @@ double RcppInfoImbalanceGain(
     const size_t na_raw = agent_raw.size();
     const size_t nE = E_std.size();
 
-    std::vector<int> E_target_raw(nt_raw);
-    std::vector<int> tau_target_raw(nt_raw);
-    std::vector<int> E_agent_raw(na_raw);
-    std::vector<int> tau_agent_raw(na_raw);
+    std::vector<size_t> E_target_raw(nt_raw);
+    std::vector<size_t> tau_target_raw(nt_raw);
+    std::vector<size_t> E_agent_raw(na_raw);
+    std::vector<size_t> tau_agent_raw(na_raw);
 
     if (nE == 1) {
         // ----------------------------------------------------------------------------
@@ -265,8 +265,8 @@ double RcppInfoImbalanceGain(
         // ------------------------------------------------------------------------
         // Agent pool
         // ------------------------------------------------------------------------
-        std::vector<int> E_agent_pool;
-        std::vector<int> tau_agent_pool;
+        std::vector<size_t> E_agent_pool;
+        std::vector<size_t> tau_agent_pool;
 
         // Remaining front values after target has consumed nt_raw values.
         if (n_front > nt_raw) {
@@ -298,8 +298,8 @@ double RcppInfoImbalanceGain(
     struct VarEmbedParam
     {
         size_t index;
-        int E;
-        int tau;
+        size_t E;
+        size_t tau;
         size_t original_position;
     };
 
@@ -374,8 +374,8 @@ double RcppInfoImbalanceGain(
     // original input order is retained together with its E / tau.
     // ============================================================================
     std::vector<size_t> tg;
-    std::vector<int> E_target;
-    std::vector<int> tau_target;
+    std::vector<size_t> E_target;
+    std::vector<size_t> tau_target;
 
     tg.reserve(target_params.size());
     E_target.reserve(target_params.size());
@@ -389,11 +389,11 @@ double RcppInfoImbalanceGain(
     }
 
     std::vector<size_t> ag;
-    std::vector<int> E_agent;
-    std::vector<int> tau_agent;
+    std::vector<size_t> E_agent;
+    std::vector<size_t> tau_agent;
 
     ag.reserve(agent_params.size());
-    E_agent.reserve( agent_params.size());
+    E_agent.reserve(agent_params.size());
     tau_agent.reserve(agent_params.size());
 
     for (const auto& x : agent_params){
