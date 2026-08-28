@@ -603,7 +603,7 @@ double RcppInfoImbalanceGain(
         }
     }
 
-    const size_t n_valid = mx.size(); 
+    size_t n_valid = mx.size(); 
     if (static_cast<size_t>(std::abs(h)) >= n_valid) {
         Rcpp::stop("Prediction horizon 'h' (%d) is too large for the given data (%d rows).", h, static_cast<int>(n_valid));
     }
