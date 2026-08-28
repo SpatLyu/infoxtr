@@ -2,11 +2,11 @@
 title: "Synergistic-Unique-Redundant Decomposition of Causality (SURD)"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-05-05
+  | Last update: 2026-08-15
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{surd}
+  %\VignetteIndexEntry{2. Synergistic-Unique-Redundant Decomposition of Causality}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
