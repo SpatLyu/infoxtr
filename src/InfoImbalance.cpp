@@ -34,7 +34,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
-        if (lib[i] >= 1 || lib[i] <= n_valid) {
+        if (lib[i] >= 1 && lib[i] <= n_valid) {
             lib_std.push_back(static_cast<size_t>(lib[i] - 1));
         }
     }
@@ -42,7 +42,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<size_t> pred_std;
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
-        if (pred[i] >= 1 || pred[i] <= n_valid) {
+        if (pred[i] >= 1 && pred[i] <= n_valid) {
             pred_std.push_back(static_cast<size_t>(pred[i] - 1));
         }
     }
