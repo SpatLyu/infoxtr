@@ -26,8 +26,8 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
     const int n_valid = Mx.nrow() - h;
-    if (n_valid <= 0) {
-        Rcpp::stop("Prediction horizon 'h' (%d) is greater than or equal to the number of observations (%d). No valid data points remaining.", h, Mx.nrow());
+    if (n_valid <= 1) {
+        Rcpp::stop("Prediction horizon 'h' (%d) is too large for the given data (%d rows).", h, Mx.nrow());
     }
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
@@ -602,7 +602,7 @@ double RcppInfoImbalanceGain(
     }
 
     size_t n_valid = mx.size(); 
-    if (static_cast<size_t>(std::abs(h)) >= n_valid) {
+    if (static_cast<size_t>(std::abs(h)) >= n_valid - 1) {
         Rcpp::stop("Prediction horizon 'h' (%d) is too large for the given data (%d rows).", h, static_cast<int>(n_valid));
     }
     n_valid -= h;
