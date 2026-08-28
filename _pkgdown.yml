@@ -38,8 +38,8 @@ reference:
 - subtitle: Information flow
   contents:
   - te
-  - surd
   - infoimbalance
+  - surd
 
 - title: Knockoff-based interaction testing
   contents:
