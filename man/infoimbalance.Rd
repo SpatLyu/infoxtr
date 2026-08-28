@@ -48,3 +48,6 @@ my = embed(rnorm(100), 3)
 infoxtr::infoimbalance(mx, my)
 
 }
+\references{
+Del Tatto, V., Fortunato, G., Bueti, D., Laio, A., 2024. Robust inference of causality in high-dimensional dynamical processes from the Information Imbalance of distance ranks. Proceedings of the National Academy of Sciences 121.
+}
