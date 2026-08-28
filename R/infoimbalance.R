@@ -1,4 +1,4 @@
-#'  Information Imbalance
+#' Information Imbalance
 #'
 #' @param mx Numeric matrix of hypothesised driving variable measurements.
 #' @param my Numeric matrix of hypothesised response variable measurements.
@@ -14,6 +14,11 @@
 #' @export
 #'
 #' @examples
+#' set.seed(42)
+#' mx = embed(rnorm(100), 3)
+#' my = embed(rnorm(100), 3)
+#' infoxtr::infoimbalance(mx, my)
+#' 
 infoimbalance = \(mx, my, alpha = seq(0,1,0.1), lib = NULL, pred = NULL,
                   h = 1, k = 3, threads = 1, method = "euclidean") {
   if (is.null(lib)) lib = seq_len(nrow(mx))
