@@ -499,6 +499,7 @@ namespace infoimbalance
         const std::vector<double>& alpha,
         const std::vector<size_t>& lib,
         const std::vector<size_t>& pred,
+        size_t h = 1,
         size_t k = 1,
         size_t threads = 1,
         const std::string& method = "euclidean")
@@ -534,7 +535,7 @@ namespace infoimbalance
         }
 
         std::vector<double> ii_vals = infoImbalance(
-            Mx, My, unique_alpha, lib, pred, k, threads, method
+            Mx, My, unique_alpha, lib, pred, h, k, threads, method
         );
 
         if (ii_vals.empty()) {
