@@ -190,6 +190,7 @@ namespace infoimbalance
         const std::vector<double>& alpha,
         const std::vector<size_t>& lib,
         const std::vector<size_t>& pred,
+        size_t h = 1,
         size_t k = 1,
         size_t threads = 1,
         const std::string& method = "euclidean")
@@ -254,7 +255,7 @@ namespace infoimbalance
 
                 distances[il] =
                     infoxtr::distance::distance(
-                        My[p], My[q], method, true);
+                        My[p + h], My[q + h], method, true);
             }
 
             // Sort indices according to Y-space distance.
