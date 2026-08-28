@@ -15,6 +15,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     const Rcpp::NumericVector& alpha,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
+    int h = 1,
     int k = 3,
     int threads = 1,
     const std::string& method = "euclidean")
@@ -24,13 +25,16 @@ Rcpp::NumericVector RcppInfoImbalance(
 
     std::vector<double> alpha_std = Rcpp::as<std::vector<double>>(alpha);
 
-    const int n_obs = Mx.nrow(); 
+    const int n_valid = Mx.nrow() - h;
+    if (n_valid <= 0) {
+        Rcpp::stop("Prediction horizon 'h' (%d) is greater than or equal to the number of observations (%d). No valid data points remaining.", h, Mx.nrow());
+    }
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
-        if (lib[i] < 1 || lib[i] > n_obs) {
+        if (lib[i] < 1 || lib[i] > n_valid) {
             Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
         }
         lib_std.push_back(static_cast<size_t>(lib[i] - 1));
@@ -39,7 +43,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     std::vector<size_t> pred_std;
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
-        if (pred[i] < 1 || pred[i] > n_obs) {
+        if (pred[i] < 1 || pred[i] > n_valid) {
             Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
         }
         pred_std.push_back(static_cast<size_t>(pred[i] - 1));
