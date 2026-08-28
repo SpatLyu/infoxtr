@@ -52,6 +52,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     return Rcpp::wrap(
         infoxtr::infoimbalance::infoImbalance(
             mx, my, alpha_std, lib_std, pred_std,
+            static_cast<size_t>(std::abs(h)), 
             static_cast<size_t>(std::abs(k)), 
             static_cast<size_t>(std::abs(threads)), method));
 }
