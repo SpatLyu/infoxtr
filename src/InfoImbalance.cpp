@@ -603,14 +603,18 @@ double RcppInfoImbalanceGain(
         }
     }
 
-    const size_t n_obs = mx.size(); 
+    const size_t n_valid = mx.size(); 
+    if (static_cast<size_t>(std::abs(h)) >= n_valid) {
+        Rcpp::stop("Prediction horizon 'h' (%d) is too large for the given data (%d rows).", h, static_cast<int>(n_valid));
+    }
+    n_valid -= h;
 
     // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
     std::vector<size_t> lib_std;
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
         size_t single_lib = static_cast<size_t>(lib[i]);
-        if (single_lib > lag || single_lib <= n_obs) {
+        if (single_lib > lag || single_lib <= n_valid) {
             lib_std.push_back(single_lib - 1);
         }
     }
@@ -619,7 +623,7 @@ double RcppInfoImbalanceGain(
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
         size_t single_pred = static_cast<size_t>(pred[i]);
-        if (single_pred > lag || single_pred <= n_obs) {
+        if (single_pred > lag || single_pred <= n_valid) {
             pred_std.push_back(single_pred - 1);
         }
     }
