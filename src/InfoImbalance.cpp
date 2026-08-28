@@ -612,7 +612,7 @@ double RcppInfoImbalanceGain(
     lib_std.reserve(lib.size());
     for (int i = 0; i < lib.size(); ++i) {
         size_t single_lib = static_cast<size_t>(lib[i]);
-        if (single_lib > lag || single_lib <= n_valid) {
+        if (single_lib > lag && single_lib <= n_valid) {
             lib_std.push_back(single_lib - 1);
         }
     }
@@ -621,7 +621,7 @@ double RcppInfoImbalanceGain(
     pred_std.reserve(pred.size());
     for (int i = 0; i < pred.size(); ++i) {
         size_t single_pred = static_cast<size_t>(pred[i]);
-        if (single_pred > lag || single_pred <= n_valid) {
+        if (single_pred > lag && single_pred <= n_valid) {
             pred_std.push_back(single_pred - 1);
         }
     }
