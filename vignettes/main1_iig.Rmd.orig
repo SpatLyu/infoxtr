@@ -37,7 +37,7 @@ $$
 
 where $r^A$ and $r^B$ are the distance ranks in spaces $A$ and $B$, respectively, and $k$ is the number of nearest neighbors considered. A small $\Delta(A\rightarrow B)$ indicates that points close in $A$ also tend to be close in $B$. Thus, the distance rank in one space provides information about the structure of another space.
 
-For $X \rightarrow Y$, let $d_Y(0)$ denote the distance space constructed from the present state of $Y$, and let $d_{XY}^{\alpha}(0)$ denote the corresponding space after incorporating $X$ with a relative scaling parameter $\alpha$. The future state of $Y$ is represented by $d_Y(\tau)$, where $\tau$ is the prediction delay. IIG therefore evaluates
+For $X \rightarrow Y$, let $d_Y(0)$ denote the distance space constructed from the present state of $Y$, and let $d_{XY}^{\alpha}(0)$ denote the corresponding space after incorporating $X$ with a relative scaling parameter $\alpha$. The future state of $Y$ is represented by $d_Y(\tau)$, where $\tau$ is the prediction horizon. IIG therefore evaluates
 
 $$
 \Delta(\alpha)
