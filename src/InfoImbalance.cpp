@@ -574,23 +574,6 @@ double RcppInfoImbalanceGain(
                 }
             }
         }
-
-        // ---------------------------------------------------------------------
-        // Apply h.
-        //
-        // Mx = rows [0, n-h)
-        // My = rows [h, n)
-        // ---------------------------------------------------------------------
-        const size_t h_std = static_cast<size_t>(std::abs(h));
-
-        if (h_std < mx.size()) {
-            const size_t n_keep = mx.size() - h_std;
-            mx.resize(n_keep);
-            my.erase(
-                my.begin(),
-                my.begin() + h_std
-            );
-        }
     }
   
     // Remove leading lagged NA (time series only)
@@ -643,6 +626,7 @@ double RcppInfoImbalanceGain(
     
     return infoxtr::infoimbalance::infoImbalanceGain(
                 mx, my, alpha_std, lib_std, pred_std,
+                static_cast<size_t>(std::abs(h)), 
                 static_cast<size_t>(std::abs(k)), 
                 static_cast<size_t>(std::abs(threads)), method);
 }
