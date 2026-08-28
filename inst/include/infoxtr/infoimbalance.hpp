@@ -14,12 +14,18 @@
  * underlying dynamical or statistical model.
  *
  * Given two representations X and Y, the method constructs a combined
- * distance space
+ * distance space using the current states:
  *
- *      A = (alpha * X, Y)
+ *      A_t = (alpha * X_t, Y_t)
  *
  * and evaluates how informative the neighbourhood structure in A is with
- * respect to the distance space defined by Y.
+ * respect to the future distance space defined by Y:
+ *
+ *      B_{t+h} = Y_{t+h}
+ *
+ * where h is the prediction horizon. This temporal asymmetry allows the
+ * framework to be used for model-free causal inference and information flow
+ * analysis.
  *
  * ---------------------------------------------------------------------------
  * Algorithm overview
@@ -29,24 +35,25 @@
  * observations. Let P denote the prediction set and L the library set from
  * which neighbours are selected. The algorithm proceeds as follows:
  *
- * 1. Distance rank construction in Y
+ * 1. Distance rank construction in the future Y space
  *
- *      For each prediction point p in P, distances between Y_p and all
- *      library points Y_q, q in L, are computed and ranked increasingly.
+ *      For each prediction point p in P, distances between the future states
+ *      Y_{p+h} and all library future states Y_{q+h}, q in L, are computed
+ *      and ranked increasingly. (Here, h denotes the prediction horizon).
  *
  *      The resulting rank r^Y_{pq} measures the position of point q in the
- *      distance space defined by Y, with rank 1 corresponding to the nearest
- *      neighbour.
+ *      future distance space defined by Y, with rank 1 corresponding to the
+ *      nearest neighbour.
  *
  *      Tied distances receive their average rank, following the convention
  *      of R's rank(..., ties.method = "average").
  *
- * 2. Construction of the combined distance space
+ * 2. Construction of the combined current distance space
  *
- *      For each scaling parameter alpha, a combined representation is defined
- *      as
+ *      For each scaling parameter alpha, a combined representation of the
+ *      current state is defined as:
  *
- *          A = (alpha * X, Y).
+ *          A_t = (alpha * X_t, Y_t).
  *
  *      The parameter alpha controls the relative contribution of X to the
  *      combined distance space.
@@ -54,11 +61,11 @@
  * 3. Nearest-neighbour selection
  *
  *      For every prediction point p, the k nearest library points are
- *      identified according to the distance in A.
+ *      identified according to the distance in the current space A_t.
  *
- *      The corresponding ranks of these neighbours in the Y distance space
- *      are then retrieved. The prediction point itself is excluded when the
- *      prediction and library sets overlap.
+ *      The corresponding ranks of these neighbours in the future Y distance
+ *      space are then retrieved. The prediction point itself is excluded when
+ *      the prediction and library sets overlap.
  *
  *      Neighbours are selected using partial sorting. Equal distances are
  *      resolved using the original library index as a deterministic
@@ -66,14 +73,14 @@
  *
  * 4. Conditional distance rank
  *
- *      For each prediction point, the ranks in Y of its k nearest neighbours
- *      in A are averaged:
+ *      For each prediction point, the ranks in the future Y space of its k
+ *      nearest neighbours in the current space A_t are averaged:
  *
  *          r^Y_{p|A}
  *              = (1 / k) sum_j r^Y_{p,NN_j^A}.
  *
- *      This quantity measures how well local proximity in the A distance
- *      space is preserved in the Y distance space.
+ *      This quantity measures how well local proximity in the current A
+ *      distance space is preserved in the future Y distance space.
  *
  * 5. Information Imbalance
  *
@@ -83,9 +90,9 @@
  *          Delta(A -> Y)
  *              = 2 / N sum_p r^Y_{p|A}.
  *
- *      Smaller values indicate that points identified as close in A also tend
- *      to be close in Y, implying that A contains information about the
- *      distance structure of Y.
+ *      Smaller values indicate that points identified as close in the current
+ *      space A also tend to be close in the future space Y, implying that A
+ *      contains predictive information about the future structure of Y.
  *
  *      Larger values indicate weaker correspondence between the two distance
  *      spaces and therefore greater information imbalance.
@@ -100,6 +107,22 @@
  *      is evaluated independently for each value. This allows the information
  *      contribution of X to the distance structure to be examined as the
  *      relative weight of X is varied.
+ *
+ * ---------------------------------------------------------------------------
+ * Information Imbalance Gain (IIG) and Causal Inference
+ * ---------------------------------------------------------------------------
+ *
+ * When applied to time series data with a prediction horizon h > 0, the
+ * baseline Information Imbalance (at alpha = 0) measures the self-predictability
+ * of Y (i.e., how well the current state Y_t predicts the future state Y_{t+h}).
+ *
+ * The Information Imbalance Gain (IIG) quantifies the relative improvement in
+ * predicting the future state Y_{t+h} when the current state of X (X_t) is
+ * included in the combined space A_t.
+ *
+ * A significant positive IIG indicates that X contains unique predictive
+ * information about the future of Y, providing a model-free indicator of
+ * Granger-like causality or directed information flow from X to Y.
  *
  * ---------------------------------------------------------------------------
  * Distance ranks
@@ -131,6 +154,9 @@
  * leave-self-out convention used in distance-rank based neighbourhood
  * comparisons.
  *
+ * Note: When h > 0, the indices in P and L must be constrained such that
+ * p + h and q + h do not exceed the total number of observations.
+ *
  * ---------------------------------------------------------------------------
  * Parallel computation
  * ---------------------------------------------------------------------------
@@ -147,11 +173,14 @@
  * Input data format
  * ---------------------------------------------------------------------------
  *
- *   Mx       : Matrix-like container containing the X representations.
+ *   Mx       : Matrix-like container containing the X representations (current).
  *   My       : Matrix-like container containing the Y representations.
  *   alpha    : Scaling parameters applied to X.
  *   lib      : Indices of observations eligible as library neighbours.
  *   pred     : Indices of prediction observations.
+ *   h        : Prediction horizon (time delay). Space A uses current states (t),
+ *              while space B uses future states (t + h). Set to 0 for synchronous
+ *              comparison (non-causal).
  *   k        : Number of nearest neighbours used in the rank comparison.
  *   threads  : Number of threads used for parallel computation.
  *   method   : Distance metric used to construct the distance spaces.
