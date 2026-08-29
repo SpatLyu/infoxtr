@@ -30,15 +30,9 @@ info_imbalance = \(mx, my, lib = NULL, pred = NULL,
 
 #' Information Imbalance Gain
 #'
-#' @param mx Numeric matrix of hypothesised driving variable measurements.
-#' @param my Numeric matrix of hypothesised response variable measurements.
+#' @inheritParams info_imbalance
 #' @param alpha (optional) Scaling parameter weighting the putative driver measurements.
-#' @param lib (optional) Library indices.
-#' @param pred (optional) Prediction indices.
 #' @param h (optional) Prediction horizon.
-#' @param k (optional) Number of nearest neighbors when estimating ranks.
-#' @param threads (optional) Number of parallel threads.
-#' @param method (optional) Distance measure to be used: `"euclidean"`, `"manhattan"`, or `maximum"`.
 #'
 #' @returns A numeric vector.
 #' @export
