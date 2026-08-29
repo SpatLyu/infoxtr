@@ -55,9 +55,9 @@ Rcpp::NumericVector RcppImbalanceGain(
             static_cast<size_t>(std::abs(threads)), method));
 }
 
-// Wrapper function to calculate information imbalance gain
+// Wrapper function to calculate information imbalance gain causality
 // [[Rcpp::export(rng = false)]]
-double RcppInfoImbalanceGain(
+double RcppImbalanceGainCausality(
     const Rcpp::NumericMatrix& mat,
     const Rcpp::IntegerVector& target,
     const Rcpp::IntegerVector& agent,
@@ -626,7 +626,7 @@ double RcppInfoImbalanceGain(
         }
     }
     
-    return infoxtr::infoimbalance::infoImbalanceGain(
+    return infoxtr::infoimbalance::imbalanceGainCausality(
                 mx, my, alpha_std, lib_std, pred_std,
                 static_cast<size_t>(std::abs(h)), 
                 static_cast<size_t>(std::abs(k)), 
