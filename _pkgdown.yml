@@ -13,6 +13,8 @@ navbar:
     articles:
       text: Vignettes
       menu:
+      - text: Information Imbalance Gain
+        href: articles/main1_imbalance.html
       - text: Synergistic-Unique-Redundant Decomposition of Causality
         href: articles/main2_surd.html
 
