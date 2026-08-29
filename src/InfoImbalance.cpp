@@ -7,9 +7,9 @@
 #include <algorithm>
 #include "infoxtr.h"
 
-// Wrapper function to calculate information imbalance with all coordinates data
+// Wrapper function to calculate information imbalance gain with all coordinates data
 // [[Rcpp::export(rng = false)]]
-Rcpp::NumericVector RcppInfoImbalance(
+Rcpp::NumericVector RcppImbalanceGain(
     const Rcpp::NumericMatrix& Mx,
     const Rcpp::NumericMatrix& My,
     const Rcpp::NumericVector& alpha,
@@ -48,7 +48,7 @@ Rcpp::NumericVector RcppInfoImbalance(
     }
     
     return Rcpp::wrap(
-        infoxtr::infoimbalance::infoImbalance(
+        infoxtr::infoimbalance::imbalanceGain(
             mx, my, alpha_std, lib_std, pred_std,
             static_cast<size_t>(std::abs(h)), 
             static_cast<size_t>(std::abs(k)), 
