@@ -11,7 +11,7 @@
 #' @returns A numeric value.
 #' @export
 #' @references
-#' Del Tatto, V., Fortunato, G., Bueti, D., Laio, A., 2024. Robust inference of causality in high-dimensional dynamical processes from the Information Imbalance of distance ranks. Proceedings of the National Academy of Sciences 121.
+#' Glielmo, A., Zeni, C., Cheng, B., Csanyi, G., Laio, A., 2022. Ranking the information content of distance measures. PNAS Nexus 1.
 #'
 #' @examples
 #' set.seed(42)
