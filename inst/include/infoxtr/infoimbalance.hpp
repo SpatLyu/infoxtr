@@ -268,9 +268,7 @@ namespace infoimbalance
             std::vector<double>(Nlib));
 
         RcppThread::parallelFor(
-            size_t(0),
-            Npred,
-            [&](size_t ip) {
+            size_t(0), Npred, [&](size_t ip) {
 
                 const size_t p = pred[ip];
 
@@ -287,28 +285,19 @@ namespace infoimbalance
                     }
 
                     distances[il] =
-                        infoxtr::distance::distance(
-                            My[p],
-                            My[q],
-                            method,
-                            true);
+                        infoxtr::distance::distance(My[p], My[q], method, true);
                 }
 
                 // Sort library indices according to Y-space distance.
                 // Finite distances come first and non-finite distances
                 // are placed at the end.
                 std::vector<size_t> order(Nlib);
-
-                std::iota(
-                    order.begin(),
-                    order.end(),
-                    size_t(0));
+                std::iota(order.begin(), order.end(), size_t(0));
 
                 std::sort(
                     order.begin(),
                     order.end(),
                     [&](size_t a, size_t b) {
-
                         const bool a_finite =
                             std::isfinite(distances[a]);
 
@@ -338,14 +327,12 @@ namespace infoimbalance
                 size_t pos = 0;
 
                 while (pos < Nlib) {
-
                     size_t end = pos + 1;
 
                     const bool current_finite =
                         std::isfinite(distances[order[pos]]);
 
                     while (end < Nlib) {
-
                         const bool next_finite =
                             std::isfinite(distances[order[end]]);
 
@@ -383,9 +370,7 @@ namespace infoimbalance
                     pos = end;
                 }
 
-            },
-            threads);
-
+            }, threads);
 
         // ------------------------------------------------------------------
         // For each prediction point, find the k nearest neighbours in the
