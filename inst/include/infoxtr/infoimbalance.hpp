@@ -213,6 +213,311 @@ namespace infoimbalance
     
     using ContMat = std::vector<std::vector<double>>;
 
+    inline double infoImbalance(
+        const ContMat& Mx,
+        const ContMat& My,
+        const std::vector<size_t>& lib,
+        const std::vector<size_t>& pred,
+        size_t k = 1,
+        size_t threads = 1,
+        const std::string& method = "euclidean")
+    {
+        const size_t Npred = pred.size();
+        const size_t Nlib  = lib.size();
+
+        if (Npred == 0 || Nlib == 0 || k == 0) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+
+        if (Mx.empty() || My.empty()) {
+            throw std::invalid_argument(
+                "Mx and My must not be empty.");
+        }
+
+        if (Mx.size() != My.size()) {
+            throw std::invalid_argument(
+                "Mx and My must contain the same number of observations.");
+        }
+
+        if (k > Nlib) {
+            k = Nlib;
+        }
+
+        if (threads == 0) {
+            threads = 1;
+        }
+
+        const size_t hw = std::thread::hardware_concurrency();
+
+        if (hw > 0) {
+            threads = std::min(threads, hw);
+        }
+
+        // ------------------------------------------------------------------
+        // Compute the ranks in the Y space.
+        //
+        // For each prediction point, distances to all library points are
+        // ranked increasingly. Ties receive their average rank, following
+        // R's rank(..., ties.method = "average").
+        //
+        // The prediction point itself is treated as missing when it is also
+        // present in the library and is therefore placed at the end.
+        // ------------------------------------------------------------------
+        std::vector<std::vector<double>> y_rank(
+            Npred,
+            std::vector<double>(Nlib));
+
+        RcppThread::parallelFor(
+            size_t(0),
+            Npred,
+            [&](size_t ip) {
+
+                const size_t p = pred[ip];
+
+                std::vector<double> distances(Nlib);
+
+                for (size_t il = 0; il < Nlib; ++il) {
+
+                    const size_t q = lib[il];
+
+                    if (p == q) {
+                        distances[il] =
+                            std::numeric_limits<double>::quiet_NaN();
+                        continue;
+                    }
+
+                    distances[il] =
+                        infoxtr::distance::distance(
+                            My[p],
+                            My[q],
+                            method,
+                            true);
+                }
+
+                // Sort library indices according to Y-space distance.
+                // Finite distances come first and non-finite distances
+                // are placed at the end.
+                std::vector<size_t> order(Nlib);
+
+                std::iota(
+                    order.begin(),
+                    order.end(),
+                    size_t(0));
+
+                std::sort(
+                    order.begin(),
+                    order.end(),
+                    [&](size_t a, size_t b) {
+
+                        const bool a_finite =
+                            std::isfinite(distances[a]);
+
+                        const bool b_finite =
+                            std::isfinite(distances[b]);
+
+                        if (a_finite != b_finite) {
+                            return a_finite;
+                        }
+
+                        if (!a_finite && !b_finite) {
+                            return lib[a] < lib[b];
+                        }
+
+                        if (distances[a] < distances[b]) {
+                            return true;
+                        }
+
+                        if (distances[a] > distances[b]) {
+                            return false;
+                        }
+
+                        return lib[a] < lib[b];
+                    });
+
+                // Assign average ranks to tied distances.
+                size_t pos = 0;
+
+                while (pos < Nlib) {
+
+                    size_t end = pos + 1;
+
+                    const bool current_finite =
+                        std::isfinite(distances[order[pos]]);
+
+                    while (end < Nlib) {
+
+                        const bool next_finite =
+                            std::isfinite(distances[order[end]]);
+
+                        // All non-finite distances form one final group.
+                        if (!current_finite && !next_finite) {
+                            ++end;
+                            continue;
+                        }
+
+                        // Finite distances are tied when their values are
+                        // numerically equal within the specified tolerance.
+                        if (current_finite &&
+                            next_finite &&
+                            infoxtr::numericutils::doubleNearlyEqual(
+                                distances[order[end]],
+                                distances[order[pos]])) {
+                            ++end;
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    // R rank() uses 1-based ranks.
+                    const double rank =
+                        0.5 * (
+                            static_cast<double>(pos + 1) +
+                            static_cast<double>(end)
+                        );
+
+                    for (size_t j = pos; j < end; ++j) {
+                        y_rank[ip][order[j]] = rank;
+                    }
+
+                    pos = end;
+                }
+
+            },
+            threads);
+
+
+        // ------------------------------------------------------------------
+        // For each prediction point, find the k nearest neighbours in the
+        // X space and calculate the mean of their corresponding Y ranks.
+        // ------------------------------------------------------------------
+        std::vector<double> conditional_rank(Npred, 0.0);
+
+        RcppThread::parallelFor(
+            size_t(0),
+            Npred,
+            [&](size_t ip) {
+
+                const size_t p = pred[ip];
+
+                struct Candidate {
+                    size_t lib_pos;
+                    double distance;
+                };
+
+                std::vector<Candidate> candidates;
+                candidates.reserve(Nlib);
+
+                // Compute distances to all library points in X space.
+                for (size_t il = 0; il < Nlib; ++il) {
+
+                    const size_t q = lib[il];
+
+                    // Exclude the prediction point itself.
+                    if (q == p) {
+                        continue;
+                    }
+
+                    const double d =
+                        infoxtr::distance::distance(
+                            Mx[p],
+                            Mx[q],
+                            method,
+                            true);
+
+                    candidates.push_back({il, d});
+                }
+
+                const size_t nk =
+                    std::min(k, candidates.size());
+
+                if (nk == 0) {
+                    conditional_rank[ip] =
+                        std::numeric_limits<double>::quiet_NaN();
+                    return;
+                }
+
+                // Select the k nearest neighbours in X space.
+                std::partial_sort(
+                    candidates.begin(),
+                    candidates.begin() + nk,
+                    candidates.end(),
+                    [&](const Candidate& lhs,
+                        const Candidate& rhs) {
+
+                        const bool lhs_finite =
+                            std::isfinite(lhs.distance);
+
+                        const bool rhs_finite =
+                            std::isfinite(rhs.distance);
+
+                        if (lhs_finite != rhs_finite) {
+                            return lhs_finite;
+                        }
+
+                        if (!lhs_finite && !rhs_finite) {
+                            return lib[lhs.lib_pos] <
+                                lib[rhs.lib_pos];
+                        }
+
+                        if (lhs.distance < rhs.distance) {
+                            return true;
+                        }
+
+                        if (lhs.distance > rhs.distance) {
+                            return false;
+                        }
+
+                        return lib[lhs.lib_pos] <
+                            lib[rhs.lib_pos];
+                    });
+
+                // Average the corresponding Y-space ranks.
+                double rank_sum = 0.0;
+
+                for (size_t j = 0; j < nk; ++j) {
+                    rank_sum +=
+                        y_rank[ip][candidates[j].lib_pos];
+                }
+
+                conditional_rank[ip] =
+                    rank_sum / static_cast<double>(nk);
+
+            },
+            threads);
+
+
+        // ------------------------------------------------------------------
+        // Information Imbalance:
+        //
+        //     II(X -> Y)
+        //       = 2 / Npred
+        //         * mean_i[
+        //             mean_{j in NN_k^X(i)} r^Y_ij
+        //           ]
+        // ------------------------------------------------------------------
+        double rank_sum = 0.0;
+        size_t n_valid = 0;
+
+        for (size_t ip = 0; ip < Npred; ++ip) {
+
+            if (std::isfinite(conditional_rank[ip])) {
+                rank_sum += conditional_rank[ip];
+                ++n_valid;
+            }
+        }
+
+        if (n_valid == 0) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+
+        const double mean_rank =
+            rank_sum / static_cast<double>(n_valid);
+
+        return 2.0 * mean_rank /
+            static_cast<double>(n_valid);
+    }
+    
     inline std::vector<double> imbalanceGain(
         const ContMat& Mx,
         const ContMat& My,
