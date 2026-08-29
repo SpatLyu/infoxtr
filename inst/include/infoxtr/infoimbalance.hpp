@@ -7,155 +7,227 @@
  * This module implements the Information Imbalance framework for comparing
  * the information content of distance spaces through distance ranks.
  *
- * Information Imbalance is a rank based statistical measure that evaluates
- * whether pairs of points that are close according to one distance space
- * remain close according to another distance space. It therefore provides a
- * model free way to compare neighbourhood information without specifying an
- * underlying dynamical or statistical model.
+ * Three related functions are provided:
  *
- * Given two representations X and Y, the method constructs a combined
- * distance space using the current states:
+ *   infoImbalance()
+ *       Computes the Information Imbalance between two representations:
  *
- *      A_t = (alpha * X_t, Y_t)
+ *           Delta(X -> Y)
  *
- * and evaluates how informative the neighbourhood structure in A is with
- * respect to the future distance space defined by Y:
+ *       For each prediction point, the k nearest neighbours are identified
+ *       in X space, and their corresponding ranks in Y space are averaged.
  *
- *      B_{t+h} = Y_{t+h}
+ *   imbalanceGain()
+ *       Computes the Information Imbalance for a series of scaling
+ *       parameters alpha using the combined space:
  *
- * where h is the prediction horizon. This temporal asymmetry allows the
- * framework to be used for model-free causal inference and information flow
- * analysis.
+ *           A(alpha) = (alpha * X, Y)
  *
- * ---------------------------------------------------------------------------
- * Algorithm overview
- * ---------------------------------------------------------------------------
+ *       and returns Delta(alpha) for each supplied alpha.
  *
- * Let X and Y denote two multivariate representations of the same set of
- * observations. Let P denote the prediction set and L the library set from
- * which neighbours are selected. The algorithm proceeds as follows:
+ *   imbalanceGainCausality()
+ *       Converts the series of Delta(alpha) values into a normalized
+ *       Information Imbalance Gain:
  *
- * 1. Distance rank construction in the future Y space
+ *           IIG(X -> Y)
+ *             = [Delta(0) - min_alpha Delta(alpha)] / Delta(0).
  *
- *      For each prediction point p in P, distances between the future states
- *      Y_{p+h} and all library future states Y_{q+h}, q in L, are computed
- *      and ranked increasingly. (Here, h denotes the prediction horizon).
- *
- *      The resulting rank r^Y_{pq} measures the position of point q in the
- *      future distance space defined by Y, with rank 1 corresponding to the
- *      nearest neighbour.
- *
- *      Tied distances receive their average rank, following the convention
- *      of R's rank(..., ties.method = "average").
- *
- * 2. Construction of the combined current distance space
- *
- *      For each scaling parameter alpha, a combined representation of the
- *      current state is defined as:
- *
- *          A_t = (alpha * X_t, Y_t).
- *
- *      The parameter alpha controls the relative contribution of X to the
- *      combined distance space.
- *
- * 3. Nearest-neighbour selection
- *
- *      For every prediction point p, the k nearest library points are
- *      identified according to the distance in the current space A_t.
- *
- *      The corresponding ranks of these neighbours in the future Y distance
- *      space are then retrieved. The prediction point itself is excluded when
- *      the prediction and library sets overlap.
- *
- *      Neighbours are selected using partial sorting. Equal distances are
- *      resolved using the original library index as a deterministic
- *      tie-breaking rule.
- *
- * 4. Conditional distance rank
- *
- *      For each prediction point, the ranks in the future Y space of its k
- *      nearest neighbours in the current space A_t are averaged:
- *
- *          r^Y_{p|A}
- *              = (1 / k) sum_j r^Y_{p,NN_j^A}.
- *
- *      This quantity measures how well local proximity in the current A
- *      distance space is preserved in the future Y distance space.
- *
- * 5. Information Imbalance
- *
- *      The Information Imbalance is obtained by averaging the conditional
- *      distance ranks across prediction points:
- *
- *          Delta(A -> Y)
- *              = 2 / N sum_p r^Y_{p|A}.
- *
- *      Smaller values indicate that points identified as close in the current
- *      space A also tend to be close in the future space Y, implying that A
- *      contains predictive information about the future structure of Y.
- *
- *      Larger values indicate weaker correspondence between the two distance
- *      spaces and therefore greater information imbalance.
- *
- *      The parameter k specifies the number of neighbours used in the
- *      comparison and provides a generalized form of the nearest-neighbour
- *      Information Imbalance.
- *
- * 6. Scaling analysis
- *
- *      When multiple values of alpha are supplied, the Information Imbalance
- *      is evaluated independently for each value. This allows the information
- *      contribution of X to the distance structure to be examined as the
- *      relative weight of X is varied.
+ *       The result measures the relative reduction in Information Imbalance
+ *       obtained by incorporating X into the representation used to predict
+ *       Y.
  *
  * ---------------------------------------------------------------------------
- * Information Imbalance Gain (IIG) and Causal Inference
+ * Information Imbalance
  * ---------------------------------------------------------------------------
  *
- * When applied to time series data with a prediction horizon h > 0, the
- * baseline Information Imbalance (at alpha = 0) measures the self-predictability
- * of Y (i.e., how well the current state Y_t predicts the future state Y_{t+h}).
+ * Let X and Y denote two representations of the same set of observations.
+ * Let P denote the prediction set and L the library set from which neighbours
+ * are selected.
  *
- * The Information Imbalance Gain (IIG) quantifies the relative improvement in
- * predicting the future state Y_{t+h} when the current state of X (X_t) is
- * included in the combined space A_t.
+ * For each prediction point p in P, distances to all library points q in L
+ * are computed in the Y space and ranked increasingly:
  *
- * A significant positive IIG indicates that X contains unique predictive
- * information about the future of Y, providing a model-free indicator of
- * Granger-like causality or directed information flow from X to Y.
+ *      r^Y_{pq}.
+ *
+ * The k nearest neighbours of p are then identified in the X space. The
+ * corresponding ranks in the Y space are averaged:
+ *
+ *      r^Y_{p|X}
+ *          = (1 / k) sum_j r^Y_{p,NN_j^X}.
+ *
+ * The Information Imbalance from X to Y is
+ *
+ *      Delta(X -> Y)
+ *          = 2 / N sum_p r^Y_{p|X},
+ *
+ * where N is the number of prediction points.
+ *
+ * A small Information Imbalance indicates that points that are close in
+ * X space also tend to be close in Y space. A larger value indicates weaker
+ * correspondence between the two neighbourhood structures.
+ *
+ * The parameter k specifies the number of neighbours used in the comparison.
+ * k = 1 corresponds to the nearest-neighbour formulation.
+ *
+ * ---------------------------------------------------------------------------
+ * Information Imbalance Gain
+ * ---------------------------------------------------------------------------
+ *
+ * For directional information analysis, the current states of X and Y are
+ * combined using a scaling parameter alpha:
+ *
+ *      A(alpha) = (alpha * X, Y).
+ *
+ * The Information Imbalance is then evaluated between this combined current
+ * space and the future state of Y:
+ *
+ *      Delta(alpha)
+ *          = Delta(A(alpha) -> Y_future).
+ *
+ * When alpha = 0, the X contribution vanishes and the baseline becomes
+ *
+ *      Delta(0) = Delta(Y_current -> Y_future).
+ *
+ * If incorporating X provides additional information about the future state
+ * of Y, an appropriate value of alpha should reduce the Information
+ * Imbalance.
+ *
+ * ---------------------------------------------------------------------------
+ * Information Imbalance Gain and Causality
+ * ---------------------------------------------------------------------------
+ *
+ * Given a series of Information Imbalance values Delta(alpha), the normalized
+ * Information Imbalance Gain is defined as
+ *
+ *      IIG(X -> Y)
+ *          = [Delta(0) - min_alpha Delta(alpha)]
+ *            / Delta(0).
+ *
+ * Thus:
+ *
+ *   Delta(0)
+ *       Baseline Information Imbalance obtained without X.
+ *
+ *   min_alpha Delta(alpha)
+ *       Best Information Imbalance obtained after incorporating X.
+ *
+ *   Delta(0) - min_alpha Delta(alpha)
+ *       Absolute reduction in Information Imbalance.
+ *
+ *   IIG(X -> Y)
+ *       Relative reduction normalized by the baseline.
+ *
+ * A value of zero indicates that adding X does not reduce the Information
+ * Imbalance. A positive value indicates that incorporating X improves the
+ * correspondence between the current representation and the future state
+ * of Y.
+ *
+ * When applied to time series with a positive prediction horizon h, this
+ * provides a model free measure of directional predictive information from
+ * X to Y.
  *
  * ---------------------------------------------------------------------------
  * Distance ranks
  * ---------------------------------------------------------------------------
  *
- * The method operates on ranks rather than raw distances. This makes the
- * comparison invariant to monotonic transformations of the distance values
- * and avoids requiring the two distance spaces to share a common numerical
- * scale.
+ * The framework operates on distance ranks rather than raw distance values.
+ * For a prediction point p, the rank of library point q is obtained by
+ * ordering distances from smallest to largest, with rank 1 assigned to the
+ * closest point.
  *
- * For a prediction point p, the rank of library point q in a distance space
- * is determined by ordering distances from the smallest to the largest.
- * Tied distances receive average ranks.
+ * Tied distances receive their average rank, following the convention of
  *
- * Missing or non-finite distances are placed after valid distances, following
+ *      R::rank(..., ties.method = "average").
+ *
+ * Non-finite distances are placed after finite distances, corresponding to
  * the intended na.last = TRUE behaviour of the reference R implementation.
  *
  * ---------------------------------------------------------------------------
- * Library and prediction sets
+ * Library, prediction and common parameters
  * ---------------------------------------------------------------------------
  *
- * The implementation allows the library and prediction sets to be specified
- * independently. This provides a flexible formulation for applications in
- * which only a subset of observations is used to construct the local distance
- * structure while another subset is used for evaluation.
+ * The following parameters are shared by all three functions:
  *
- * When the prediction and library sets overlap, the prediction point itself
- * is excluded from the nearest-neighbour search, consistent with the
- * leave-self-out convention used in distance-rank based neighbourhood
- * comparisons.
+ *   Mx
+ *       Matrix-like container containing the X representations.
  *
- * Note: When h > 0, the indices in P and L must be constrained such that
- * p + h and q + h do not exceed the total number of observations.
+ *   My
+ *       Matrix-like container containing the Y representations.
+ *
+ *   lib
+ *       Indices of observations eligible to serve as library neighbours.
+ *
+ *   pred
+ *       Indices of observations for which the Information Imbalance is
+ *       evaluated.
+ *
+ *   k
+ *       Number of nearest neighbours used in the rank comparison.
+ *
+ *   threads
+ *       Number of threads used for parallel computation.
+ *
+ *   method
+ *       Distance metric used to construct the distance spaces.
+ *
+ * When prediction and library sets overlap, the prediction point itself is
+ * excluded from the nearest-neighbour search.
+ *
+ * ---------------------------------------------------------------------------
+ * Function-specific parameters
+ * ---------------------------------------------------------------------------
+ *
+ * infoImbalance()
+ *
+ *   No additional parameters.
+ *
+ *   Returns a single Information Imbalance value:
+ *
+ *       Delta(X -> Y).
+ *
+ *
+ * imbalanceGain()
+ *
+ *   alpha
+ *       Scaling parameters applied to X.
+ *
+ *   h
+ *       Prediction horizon. The current space uses t, while the target
+ *       Y space uses t + h.
+ *
+ *   Returns one Information Imbalance value Delta(alpha) for each supplied
+ *   alpha.
+ *
+ *
+ * imbalanceGainCausality()
+ *
+ *   alpha
+ *       Scaling parameters used to evaluate Delta(alpha).
+ *
+ *   h
+ *       Prediction horizon.
+ *
+ *   Returns a single normalized Information Imbalance Gain:
+ *
+ *       [Delta(0) - min_alpha Delta(alpha)] / Delta(0).
+ *
+ * ---------------------------------------------------------------------------
+ * Prediction horizon
+ * ---------------------------------------------------------------------------
+ *
+ * infoImbalance() directly compares the representations supplied through
+ * Mx and My and therefore has no explicit prediction-horizon parameter.
+ *
+ * For imbalanceGain() and imbalanceGainCausality(), h defines the prediction
+ * horizon:
+ *
+ *      A_t(alpha) = (alpha * X_t, Y_t)
+ *
+ *      B_{t+h}    = Y_{t+h}.
+ *
+ * For h = 0, the comparison is synchronous. For h > 0, the framework
+ * evaluates whether the current state contains information about the future
+ * state of Y.
  *
  * ---------------------------------------------------------------------------
  * Parallel computation
@@ -164,27 +236,17 @@
  * Calculations for different prediction points are independent and are
  * parallelized using RcppThread.
  *
- * The construction of Y-space distance ranks and the evaluation of
- * nearest-neighbour ranks in the combined space are both parallelized across
- * prediction points. Per-prediction results are stored independently and
- * aggregated after parallel execution to avoid data races.
+ * In infoImbalance(), the construction of Y-space distance ranks and the
+ * nearest-neighbour search in X space are parallelized across prediction
+ * points.
+ *
+ * In imbalanceGain(), the same procedure is repeated independently for each
+ * alpha value.
+ *
+ * Per-prediction results are stored independently and aggregated after
+ * parallel execution to avoid data races.
  *
  * ---------------------------------------------------------------------------
- * Input data format
- * ---------------------------------------------------------------------------
- *
- *   Mx       : Matrix-like container containing the X representations (current).
- *   My       : Matrix-like container containing the Y representations.
- *   alpha    : Scaling parameters applied to X.
- *   lib      : Indices of observations eligible as library neighbours.
- *   pred     : Indices of prediction observations.
- *   h        : Prediction horizon (time delay). Space A uses current states (t),
- *              while space B uses future states (t + h). Set to 0 for synchronous
- *              comparison (non-causal).
- *   k        : Number of nearest neighbours used in the rank comparison.
- *   threads  : Number of threads used for parallel computation.
- *   method   : Distance metric used to construct the distance spaces.
- *
  * Author: Wenbo Lyu (Github: @SpatLyu)
  * License: GPL-3
  ******************************************************************************/
