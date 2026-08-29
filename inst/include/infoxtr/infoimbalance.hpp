@@ -469,8 +469,6 @@ namespace infoimbalance
                     std::min(k, candidates.size());
 
                 if (nk == 0) {
-                    conditional_rank[ip] =
-                        std::numeric_limits<double>::quiet_NaN();
                     return;
                 }
 
@@ -540,7 +538,7 @@ namespace infoimbalance
     }
     
     inline std::vector<double> imbalanceGain(
-        const CtMat& Mx,
+        const ContMat& Mx,
         const ContMat& My,
         const std::vector<double>& alpha,
         const std::vector<size_t>& lib,
@@ -550,7 +548,7 @@ namespace infoimbalance
         size_t threads = 1,
         const std::string& method = "euclidean")
     {
-        const onsize_t Npred = pred.size();
+        const size_t Npred = pred.size();
         const size_t Nlib  = lib.size();
 
         if (Npred == 0 || Nlib == 0 || k == 0) {

@@ -17,6 +17,10 @@ RcppDist4MatSub <- function(mat, lib, pred, method = "euclidean", na_rm = TRUE, 
     .Call(`_infoxtr_RcppDist4MatSub`, mat, lib, pred, method, na_rm, byrow)
 }
 
+RcppInfoImbalance <- function(Mx, My, lib, pred, k = 3L, threads = 1L, method = "euclidean") {
+    .Call(`_infoxtr_RcppInfoImbalance`, Mx, My, lib, pred, k, threads, method)
+}
+
 RcppImbalanceGain <- function(Mx, My, alpha, lib, pred, h = 1L, k = 3L, threads = 1L, method = "euclidean") {
     .Call(`_infoxtr_RcppImbalanceGain`, Mx, My, alpha, lib, pred, h, k, threads, method)
 }
