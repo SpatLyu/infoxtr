@@ -34,6 +34,7 @@ reference:
   - ce
   - mi
   - cmi
+  - info_imbalance
 
 - subtitle: Information flow
   contents:
