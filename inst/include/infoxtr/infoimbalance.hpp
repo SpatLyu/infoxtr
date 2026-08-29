@@ -373,7 +373,7 @@ namespace infoimbalance
         // For each prediction point, find the k nearest neighbours in the
         // X space and calculate the mean of their corresponding Y ranks.
         // ------------------------------------------------------------------
-        std::vector<double> conditional_rank(Npred, 0.0);
+        std::vector<double> rank_sums(Npred, 0.0);
 
         RcppThread::parallelFor(
             size_t(0), Npred, [&](size_t ip) {
@@ -447,15 +447,15 @@ namespace infoimbalance
                     });
 
                 // Average the corresponding Y-space ranks.
-                double rank_sum = 0.0;
+                double conditional_rank = 0.0;
 
                 for (size_t j = 0; j < nk; ++j) {
-                    rank_sum +=
+                    conditional_rank +=
                         y_rank[ip][candidates[j].lib_pos];
                 }
 
-                conditional_rank[ip] =
-                    rank_sum / static_cast<double>(nk);
+                rank_sums[ip] =
+                    conditional_rank / static_cast<double>(nk);
 
             }, threads);
 
@@ -468,30 +468,17 @@ namespace infoimbalance
         //             mean_{j in NN_k^X(i)} r^Y_ij
         //           ]
         // ------------------------------------------------------------------
-        double rank_sum = 0.0;
-        size_t n_valid = 0;
-
-        for (size_t ip = 0; ip < Npred; ++ip) {
-
-            if (std::isfinite(conditional_rank[ip])) {
-                rank_sum += conditional_rank[ip];
-                ++n_valid;
-            }
-        }
-
-        if (n_valid == 0) {
-            return std::numeric_limits<double>::quiet_NaN();
-        }
+        const double rank_sum = 
+            std::accumulate(rank_sums.begin(), rank_sums.end(), 0.0);
 
         const double mean_rank =
-            rank_sum / static_cast<double>(n_valid);
+            rank_sum / static_cast<double>(Npred);
 
-        return 2.0 * mean_rank /
-            static_cast<double>(n_valid);
+        return 2.0 / static_cast<double>(Npred) * mean_rank;
     }
     
     inline std::vector<double> imbalanceGain(
-        const ContMat& Mx,
+        const CtMat& Mx,
         const ContMat& My,
         const std::vector<double>& alpha,
         const std::vector<size_t>& lib,
@@ -501,7 +488,7 @@ namespace infoimbalance
         size_t threads = 1,
         const std::string& method = "euclidean")
     {
-        const size_t Npred = pred.size();
+        const onsize_t Npred = pred.size();
         const size_t Nlib  = lib.size();
 
         if (Npred == 0 || Nlib == 0 || k == 0) {
