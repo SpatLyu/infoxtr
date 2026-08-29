@@ -269,7 +269,6 @@ namespace infoimbalance
 
         RcppThread::parallelFor(
             size_t(0), Npred, [&](size_t ip) {
-
                 const size_t p = pred[ip];
 
                 std::vector<double> distances(Nlib);
@@ -379,10 +378,7 @@ namespace infoimbalance
         std::vector<double> conditional_rank(Npred, 0.0);
 
         RcppThread::parallelFor(
-            size_t(0),
-            Npred,
-            [&](size_t ip) {
-
+            size_t(0), Npred, [&](size_t ip) {
                 const size_t p = pred[ip];
 
                 struct Candidate {
@@ -620,14 +616,12 @@ namespace infoimbalance
             size_t pos = 0;
 
             while (pos < Nlib) {
-
                 size_t end = pos + 1;
 
                 const bool current_finite =
                     std::isfinite(distances[order[pos]]);
 
                 while (end < Nlib) {
-
                     const bool next_finite =
                         std::isfinite(distances[order[end]]);
 
@@ -679,7 +673,6 @@ namespace infoimbalance
         std::vector<double> out(alpha.size());
 
         for (size_t ia = 0; ia < alpha.size(); ++ia) {
-
             const double a = alpha[ia];
 
             std::vector<double> rank_sums(Npred, 0.0);
@@ -690,7 +683,6 @@ namespace infoimbalance
             // --------------------------------------------------------------
             RcppThread::parallelFor(
                 size_t(0), Npred, [&](size_t ip) {
-
                 const size_t p = pred[ip];
 
                 struct Candidate {
@@ -742,7 +734,6 @@ namespace infoimbalance
                     candidates.end(),
                     [&](const Candidate& lhs,
                         const Candidate& rhs) {
-
                         const bool lhs_finite =
                             std::isfinite(lhs.distance);
 
