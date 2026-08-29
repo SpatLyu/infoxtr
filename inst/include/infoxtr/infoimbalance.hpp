@@ -1,8 +1,8 @@
 /******************************************************************************
  * File: infoimbalance.hpp
  *
- * Information Imbalance Gain (IIG)
- * -----------------------------------
+ * Information Imbalance and Imbalance Gain
+ * ----------------------------------------
  *
  * This module implements the Information Imbalance framework for comparing
  * the information content of distance spaces through distance ranks.
@@ -213,7 +213,7 @@ namespace infoimbalance
     
     using ContMat = std::vector<std::vector<double>>;
 
-    inline std::vector<double> infoImbalance(
+    inline std::vector<double> imbalanceGain(
         const ContMat& Mx,
         const ContMat& My,
         const std::vector<double>& alpha,
@@ -522,7 +522,7 @@ namespace infoimbalance
         return out;
     }
 
-    inline double infoImbalanceGain(
+    inline double imbalanceGainCausality(
         const ContMat& Mx,
         const ContMat& My,
         const std::vector<double>& alpha,
@@ -563,7 +563,7 @@ namespace infoimbalance
             return std::numeric_limits<double>::quiet_NaN();
         }
 
-        std::vector<double> ii_vals = infoImbalance(
+        std::vector<double> ii_vals = imbalanceGain(
             Mx, My, unique_alpha, lib, pred, h, k, threads, method
         );
 
