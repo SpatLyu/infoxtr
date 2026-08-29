@@ -72,9 +72,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppInfoImbalance
-Rcpp::NumericVector RcppInfoImbalance(const Rcpp::NumericMatrix& Mx, const Rcpp::NumericMatrix& My, const Rcpp::NumericVector& alpha, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int h, int k, int threads, const std::string& method);
-RcppExport SEXP _infoxtr_RcppInfoImbalance(SEXP MxSEXP, SEXP MySEXP, SEXP alphaSEXP, SEXP libSEXP, SEXP predSEXP, SEXP hSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP methodSEXP) {
+// RcppImbalanceGain
+Rcpp::NumericVector RcppImbalanceGain(const Rcpp::NumericMatrix& Mx, const Rcpp::NumericMatrix& My, const Rcpp::NumericVector& alpha, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int h, int k, int threads, const std::string& method);
+RcppExport SEXP _infoxtr_RcppImbalanceGain(SEXP MxSEXP, SEXP MySEXP, SEXP alphaSEXP, SEXP libSEXP, SEXP predSEXP, SEXP hSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type Mx(MxSEXP);
@@ -86,13 +86,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppInfoImbalance(Mx, My, alpha, lib, pred, h, k, threads, method));
+    rcpp_result_gen = Rcpp::wrap(RcppImbalanceGain(Mx, My, alpha, lib, pred, h, k, threads, method));
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppInfoImbalanceGain
-double RcppInfoImbalanceGain(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target, const Rcpp::IntegerVector& agent, const Rcpp::NumericVector& alpha, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int style, int h, int k, int threads, const std::string& method, Rcpp::Nullable<Rcpp::List> nb, Rcpp::Nullable<int> nrows);
-RcppExport SEXP _infoxtr_RcppInfoImbalanceGain(SEXP matSEXP, SEXP targetSEXP, SEXP agentSEXP, SEXP alphaSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP hSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP methodSEXP, SEXP nbSEXP, SEXP nrowsSEXP) {
+// RcppImbalanceGainCausality
+double RcppImbalanceGainCausality(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target, const Rcpp::IntegerVector& agent, const Rcpp::NumericVector& alpha, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int style, int h, int k, int threads, const std::string& method, Rcpp::Nullable<Rcpp::List> nb, Rcpp::Nullable<int> nrows);
+RcppExport SEXP _infoxtr_RcppImbalanceGainCausality(SEXP matSEXP, SEXP targetSEXP, SEXP agentSEXP, SEXP alphaSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP hSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP methodSEXP, SEXP nbSEXP, SEXP nrowsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
@@ -110,7 +110,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::List> >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type nrows(nrowsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppInfoImbalanceGain(mat, target, agent, alpha, lib, pred, E, tau, style, h, k, threads, method, nb, nrows));
+    rcpp_result_gen = Rcpp::wrap(RcppImbalanceGainCausality(mat, target, agent, alpha, lib, pred, E, tau, style, h, k, threads, method, nb, nrows));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -452,8 +452,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_infoxtr_RcppDist4Vec", (DL_FUNC) &_infoxtr_RcppDist4Vec, 4},
     {"_infoxtr_RcppDist4Mat", (DL_FUNC) &_infoxtr_RcppDist4Mat, 4},
     {"_infoxtr_RcppDist4MatSub", (DL_FUNC) &_infoxtr_RcppDist4MatSub, 6},
-    {"_infoxtr_RcppInfoImbalance", (DL_FUNC) &_infoxtr_RcppInfoImbalance, 9},
-    {"_infoxtr_RcppInfoImbalanceGain", (DL_FUNC) &_infoxtr_RcppInfoImbalanceGain, 15},
+    {"_infoxtr_RcppImbalanceGain", (DL_FUNC) &_infoxtr_RcppImbalanceGain, 9},
+    {"_infoxtr_RcppImbalanceGainCausality", (DL_FUNC) &_infoxtr_RcppImbalanceGainCausality, 15},
     {"_infoxtr_RcppDiscEntropy", (DL_FUNC) &_infoxtr_RcppDiscEntropy, 3},
     {"_infoxtr_RcppContEntropy", (DL_FUNC) &_infoxtr_RcppContEntropy, 4},
     {"_infoxtr_RcppDiscJE", (DL_FUNC) &_infoxtr_RcppDiscJE, 4},
