@@ -2,7 +2,7 @@
 
 ### new
 
-* Enact `infoimbalance` R API support for infomation imbalance gain method (#87).
+* Provide R-level API and vignette for infomation imbalance and imbalance gain (#91).
 
 ### breaking changes
 
