@@ -274,7 +274,6 @@ namespace infoimbalance
                 std::vector<double> distances(Nlib);
 
                 for (size_t il = 0; il < Nlib; ++il) {
-
                     const size_t q = lib[il];
 
                     if (p == q) {
@@ -292,7 +291,6 @@ namespace infoimbalance
                 // are placed at the end.
                 std::vector<size_t> order(Nlib);
                 std::iota(order.begin(), order.end(), size_t(0));
-
                 std::sort(
                     order.begin(),
                     order.end(),
@@ -400,11 +398,7 @@ namespace infoimbalance
                     }
 
                     const double d =
-                        infoxtr::distance::distance(
-                            Mx[p],
-                            Mx[q],
-                            method,
-                            true);
+                        infoxtr::distance::distance(Mx[p], Mx[q], method, true);
 
                     candidates.push_back({il, d});
                 }
@@ -425,7 +419,6 @@ namespace infoimbalance
                     candidates.end(),
                     [&](const Candidate& lhs,
                         const Candidate& rhs) {
-
                         const bool lhs_finite =
                             std::isfinite(lhs.distance);
 
@@ -464,9 +457,7 @@ namespace infoimbalance
                 conditional_rank[ip] =
                     rank_sum / static_cast<double>(nk);
 
-            },
-            threads);
-
+            }, threads);
 
         // ------------------------------------------------------------------
         // Information Imbalance:
