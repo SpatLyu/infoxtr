@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-The Information Imbalance Gain (IIG) quantifies the information that a variable $X$ provides about the future state of another variable $Y$. To test the causation $X \rightarrow Y$, IIG compares the neighborhood structure of the present state of $Y$ with that of an augmented state containing both $X$ and $Y$.
+The Information Imbalance Gain (IIG) quantifies the information that a variable $X$ provides about the future state of another variable $Y$. To test the causation $X \rightarrow Y$, IIG compares the neighborhood structure of the future state of $Y$ with that of an augmented present state containing both $X$ and $Y$.
 
 The basic quantity is the **Information Imbalance** between two distance spaces $A$ and $B$:
 
