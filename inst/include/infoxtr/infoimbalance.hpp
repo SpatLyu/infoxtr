@@ -835,7 +835,7 @@ namespace infoimbalance
                 rank_sum / static_cast<double>(Npred);
 
             out[ia] =
-                2.0 / static_cast<double>(Npred) * mean_rank;
+                2.0 / static_cast<double>(Nlib) * mean_rank;
         }
 
         return out;
