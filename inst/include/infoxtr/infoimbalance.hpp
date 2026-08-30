@@ -523,7 +523,7 @@ namespace infoimbalance
         // Information Imbalance:
         //
         //     II(X -> Y)
-        //       = 2 / Npred
+        //       = 2 / Nlib
         //         * mean_i[
         //             mean_{j in NN_k^X(i)} r^Y_ij
         //           ]
