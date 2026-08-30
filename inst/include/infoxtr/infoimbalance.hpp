@@ -60,7 +60,7 @@
  *      Delta(X -> Y)
  *          = 2 / N sum_p r^Y_{p|X},
  *
- * where N is the number of prediction points.
+ * where N is the number of library points.
  *
  * A small Information Imbalance indicates that points that are close in
  * X space also tend to be close in Y space. A larger value indicates weaker
