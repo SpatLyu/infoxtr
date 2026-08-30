@@ -56,17 +56,20 @@ Kraskov, A., Stogbauer, H., Grassberger, P., 2004. Estimating mutual information
 
 Glielmo, A., Zeni, C., Cheng, B., Csányi, G., Laio, A., 2022. Ranking the information content of distance measures. PNAS Nexus 1. [https://doi.org/10.1093/pnasnexus/pgac039][3].
 
-Martinez-Sanchez, A., Arranz, G., Lozano-Duran, A., 2024. Decomposing causality into its synergistic, unique, and redundant components. Nature Communications 15. [https://doi.org/10.1038/s41467-024-53373-4][4].
+Del Tatto, V., Fortunato, G., Bueti, D., Laio, A., 2024. Robust inference of causality in high-dimensional dynamical processes from the Information Imbalance of distance ranks. Proceedings of the National Academy of Sciences 121. [https://doi.org/10.1073/pnas.2317256121][4].
 
-Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11. [https://doi.org/10.1126/sciadv.adu6464][5].
+Martinez-Sanchez, A., Arranz, G., Lozano-Duran, A., 2024. Decomposing causality into its synergistic, unique, and redundant components. Nature Communications 15. [https://doi.org/10.1038/s41467-024-53373-4][5].
 
-Varley, T.F., 2025. Information theory for complex systems scientists: What, why, and how. Physics Reports 1148, 1–55. [https://doi.org/10.1016/j.physrep.2025.09.007][6].
+Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11. [https://doi.org/10.1126/sciadv.adu6464][6].
+
+Varley, T.F., 2025. Information theory for complex systems scientists: What, why, and how. Physics Reports 1148, 1–55. [https://doi.org/10.1016/j.physrep.2025.09.007][7].
 
 &nbsp;
 
 [1]: https://doi.org/10.1103/physrevlett.85.461
 [2]: https://doi.org/10.1103/physreve.69.066138
 [3]: https://doi.org/10.1093/pnasnexus/pgac039
-[4]: https://doi.org/10.1038/s41467-024-53373-4
-[5]: https://doi.org/10.1126/sciadv.adu6464
-[6]: https://doi.org/10.1016/j.physrep.2025.09.007
+[4]: https://doi.org/10.1073/pnas.2317256121
+[5]: https://doi.org/10.1038/s41467-024-53373-4
+[6]: https://doi.org/10.1126/sciadv.adu6464
+[7]: https://doi.org/10.1016/j.physrep.2025.09.007
