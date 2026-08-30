@@ -534,7 +534,7 @@ namespace infoimbalance
         const double mean_rank =
             rank_sum / static_cast<double>(Npred);
 
-        return 2.0 / static_cast<double>(Npred) * mean_rank;
+        return 2.0 / static_cast<double>(Nlib) * mean_rank;
     }
     
     inline std::vector<double> imbalanceGain(
