@@ -826,7 +826,7 @@ namespace infoimbalance
             //
             //     II = 2 / N * mean(conditional ranks)
             //
-            // where N corresponds to the number of prediction points.
+            // where N corresponds to the number of library points.
             //
             // This is the direct generalization of the R implementation,
             // with ranks computed over the supplied library.
