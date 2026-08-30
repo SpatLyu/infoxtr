@@ -54,7 +54,7 @@ Schreiber, T., 2000. Measuring Information Transfer. Physical Review Letters 85,
 
 Kraskov, A., Stogbauer, H., Grassberger, P., 2004. Estimating mutual information. Physical Review E 69. [https://doi.org/10.1103/physreve.69.066138][2].
 
-Glielmo, A., Zeni, C., Cheng, B., Csányi, G., Laio, A., 2022. Ranking the information content of distance measures. PNAS Nexus 1. [https://doi.org/10.1093/pnasnexus/pgac039][3].
+Glielmo, A., Zeni, C., Cheng, B., Csanyi, G., Laio, A., 2022. Ranking the information content of distance measures. PNAS Nexus 1. [https://doi.org/10.1093/pnasnexus/pgac039][3].
 
 Del Tatto, V., Fortunato, G., Bueti, D., Laio, A., 2024. Robust inference of causality in high-dimensional dynamical processes from the Information Imbalance of distance ranks. Proceedings of the National Academy of Sciences 121. [https://doi.org/10.1073/pnas.2317256121][4].
 
