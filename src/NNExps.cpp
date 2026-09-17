@@ -13,6 +13,7 @@ Rcpp::List RcppNN4Mat(
     int k,
     std::string method = "euclidean",
     bool include_self = false,
+    bool na_comp = true,
     bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -21,7 +22,7 @@ Rcpp::List RcppNN4Mat(
     // Call the neighbpurbood function
     std::vector<std::vector<size_t>> neighbors = infoxtr::neighbor::NN4Mat(
         cppMat, static_cast<size_t>(std::abs(k)), 
-        method, include_self, byrow);
+        method, include_self, na_comp, byrow);
 
     // Return nb object (List in R side)
     return infoxtr::convert::std2nb(neighbors);
@@ -36,6 +37,7 @@ Rcpp::List RcppNN4MatSub(
     int k,
     std::string method = "euclidean",
     bool include_self = false,
+    bool na_comp = true,
     bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -66,7 +68,7 @@ Rcpp::List RcppNN4MatSub(
     std::vector<std::vector<size_t>> neighbors = infoxtr::neighbor::NN4Mat(
         cppMat, lib_std, pred_std, 
         static_cast<size_t>(std::abs(k)), 
-        method, include_self, byrow);
+        method, include_self, na_comp, byrow);
 
     // Return nb object (List in R side)
     return infoxtr::convert::std2nb(neighbors);

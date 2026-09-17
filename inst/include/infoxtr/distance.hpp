@@ -14,6 +14,30 @@
  *          NaN values are removed pairwise before calculation.
  *          If all elements are removed, result is NaN.
  *
+ *      When na_comp = true (only effective if na_rm = true):
+ *          Dimensions skipped due to NaN are compensated by
+ *          rescaling the partial sum with dim / n_valid, where
+ *          dim = number of dimensions of the vectors compared,
+ *          n_valid = number of commonly observed dimensions:
+ *
+ *              euclidean : sqrt(dim / n_valid * sum((x - y)^2))
+ *              manhattan : (dim / n_valid) * sum(|x - y|)
+ *
+ *          This follows the semantics of R's dist() and
+ *          sklearn's nan_euclidean_distances: a missing 
+ *          dimension contributes the mean squared (absolute) 
+ *          difference of the observed dimensions, so that 
+ *          vectors with more missing values are NOT systematically 
+ *          closer to everything else.
+ *
+ *      When na_comp = false (only effective if na_rm = true):
+ *          No compensation. The distance is computed from the
+ *          raw partial sum over the commonly observed dimensions.
+ *
+ *      When na_rm = false:
+ *          Any NaN in either vector makes the result NaN.
+ *          na_comp has no effect in this case.
+ *
  *  Matrix behavior:
  *      Distances can be computed either row-wise or column-wise.
  *
@@ -167,7 +191,8 @@ namespace distance
         const std::vector<double>& vec,
         const double scalar,
         const std::string& method = "euclidean",
-        bool na_rm = true)
+        bool na_rm = true,
+        bool na_comp = true)
     {
         if (vec.empty() || std::isnan(scalar))
             return std::numeric_limits<double>::quiet_NaN();
@@ -214,6 +239,18 @@ namespace distance
         if (n_valid == 0)
             return std::numeric_limits<double>::quiet_NaN();
 
+        // Pairwise-compensation for dimensions skipped due to NA/NaN
+        // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+        // scale the partial sum by vec.size() / n_valid.
+        if (na_comp && n_valid < vec.size()) {
+            const double scale = static_cast<double>(vec.size()) / static_cast<double>(n_valid);
+            if (dist_method == distanceMethod::Euclidean) {
+                sum *= scale;
+            } else if (dist_method == distanceMethod::Manhattan) {
+                sum *= scale;
+            }
+        }    
+
         if (dist_method == distanceMethod::Euclidean)
             return std::sqrt(sum);
         else if (dist_method == distanceMethod::Manhattan)
@@ -226,9 +263,10 @@ namespace distance
         const double scalar,
         const std::vector<double>& vec,
         const std::string& method = "euclidean",
-        bool na_rm = true)
+        bool na_rm = true,
+        bool na_comp = true)
     {
-        return distance(vec, scalar, method, na_rm);
+        return distance(vec, scalar, method, na_rm, na_comp);
     }
 
     /***********************************************************
@@ -264,7 +302,8 @@ namespace distance
         const std::vector<double>& vec1,
         const std::vector<double>& vec2,
         const std::string& method = "euclidean",
-        bool na_rm = true)
+        bool na_rm = true,
+        bool na_comp = true)
     {   
         if (vec1.empty() || vec2.empty() || vec1.size() != vec2.size())
             return std::numeric_limits<double>::quiet_NaN();
@@ -312,6 +351,18 @@ namespace distance
 
         if (n_valid == 0)
             return std::numeric_limits<double>::quiet_NaN();
+
+        // Pairwise-compensation for dimensions skipped due to NA/NaN
+        // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+        // scale the partial sum by vec1.size() / n_valid.
+        if (na_comp && n_valid < vec1.size()) {
+            const double scale = static_cast<double>(vec1.size()) / static_cast<double>(n_valid);
+            if (dist_method == distanceMethod::Euclidean) {
+                sum *= scale;
+            } else if (dist_method == distanceMethod::Manhattan) {
+                sum *= scale;
+            }
+        }           
 
         if (dist_method == distanceMethod::Euclidean)
             return std::sqrt(sum);
@@ -374,10 +425,11 @@ namespace distance
      *      Distances are computed between columns.
      *      Result size: n_cols × n_cols
      *
-     * @param mat    Input numeric matrix stored as vector of rows
-     * @param method Distance metric ("euclidean", "manhattan", "maximum")
-     * @param na_rm  Remove NaN/NA values pairwise if true
-     * @param byrow  If true compute row distances, otherwise column distances
+     * @param mat     Input numeric matrix stored as vector of rows
+     * @param method  Distance metric ("euclidean", "manhattan", "maximum")
+     * @param na_rm   Remove NaN/NA values pairwise if true
+     * @param na_comp Adjust distance for missing values (TRUE/FALSE)
+     * @param byrow   If true compute row distances, otherwise column distances
      *
      * @return Symmetric distance matrix
      ***************************************************************************/
@@ -385,6 +437,7 @@ namespace distance
         const std::vector<std::vector<double>>& mat,
         const std::string& method = "euclidean",
         bool na_rm = true,
+        bool na_comp = true,
         bool byrow = true)
     {
         if (mat.empty()) return {};
@@ -460,6 +513,18 @@ namespace distance
                 if (has_na || n_valid == 0)
                     continue;
 
+                // Pairwise-compensation for dimensions skipped due to NA/NaN
+                // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+                // scale the partial sum by dim / n_valid.
+                if (na_comp && n_valid < dim) {
+                    const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
+                    if (dist_method == distanceMethod::Euclidean) {
+                        sum *= scale;
+                    } else if (dist_method == distanceMethod::Manhattan) {
+                        sum *= scale;
+                    }
+                }                
+
                 double distv;
 
                 if (dist_method == distanceMethod::Euclidean)
@@ -477,7 +542,7 @@ namespace distance
         return distm;
     }
 
-    /****************************************************************************************
+    /***************************************************************************************
      * Matrix Subset Distance
      *
      * Computes distances between selected rows or columns
@@ -495,12 +560,21 @@ namespace distance
      * byrow = false
      *      Distances are computed between columns.
      *
-     * @param mat    Input numeric matrix
-     * @param lib    Indices defining the library set
-     * @param pred   Indices defining the prediction set
-     * @param method Distance metric
-     * @param na_rm  Remove NaN/NA values pairwise
-     * @param byrow  If true operate on rows, otherwise columns
+     * @param mat     Input numeric matrix
+     * @param lib     Indices defining the library set
+     * @param pred    Indices defining the prediction set
+     * @param method  Distance metric
+     * @param na_rm   Remove NaN/NA values pairwise
+     *                  - true  : skip dims with NaN on either side
+     *                  - false : any NaN in a pair ⇒ entry = NaN
+     * @param na_comp Proportional compensation for dimensions skipped
+     *                 due to NaN (na_rm = true only).
+     *                 - true  : d = sqrt(dim / n_valid * sum_sq)  (Euclidean)
+     *                             or sum * dim / n_valid          (Manhattan)
+     *                 - false : no compensation (naive pairwise-complete);
+     *                           sparse rows appear artificially close,
+     *                   NaN if n_valid == 0
+     * @param byrow   If true operate on rows, otherwise columns
      *
      * @return A square matrix of size n_rows × n_rows (or n_cols × n_cols if byrow=false),
      *         with entries at [pred[i]][lib[j]] filled with computed distances.
@@ -512,6 +586,7 @@ namespace distance
         const std::vector<size_t>& pred,
         const std::string& method = "euclidean",
         bool na_rm = true,
+        bool na_comp = true,
         bool byrow = true)
     {
         if (mat.empty()) return {};
@@ -594,6 +669,18 @@ namespace distance
 
                 if (has_na || n_valid == 0)
                     continue;
+
+                // Pairwise-compensation for dimensions skipped due to NA/NaN
+                // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+                // scale the partial sum by dim / n_valid.
+                if (na_comp && n_valid < dim) {
+                    const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
+                    if (dist_method == distanceMethod::Euclidean) {
+                        sum *= scale;
+                    } else if (dist_method == distanceMethod::Manhattan) {
+                        sum *= scale;
+                    }
+                }
 
                 double distv;
 
