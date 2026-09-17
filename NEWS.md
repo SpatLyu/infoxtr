@@ -6,6 +6,8 @@
 
 ### breaking changes
 
+* Euclidean/Manhattan distances now automatically compensate for dimensions skipped due to `NA`/`NaN`, aligned with base R `dist()` (#96).
+
 * Remove leading lag-induced NA values in `surd` time-series implementation (#83).
 
 # infoxtr 0.2

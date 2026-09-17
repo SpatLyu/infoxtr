@@ -24,7 +24,8 @@ Rcpp::NumericVector RcppKOCMI(
     int seed = 123456789,
     double base = 2.0,
     const std::string& method = "equal",
-    bool contain_null = true)
+    bool contain_null = true,
+    bool na_comp = true)
 {   
     if (contain_null && !null_knockoff.isNotNull())
     {
@@ -110,7 +111,7 @@ Rcpp::NumericVector RcppKOCMI(
             static_cast<size_t>(std::abs(alg)),
             static_cast<size_t>(std::abs(threads)),
             static_cast<uint64_t>(std::abs(seed)),
-            contain_null
+            contain_null, na_comp
         );
     }
     else  

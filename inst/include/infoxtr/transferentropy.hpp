@@ -229,6 +229,7 @@ namespace transferentropy
         size_t k = 3,
         size_t alg = 0,
         double base = 2.0,
+        bool na_comp = true,
         bool normalize = false,
         bool lag_single = false)
     {   
@@ -334,7 +335,7 @@ namespace transferentropy
         std::iota(tgl_idx.begin(), tgl_idx.end(), tg.size() + ag_lag);
 
         // Compute conditional mutual information
-        return infoxtr::ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, normalize);
+        return infoxtr::ksginfo::cmi(pm, tg_idx, ag_idx, tgl_idx, k, alg, base, na_comp, normalize);
     }    
 
 } // namespace transferentropy

@@ -49,7 +49,7 @@ je = \(data, indices, base = exp(1), type = c("cont", "disc"), k = 3) {
   if (type == "disc") {
     return(RcppDiscJE(mat, abs(indices), base, TRUE))
   } else {
-    return(RcppContJE(mat, abs(indices), k, 0, base))
+    return(RcppContJE(mat, abs(indices), k, 0, base, TRUE))
   }
 }
 
@@ -73,7 +73,7 @@ ce = \(data, target, conds, base = exp(1), type = c("cont", "disc"), k = 3) {
   if (type == "disc") {
     return(RcppDiscCE(mat, abs(target), abs(conds), base, TRUE))
   } else {
-    return(RcppContCE(mat, abs(target), abs(conds), k, 0, base))
+    return(RcppContCE(mat, abs(target), abs(conds), k, 0, base, TRUE))
   }
 }
 
@@ -97,7 +97,7 @@ mi = \(data, target, interact, base = exp(1), type = c("cont", "disc"), k = 3, n
   if (type == "disc") {
     return(RcppDiscMI(mat, abs(target), abs(interact), base, TRUE, normalize))
   } else {
-    return(RcppContMI(mat, abs(target), abs(interact), k, 0, base, normalize))
+    return(RcppContMI(mat, abs(target), abs(interact), k, 0, base, TRUE, normalize))
   }
 }
 
@@ -122,6 +122,6 @@ cmi = \(data, target, interact, conds, base = exp(1), type = c("cont", "disc"), 
   if (type == "disc") {
     return(RcppDiscCMI(mat, abs(target), abs(interact), abs(conds), base, TRUE, normalize))
   } else {
-    return(RcppContCMI(mat, abs(target), abs(interact), abs(conds), k, 0, base, normalize))
+    return(RcppContCMI(mat, abs(target), abs(interact), abs(conds), k, 0, base, TRUE, normalize))
   }
 }
