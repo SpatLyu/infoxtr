@@ -1,8 +1,8 @@
 ---
-title: "Synergistic-Unique-Redundant Decomposition of Causality (SURD)"
+title: "Synergistic-Unique-Redundant Decomposition of Causality"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-08-15
+  | Last update: 2026-09-30
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
