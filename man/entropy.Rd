@@ -22,8 +22,7 @@ Ignored when \code{type = "disc"}.}
 A numerical value.
 }
 \description{
-Estimate the entropy of a vector using either category counts
-(for discrete data) or a k-nearest neighbor estimator (for continuous data).
+Shannon Entropy
 }
 \examples{
 set.seed(42)

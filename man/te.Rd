@@ -45,7 +45,7 @@ Ignored when \code{type = "disc"}.}
 A numerical value.
 }
 \description{
-Estimate the transfer entropy from agent variables to target variables.
+Transfer Entropy
 }
 \examples{
 set.seed(42)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kocmi.R
 \name{kocmi}
 \alias{kocmi}
-\title{KOCMI}
+\title{Knockoff Conditional Mutual Information}
 \usage{
 kocmi(
   data,

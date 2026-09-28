@@ -26,7 +26,7 @@ Ignored when \code{type = "disc"}.}
 A numerical value.
 }
 \description{
-Estimate the conditional entropy of target variables given conditioning variables.
+Conditional Entropy
 }
 \examples{
 infoxtr::ce(matrix(1:100,ncol=2),1,2)

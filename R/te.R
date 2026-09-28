@@ -1,7 +1,5 @@
 #' Transfer Entropy
 #'
-#' Estimate the transfer entropy from agent variables to target variables.
-#'
 #' @inheritParams mi
 #' @param agent Integer vector of column indices for the source (agent) variables.
 #' @param lag_p (optional) Lag of the target variables.

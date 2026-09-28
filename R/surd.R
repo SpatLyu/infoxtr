@@ -20,8 +20,6 @@
                   normalize, abs(bin), method, NULL, terra::nrow(data[[1]])))
 }
 
-#' SURD
-#' 
 #' Synergistic-Unique-Redundant Decomposition
 #' 
 #' @note `surd` only supports numeric input data. Both `bin` and `method`

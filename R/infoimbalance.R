@@ -28,7 +28,7 @@ info_imbalance = \(mx, my, lib = NULL, pred = NULL,
                            abs(k), abs(threads), method))
 }
 
-#' Information Imbalance Gain
+#' Imbalance Gain
 #'
 #' @inheritParams info_imbalance
 #' @param alpha (optional) Scaling parameter weighting the putative driver measurements.

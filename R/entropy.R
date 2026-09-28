@@ -1,8 +1,5 @@
 #' Shannon Entropy
 #'
-#' Estimate the entropy of a vector using either category counts
-#' (for discrete data) or a k-nearest neighbor estimator (for continuous data).
-#'
 #' @param vec A vector.
 #' @param base (optional) Logarithm base of the entropy.
 #'   Defaults to `exp(1)` (nats). Use `2` for bits or `10` for dits.
@@ -31,8 +28,6 @@ entropy = \(vec, base = exp(1), type = c("cont", "disc"), k = 3) {
 
 #' Joint Entropy
 #'
-#' Estimate the joint entropy of selected variables.
-#'
 #' @inheritParams entropy
 #' @param data Observation data.
 #' @param indices Integer vector of column indices to include in joint entropy calculation.
@@ -54,8 +49,6 @@ je = \(data, indices, base = exp(1), type = c("cont", "disc"), k = 3) {
 }
 
 #' Conditional Entropy
-#'
-#' Estimate the conditional entropy of target variables given conditioning variables.
 #'
 #' @inheritParams je
 #' @param target Integer vector of column indices for the target variables.
@@ -79,8 +72,6 @@ ce = \(data, target, conds, base = exp(1), type = c("cont", "disc"), k = 3) {
 
 #' Mutual Information
 #'
-#' Estimate the mutual information between target and interacting variables.
-#'
 #' @inheritParams ce
 #' @param interact Integer vector of column indices for the interacting variables.
 #' @param normalize (optional) Logical; if `TRUE`, return normalized mutual information.
@@ -102,9 +93,6 @@ mi = \(data, target, interact, base = exp(1), type = c("cont", "disc"), k = 3, n
 }
 
 #' Conditional Mutual Information
-#'
-#' Estimate the conditional mutual information between target and interacting
-#' variables given conditioning variables.
 #'
 #' @inheritParams mi
 #' @param conds Integer vector of column indices for the conditioning variables.

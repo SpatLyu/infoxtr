@@ -24,7 +24,7 @@ Ignored when \code{type = "disc"}.}
 A numerical value.
 }
 \description{
-Estimate the joint entropy of selected variables.
+Joint Entropy
 }
 \examples{
 infoxtr::je(matrix(1:100,ncol=2),1:2)

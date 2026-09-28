@@ -36,7 +36,7 @@ Ignored when \code{type = "disc"}.}
 A numerical value.
 }
 \description{
-Estimate the mutual information between target and interacting variables.
+Mutual Information
 }
 \examples{
 infoxtr::mi(matrix(1:100,ncol=2),1,2)
