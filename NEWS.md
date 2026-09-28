@@ -4,6 +4,10 @@
 
 * Provide R-level API and vignette for infomation imbalance and imbalance gain (#91).
 
+### enhancements
+
+* `discretize()` now safely falls back to factor encoding (`NA` as `0`) for edge cases (#98).
+
 ### breaking changes
 
 * Euclidean/Manhattan distances now automatically compensate for dimensions skipped due to `NA`/`NaN`, aligned with base R `dist()` (#96).

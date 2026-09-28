@@ -1,11 +1,9 @@
 #' Discretization
 #'
-#' Discretize a numeric vector into categorical classes using several
-#' commonly used discretization methods. Missing values (`NA`/`NaN`) 
-#' are ignored and returned as class `0`.
-#'
-#' @note If `x` is not numeric, it will be converted to
-#' integer categories via `as.factor()`.
+#' @note If `x` is not numeric, or if the number of unique non-`NA` values 
+#' is less than or equal to `n` (except for the `"headtail"("headtails")` method), 
+#' the function falls back to integer encoding via `as.factor()`. 
+#' In all cases, missing values (`NA`/`NaN`) are ignored and returned as class `0`.
 #'
 #' @param x A vector.
 #' @param n (optional) Number of classes.
@@ -32,8 +30,11 @@
 #' 
 discretize = \(x, n = 5, method = "natural", large = 3000, prop = 0.15,
                seed = 42, thr = 0.4, iter = 100, bps = NULL, right_closed = TRUE){
-  if (!is.numeric(x)){
-    return(as.integer(as.factor(x)))
+  if (!is.numeric(x) || (!method %in% c("headtail", "headtails") 
+                         && length(unique(x[!is.na(x)])) <= n)){
+    strata = rep(0L, length(x))
+    strata[!is.na(x)] = as.integer(as.factor(x[!is.na(x)]))
+    return(strata)
   }
 
   return(RcppDisc(x,n,method,large,prop,seed,thr,iter,bps,right_closed))
