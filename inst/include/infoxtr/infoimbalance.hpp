@@ -21,7 +21,10 @@
  *       Computes the Information Imbalance for a series of scaling
  *       parameters alpha using the combined space:
  *
- *           A(alpha) = (alpha * X, Y)
+ *           A(alpha) = (Y, alpha * X)
+ *
+ *           Delta(alpha)
+ *             = Delta(A(alpha) -> Y_future).
  *
  *       and returns Delta(alpha) for each supplied alpha.
  *
@@ -76,7 +79,7 @@
  * For directional information analysis, the current states of X and Y are
  * combined using a scaling parameter alpha:
  *
- *      A(alpha) = (alpha * X, Y).
+ *      A(alpha) = (Y, alpha * X).
  *
  * The Information Imbalance is then evaluated between this combined current
  * space and the future state of Y:
@@ -224,7 +227,7 @@
  * For imbalanceGain() and imbalanceGainCausality(), h defines the prediction
  * horizon:
  *
- *      A_t(alpha) = (alpha * X_t, Y_t)
+ *      A_t(alpha) = (Y_t, alpha * X_t)
  *
  *      B_{t+h}    = Y_{t+h}.
  *
@@ -722,7 +725,7 @@ namespace infoimbalance
 
             // --------------------------------------------------------------
             // For every prediction point, find its k nearest neighbours
-            // in A = (alpha * X, Y).
+            // in A = (Y, alpha * X).
             // --------------------------------------------------------------
             RcppThread::parallelFor(
                 size_t(0), Npred, [&](size_t ip) {
@@ -735,12 +738,18 @@ namespace infoimbalance
 
                 std::vector<Candidate> candidates;
                 candidates.reserve(Nlib);
+                
+                // When alpha is 0, Mx information is not needed.
+                const bool use_Mx = !infoxtr::numericutils::doubleNearlyEqual(a, 0.0);
+                const size_t vec_dim = use_Mx ? (dimY + dimX) : dimY;
 
-                std::vector<double> vec_p(dimX + dimY);
-                std::vector<double> vec_q(dimX + dimY);
+                std::vector<double> vec_p(vec_dim);
+                std::vector<double> vec_q(vec_dim);
 
-                for (size_t d = 0; d < dimX; ++d) vec_p[d] = a * Mx[p][d];
-                for (size_t d = 0; d < dimY; ++d) vec_p[dimX + d] = My[p][d];
+                for (size_t d = 0; d < dimY; ++d) vec_p[d] = My[p][d];  
+                if (use_Mx) {
+                    for (size_t d = 0; d < dimX; ++d) vec_p[dimY + d] = a * Mx[p][d];
+                }
 
                 for (size_t il = 0; il < Nlib; ++il) {
                     const size_t q = lib[il];
@@ -749,8 +758,10 @@ namespace infoimbalance
                     // consistent with the NA diagonal used in the R implementation.
                     if (q == p) continue;
 
-                    for (size_t d = 0; d < dimX; ++d) vec_q[d] = a * Mx[q][d];
-                    for (size_t d = 0; d < dimY; ++d) vec_q[dimX + d] = My[q][d];
+                    for (size_t d = 0; d < dimY; ++d) vec_q[d] = My[q][d];
+                    if (use_Mx) {
+                        for (size_t d = 0; d < dimX; ++d) vec_q[dimY + d] = a * Mx[q][d];
+                    }
 
                     const double d = infoxtr::distance::distance(vec_p, vec_q, method, true, na_comp);
                     candidates.push_back({il, d});
