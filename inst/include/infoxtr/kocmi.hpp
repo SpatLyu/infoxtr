@@ -303,7 +303,8 @@ namespace kocmi
         const ContVec& interact,
         const ContMat& conds,
         size_t k = 3,
-        size_t alg = 0)
+        size_t alg = 0,
+        bool na_comp = true)
     {   
         ContMat xyz = conds;
         xyz.push_back(target);  
@@ -315,10 +316,10 @@ namespace kocmi
         ContMat yz = conds;
         yz.push_back(interact);
 
-        auto d_xyz = infoxtr::distance::distance(xyz,"maximum",true,true,false);
-        auto d_xz  = infoxtr::distance::distance(xz,"maximum",true,true,false);
-        auto d_yz  = infoxtr::distance::distance(yz,"maximum",true,true,false);
-        auto d_z   = infoxtr::distance::distance(conds,"maximum",true,true,false);
+        auto d_xyz = infoxtr::distance::distance(xyz,"maximum",true,na_comp,false);
+        auto d_xz  = infoxtr::distance::distance(xz,"maximum",true,na_comp,false);
+        auto d_yz  = infoxtr::distance::distance(yz,"maximum",true,na_comp,false);
+        auto d_z   = infoxtr::distance::distance(conds,"maximum",true,na_comp,false);
 
         const size_t n = d_xyz.size();
 
@@ -384,7 +385,8 @@ namespace kocmi
         const DiscVec& target,
         const DiscVec& interact,
         const DiscMat& conds,
-        double base = 2.0)
+        double base = 2.0,
+        bool na_rm = true)
     {   
         DiscMat mat = conds;
         mat.push_back(target);  
@@ -406,10 +408,10 @@ namespace kocmi
         yz.push_back(conds.size() + 1);
         for (size_t idx : z) yz.push_back(idx);
 
-        double h_xz  = infoxtr::infotheo::je(mat, xz, base, true);
-        double h_yz  = infoxtr::infotheo::je(mat, yz, base, true);
-        double h_z   = infoxtr::infotheo::je(mat, z, base, true);
-        double h_xyz = infoxtr::infotheo::je(mat, xyz, base, true);
+        double h_xz  = infoxtr::infotheo::je(mat, xz, base, na_rm);
+        double h_yz  = infoxtr::infotheo::je(mat, yz, base, na_rm);
+        double h_z   = infoxtr::infotheo::je(mat, z, base, na_rm);
+        double h_xyz = infoxtr::infotheo::je(mat, xyz, base, na_rm);
 
         double cmival = h_xz + h_yz - h_z - h_xyz;
 
@@ -430,7 +432,8 @@ namespace kocmi
         size_t alg = 0,
         size_t threads = 1,
         uint64_t seed = 123456789,
-        bool contain_null = true)
+        bool contain_null = true,
+        bool na_comp = true)
     { 
         const size_t monte_size = knockoff.size();
         if (contain_null && monte_size != null_knockoff.size())
@@ -443,7 +446,7 @@ namespace kocmi
         if (hw > 0) threads = std::min(threads, hw);
 
         double cmi_val = std::numeric_limits<double>::quiet_NaN();
-        if (!contain_null) cmi_val = cmi(target, agent, conds, k, alg);
+        if (!contain_null) cmi_val = cmi(target, agent, conds, k, alg, na_comp);
         
         std::vector<double> diffs(monte_size, std::numeric_limits<double>::quiet_NaN());
 
@@ -451,11 +454,11 @@ namespace kocmi
         {
             for (size_t mi = 0; mi < monte_size; ++mi)
             { 
-                double cmi_knockoff = cmi(target, knockoff[mi], conds, k, alg);
+                double cmi_knockoff = cmi(target, knockoff[mi], conds, k, alg, na_comp);
 
                 if (contain_null)
                 {
-                    diffs[mi] = cmi(target, null_knockoff[mi], conds, k, alg) - cmi_knockoff;
+                    diffs[mi] = cmi(target, null_knockoff[mi], conds, k, alg, na_comp) - cmi_knockoff;
                 }
                 else 
                 {
@@ -466,11 +469,11 @@ namespace kocmi
         else  
         {
             RcppThread::parallelFor(0, monte_size, [&](size_t mi) {
-                double cmi_knockoff = cmi(target, knockoff[mi], conds, k, alg);
+                double cmi_knockoff = cmi(target, knockoff[mi], conds, k, alg, na_comp);
 
                 if (contain_null)
                 {
-                    diffs[mi] = cmi(target, null_knockoff[mi], conds, k, alg) - cmi_knockoff;
+                    diffs[mi] = cmi(target, null_knockoff[mi], conds, k, alg, na_comp) - cmi_knockoff;
                 }
                 else 
                 {
