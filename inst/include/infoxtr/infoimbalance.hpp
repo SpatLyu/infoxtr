@@ -170,6 +170,9 @@
  *   method
  *       Distance metric used to construct the distance spaces.
  *
+ *   na_comp
+ *       Adjust distance for missing values (TRUE/FALSE).
+ *
  * When prediction and library sets overlap, the prediction point itself is
  * excluded from the nearest-neighbour search.
  *
