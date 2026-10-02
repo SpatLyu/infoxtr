@@ -428,8 +428,7 @@ namespace distance
      * @param mat     Input numeric matrix stored as vector of rows
      * @param method  Distance metric ("euclidean", "manhattan", "maximum")
      * @param na_rm   Remove NaN/NA values pairwise if true
-     * @param na_comp Whether the distance is scaled up proportionally for 
-     *                 dimensions skipped due to NaN (na_rm = true only)
+     * @param na_comp Adjust distance for missing values (TRUE/FALSE)
      * @param byrow   If true compute row distances, otherwise column distances
      *
      * @return Symmetric distance matrix
