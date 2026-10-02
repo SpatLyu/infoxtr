@@ -521,6 +521,7 @@ namespace distance
         const std::vector<size_t>& pred,
         const std::string& method = "euclidean",
         bool na_rm = true,
+        bool na_comp = true,
         bool byrow = true)
     {
         if (mat.empty()) return {};
@@ -603,6 +604,18 @@ namespace distance
 
                 if (has_na || n_valid == 0)
                     continue;
+
+                // Pairwise-compensation for dimensions skipped due to NA/NaN
+                // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+                // scale the partial sum by dim / n_valid.
+                if (na_comp && n_valid < dim) {
+                    const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
+                    if (dist_method == distanceMethod::Euclidean) {
+                        sum *= scale;
+                    } else if (dist_method == placeManhattan) {
+                        sum *= scale;
+                    }
+                }
 
                 double distv;
 
