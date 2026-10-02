@@ -16,7 +16,8 @@ Rcpp::NumericVector RcppInfoImbalance(
     const Rcpp::IntegerVector& pred,
     int k = 3,
     int threads = 1,
-    const std::string& method = "euclidean")
+    const std::string& method = "euclidean",
+    bool na_comp = true)
 {
     std::vector<std::vector<double>> mx = infoxtr::convert::mat_r2std(Mx, true);
     std::vector<std::vector<double>> my = infoxtr::convert::mat_r2std(My, true);
@@ -44,7 +45,8 @@ Rcpp::NumericVector RcppInfoImbalance(
         infoxtr::infoimbalance::infoImbalance(
             mx, my, lib_std, pred_std,
             static_cast<size_t>(std::abs(k)), 
-            static_cast<size_t>(std::abs(threads)), method));
+            static_cast<size_t>(std::abs(threads)), 
+            method, na_comp));
 }
 
 // Wrapper function to calculate information imbalance gain with all coordinates data
@@ -58,7 +60,8 @@ Rcpp::NumericVector RcppImbalanceGain(
     int h = 1,
     int k = 3,
     int threads = 1,
-    const std::string& method = "euclidean")
+    const std::string& method = "euclidean",
+    bool na_comp = true)
 {
     std::vector<std::vector<double>> mx = infoxtr::convert::mat_r2std(Mx, true);
     std::vector<std::vector<double>> my = infoxtr::convert::mat_r2std(My, true);
@@ -92,7 +95,8 @@ Rcpp::NumericVector RcppImbalanceGain(
             mx, my, alpha_std, lib_std, pred_std,
             static_cast<size_t>(std::abs(h)), 
             static_cast<size_t>(std::abs(k)), 
-            static_cast<size_t>(std::abs(threads)), method));
+            static_cast<size_t>(std::abs(threads)), 
+            method, na_comp));
 }
 
 // Wrapper function to calculate information imbalance gain causality
@@ -111,6 +115,7 @@ double RcppImbalanceGainCausality(
     int k = 3,
     int threads = 1,
     const std::string& method = "euclidean",
+    bool na_comp = true,
     Rcpp::Nullable<Rcpp::List> nb = R_NilValue,
     Rcpp::Nullable<int> nrows = R_NilValue)
 {
@@ -670,5 +675,6 @@ double RcppImbalanceGainCausality(
                 mx, my, alpha_std, lib_std, pred_std,
                 static_cast<size_t>(std::abs(h)), 
                 static_cast<size_t>(std::abs(k)), 
-                static_cast<size_t>(std::abs(threads)), method);
+                static_cast<size_t>(std::abs(threads)), 
+                method, na_comp);
 }
