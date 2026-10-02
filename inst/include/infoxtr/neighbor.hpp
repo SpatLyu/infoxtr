@@ -173,7 +173,7 @@ namespace neighbor
                     const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
                     if (dist_method == infoxtr::distanceMethod::Euclidean) {
                         sum *= scale;
-                    } else if (dist_method == placeManhattan) {
+                    } else if (dist_method == infoxtr::distanceMethod::Manhattan) {
                         sum *= scale;
                     }
                 }  
@@ -323,7 +323,7 @@ namespace neighbor
                     const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
                     if (dist_method == infoxtr::distanceMethod::Euclidean) {
                         sum *= scale;
-                    } else if (dist_method == placeManhattan) {
+                    } else if (dist_method == infoxtr::distanceMethod::Manhattan) {
                         sum *= scale;
                     }
                 } 
