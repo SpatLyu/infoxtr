@@ -170,7 +170,8 @@ double RcppContJE(const Rcpp::NumericMatrix& mat,
                   const Rcpp::IntegerVector& vars,
                   int k = 3, 
                   int alg = 0,
-                  double base = 2.0)
+                  double base = 2.0,
+                  bool na_comp = true)
 {
     std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
     std::vector<size_t> v = Rcpp::as<std::vector<size_t>>(vars);
@@ -187,7 +188,7 @@ double RcppContJE(const Rcpp::NumericMatrix& mat,
     
     return infoxtr::ksginfo::je(
                 m, v, static_cast<size_t>(std::abs(k)), 
-                static_cast<size_t>(std::abs(alg)), std::abs(base));
+                static_cast<size_t>(std::abs(alg)), std::abs(base), na_comp);
 }
 
 // Wrapper function to calculate conditional entropy for discrete data
@@ -231,7 +232,8 @@ double RcppContCE(const Rcpp::NumericMatrix& mat,
                   const Rcpp::IntegerVector& conds,
                   int k = 3, 
                   int alg = 0,
-                  double base = 2.0)
+                  double base = 2.0,
+                  bool na_comp = true)
 {
     std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
 
@@ -258,7 +260,7 @@ double RcppContCE(const Rcpp::NumericMatrix& mat,
     
     return infoxtr::ksginfo::ce(
                 m, t, c, static_cast<size_t>(std::abs(k)), 
-                static_cast<size_t>(std::abs(alg)), std::abs(base));
+                static_cast<size_t>(std::abs(alg)), std::abs(base), na_comp);
 }
 
 // Wrapper function to calculate mutual information for discrete data
@@ -304,6 +306,7 @@ double RcppContMI(const Rcpp::NumericMatrix& mat,
                   int k = 3, 
                   int alg = 0,
                   double base = 2.0,
+                  bool na_comp = true,
                   bool normalize = false)
 {
     std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
@@ -331,7 +334,8 @@ double RcppContMI(const Rcpp::NumericMatrix& mat,
     
     return infoxtr::ksginfo::mi(
                 m, t, i, static_cast<size_t>(std::abs(k)), 
-                static_cast<size_t>(std::abs(alg)), std::abs(base), normalize);
+                static_cast<size_t>(std::abs(alg)), 
+                std::abs(base), na_comp, normalize);
 }
 
 // Wrapper function to calculate conditional mutual information for discrete data
@@ -388,6 +392,7 @@ double RcppContCMI(const Rcpp::NumericMatrix& mat,
                    int k = 3, 
                    int alg = 0,
                    double base = 2.0,
+                   bool na_comp = true,
                    bool normalize = false)
 {
     std::vector<std::vector<double>> m = infoxtr::convert::mat_r2std(mat, false);
@@ -426,7 +431,7 @@ double RcppContCMI(const Rcpp::NumericMatrix& mat,
                 m, t, i, c, 
                 static_cast<size_t>(std::abs(k)), 
                 static_cast<size_t>(std::abs(alg)), 
-                std::abs(base), normalize);
+                std::abs(base), na_comp, normalize);
 }
 
 // Wrapper function to calculate transfer entropy for discrete time series data
