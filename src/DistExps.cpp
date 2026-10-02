@@ -12,14 +12,15 @@ double RcppDist4Vec(
     const Rcpp::NumericVector& v1,
     const Rcpp::NumericVector& v2,
     std::string method = "euclidean",
-    bool na_rm = true
+    bool na_rm = true,
+    bool na_comp = true
 ) {
     // Convert Rcpp::NumericVector to std::vector<double>
     std::vector<double> v1_std = Rcpp::as<std::vector<double>>(v1);
     std::vector<double> v2_std = Rcpp::as<std::vector<double>>(v2);
 
     // Call the distance function
-    double distv = infoxtr::distance::distance(v1_std, v2_std, method, na_rm);
+    double distv = infoxtr::distance::distance(v1_std, v2_std, method, na_rm, na_comp);
 
     return distv;
 }
@@ -30,13 +31,14 @@ Rcpp::NumericVector RcppDist4Mat(
     const Rcpp::NumericMatrix& mat,
     std::string method = "euclidean",
     bool na_rm = true,
+    bool na_comp = true,
     bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
     std::vector<std::vector<double>> cppMat = infoxtr::convert::mat_r2std(mat, true);
 
     // Call the distance function
-    std::vector<std::vector<double>> distm = infoxtr::distance::distance(cppMat, method, na_rm, byrow);
+    std::vector<std::vector<double>> distm = infoxtr::distance::distance(cppMat, method, na_rm, na_comp, byrow);
 
     // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
     return infoxtr::convert::mat_std2r(distm, true);
@@ -50,6 +52,7 @@ Rcpp::NumericVector RcppDist4MatSub(
     const Rcpp::IntegerVector& pred,
     std::string method = "euclidean",
     bool na_rm = true,
+    bool na_comp = true,
     bool byrow = true
 ) {
     // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -78,7 +81,7 @@ Rcpp::NumericVector RcppDist4MatSub(
 
     // Call the distance function
     std::vector<std::vector<double>> distm = infoxtr::distance::distance(
-        cppMat, lib_std, pred_std, method, na_rm, byrow);
+        cppMat, lib_std, pred_std, method, na_rm, na_comp, byrow);
 
     // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix and return
     return infoxtr::convert::mat_std2r(distm, true);
