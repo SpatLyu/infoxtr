@@ -477,7 +477,7 @@ namespace distance
         return distm;
     }
 
-    /****************************************************************************************
+    /***************************************************************************************
      * Matrix Subset Distance
      *
      * Computes distances between selected rows or columns
@@ -500,6 +500,15 @@ namespace distance
      * @param pred   Indices defining the prediction set
      * @param method Distance metric
      * @param na_rm  Remove NaN/NA values pairwise
+     *                 - true  : skip dims with NaN on either side
+     *                 - false : any NaN in a pair ⇒ entry = NaN
+     * @param na_comp Proportional compensation for dimensions skipped
+     *                 due to NaN (na_rm = true only).
+     *                 - true  : d = sqrt(dim / n_valid * sum_sq)  (Euclidean)
+     *                             or sum * dim / n_valid          (Manhattan)
+     *                 - false : no compensation (naive pairwise-complete);
+     *                           sparse rows appear artificially close,
+     *                   NaN if n_valid == 0
      * @param byrow  If true operate on rows, otherwise columns
      *
      * @return A square matrix of size n_rows × n_rows (or n_cols × n_cols if byrow=false),
