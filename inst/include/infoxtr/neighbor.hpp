@@ -171,9 +171,9 @@ namespace neighbor
                 // scale the partial sum by dim / n_valid.
                 if (na_comp && n_valid < dim) {
                     const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
-                    if (dist_method == infoxtr::distanceMethod::Euclidean) {
+                    if (dist_method == infoxtr::distance::distanceMethod::Euclidean) {
                         sum *= scale;
-                    } else if (dist_method == infoxtr::distanceMethod::Manhattan) {
+                    } else if (dist_method == infoxtr::distance::distanceMethod::Manhattan) {
                         sum *= scale;
                     }
                 }  
@@ -321,9 +321,9 @@ namespace neighbor
                 // scale the partial sum by dim / n_valid.
                 if (na_comp && n_valid < dim) {
                     const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
-                    if (dist_method == infoxtr::distanceMethod::Euclidean) {
+                    if (dist_method == infoxtr::distance::distanceMethod::Euclidean) {
                         sum *= scale;
-                    } else if (dist_method == infoxtr::distanceMethod::Manhattan) {
+                    } else if (dist_method == infoxtr::distance::distanceMethod::Manhattan) {
                         sum *= scale;
                     }
                 } 
