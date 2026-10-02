@@ -14,6 +14,30 @@
  *          NaN values are removed pairwise before calculation.
  *          If all elements are removed, result is NaN.
  *
+ *      When na_comp = true (only effective if na_rm = true):
+ *          Dimensions skipped due to NaN are compensated by
+ *          rescaling the partial sum with dim / n_valid, where
+ *          dim = number of dimensions of the vectors compared,
+ *          n_valid = number of commonly observed dimensions:
+ *
+ *              euclidean : sqrt(dim / n_valid * sum((x - y)^2))
+ *              manhattan : (dim / n_valid) * sum(|x - y|)
+ *
+ *          This follows the semantics of R's dist() and
+ *          sklearn's nan_euclidean_distances: a missing 
+ *          dimension contributes the mean squared (absolute) 
+ *          difference of the observed dimensions, so that 
+ *          vectors with more missing values are NOT systematically 
+ *          closer to everything else.
+ *
+ *      When na_comp = false (only effective if na_rm = true):
+ *          No compensation. The distance is computed from the
+ *          raw partial sum over the commonly observed dimensions.
+ *
+ *      When na_rm = false:
+ *          Any NaN in either vector makes the result NaN.
+ *          na_comp has no effect in this case.
+ *
  *  Matrix behavior:
  *      Distances can be computed either row-wise or column-wise.
  *
