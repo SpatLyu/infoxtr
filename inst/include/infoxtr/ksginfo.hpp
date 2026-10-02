@@ -151,7 +151,7 @@ namespace ksginfo
         const size_t d = sub.size();
         const size_t n = sub[0].size();
 
-        auto dist = infoxtr::distance::distance(sub,"maximum",true,false);
+        auto dist = infoxtr::distance::distance(sub,"maximum",true,true,false);
 
         double avg = 0.0;
 
@@ -229,9 +229,9 @@ namespace ksginfo
         std::vector<size_t> xy = target;
         xy.insert(xy.end(), interact.begin(), interact.end());
 
-        auto d_xy = infoxtr::distance::distance(subset(mat,xy),"maximum",true,false);
-        auto d_x  = infoxtr::distance::distance(subset(mat,target),"maximum",true,false);
-        auto d_y  = infoxtr::distance::distance(subset(mat,interact),"maximum",true,false);
+        auto d_xy = infoxtr::distance::distance(subset(mat,xy),"maximum",true,true,false);
+        auto d_x  = infoxtr::distance::distance(subset(mat,target),"maximum",true,true,false);
+        auto d_y  = infoxtr::distance::distance(subset(mat,interact),"maximum",true,true,false);
 
         const size_t n = d_xy.size();
         const size_t d = xy.size();
@@ -347,10 +347,10 @@ namespace ksginfo
         std::vector<size_t> yz = conds;
         yz.insert(yz.end(), interact.begin(), interact.end());
 
-        auto d_xyz = infoxtr::distance::distance(subset(mat,xyz),"maximum",true,false);
-        auto d_xz  = infoxtr::distance::distance(subset(mat,xz),"maximum",true,false);
-        auto d_yz  = infoxtr::distance::distance(subset(mat,yz),"maximum",true,false);
-        auto d_z   = infoxtr::distance::distance(subset(mat,conds),"maximum",true,false);
+        auto d_xyz = infoxtr::distance::distance(subset(mat,xyz),"maximum",true,true,false);
+        auto d_xz  = infoxtr::distance::distance(subset(mat,xz),"maximum",true,true,false);
+        auto d_yz  = infoxtr::distance::distance(subset(mat,yz),"maximum",true,true,false);
+        auto d_z   = infoxtr::distance::distance(subset(mat,conds),"maximum",true,true,false);
 
         const size_t n = d_xyz.size();
         const size_t d = xy.size();
