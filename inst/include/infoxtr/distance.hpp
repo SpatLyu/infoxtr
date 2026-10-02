@@ -425,10 +425,12 @@ namespace distance
      *      Distances are computed between columns.
      *      Result size: n_cols × n_cols
      *
-     * @param mat    Input numeric matrix stored as vector of rows
-     * @param method Distance metric ("euclidean", "manhattan", "maximum")
-     * @param na_rm  Remove NaN/NA values pairwise if true
-     * @param byrow  If true compute row distances, otherwise column distances
+     * @param mat     Input numeric matrix stored as vector of rows
+     * @param method  Distance metric ("euclidean", "manhattan", "maximum")
+     * @param na_rm   Remove NaN/NA values pairwise if true
+     * @param na_comp Whether the distance is scaled up proportionally for 
+     *                 dimensions skipped due to NaN (na_rm = true only)
+     * @param byrow   If true compute row distances, otherwise column distances
      *
      * @return Symmetric distance matrix
      ***************************************************************************/
@@ -559,13 +561,13 @@ namespace distance
      * byrow = false
      *      Distances are computed between columns.
      *
-     * @param mat    Input numeric matrix
-     * @param lib    Indices defining the library set
-     * @param pred   Indices defining the prediction set
-     * @param method Distance metric
-     * @param na_rm  Remove NaN/NA values pairwise
-     *                 - true  : skip dims with NaN on either side
-     *                 - false : any NaN in a pair ⇒ entry = NaN
+     * @param mat     Input numeric matrix
+     * @param lib     Indices defining the library set
+     * @param pred    Indices defining the prediction set
+     * @param method  Distance metric
+     * @param na_rm   Remove NaN/NA values pairwise
+     *                  - true  : skip dims with NaN on either side
+     *                  - false : any NaN in a pair ⇒ entry = NaN
      * @param na_comp Proportional compensation for dimensions skipped
      *                 due to NaN (na_rm = true only).
      *                 - true  : d = sqrt(dim / n_valid * sum_sq)  (Euclidean)
@@ -573,7 +575,7 @@ namespace distance
      *                 - false : no compensation (naive pairwise-complete);
      *                           sparse rows appear artificially close,
      *                   NaN if n_valid == 0
-     * @param byrow  If true operate on rows, otherwise columns
+     * @param byrow   If true operate on rows, otherwise columns
      *
      * @return A square matrix of size n_rows × n_rows (or n_cols × n_cols if byrow=false),
      *         with entries at [pred[i]][lib[j]] filled with computed distances.
