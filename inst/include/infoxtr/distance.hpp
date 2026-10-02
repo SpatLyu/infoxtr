@@ -167,7 +167,8 @@ namespace distance
         const std::vector<double>& vec,
         const double scalar,
         const std::string& method = "euclidean",
-        bool na_rm = true)
+        bool na_rm = true,
+        bool na_comp = true)
     {
         if (vec.empty() || std::isnan(scalar))
             return std::numeric_limits<double>::quiet_NaN();
@@ -213,6 +214,18 @@ namespace distance
 
         if (n_valid == 0)
             return std::numeric_limits<double>::quiet_NaN();
+
+        // Pairwise-compensation for dimensions skipped due to NA/NaN
+        // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+        // scale the partial sum by vec.size() / n_valid.
+        if (na_comp && n_valid < vec.size()) {
+            const double scale = static_cast<double>(vec.size()) / static_cast<double>(n_valid);
+            if (dist_method == distanceMethod::Euclidean) {
+                sum *= scale;
+            } else if (dist_method == placeManhattan) {
+                sum *= scale;
+            }
+        }    
 
         if (dist_method == distanceMethod::Euclidean)
             return std::sqrt(sum);
