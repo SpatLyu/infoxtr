@@ -5,16 +5,16 @@ RcppDisc <- function(vec, n = 5L, method = "natural", sample_begin = 3000L, samp
     .Call(`_infoxtr_RcppDisc`, vec, n, method, sample_begin, sample_prop, seed, threshold, iter_step, breakpoints, right_closed)
 }
 
-RcppDist4Vec <- function(v1, v2, method = "euclidean", na_rm = TRUE) {
-    .Call(`_infoxtr_RcppDist4Vec`, v1, v2, method, na_rm)
+RcppDist4Vec <- function(v1, v2, method = "euclidean", na_rm = TRUE, na_comp = TRUE) {
+    .Call(`_infoxtr_RcppDist4Vec`, v1, v2, method, na_rm, na_comp)
 }
 
-RcppDist4Mat <- function(mat, method = "euclidean", na_rm = TRUE, byrow = TRUE) {
-    .Call(`_infoxtr_RcppDist4Mat`, mat, method, na_rm, byrow)
+RcppDist4Mat <- function(mat, method = "euclidean", na_rm = TRUE, na_comp = TRUE, byrow = TRUE) {
+    .Call(`_infoxtr_RcppDist4Mat`, mat, method, na_rm, na_comp, byrow)
 }
 
-RcppDist4MatSub <- function(mat, lib, pred, method = "euclidean", na_rm = TRUE, byrow = TRUE) {
-    .Call(`_infoxtr_RcppDist4MatSub`, mat, lib, pred, method, na_rm, byrow)
+RcppDist4MatSub <- function(mat, lib, pred, method = "euclidean", na_rm = TRUE, na_comp = TRUE, byrow = TRUE) {
+    .Call(`_infoxtr_RcppDist4MatSub`, mat, lib, pred, method, na_rm, na_comp, byrow)
 }
 
 RcppInfoImbalance <- function(Mx, My, lib, pred, k = 3L, threads = 1L, method = "euclidean") {
@@ -97,12 +97,12 @@ RcppGenTSLag <- function(mat, lag = 1L) {
     .Call(`_infoxtr_RcppGenTSLag`, mat, lag)
 }
 
-RcppNN4Mat <- function(mat, k, method = "euclidean", include_self = FALSE, byrow = TRUE) {
-    .Call(`_infoxtr_RcppNN4Mat`, mat, k, method, include_self, byrow)
+RcppNN4Mat <- function(mat, k, method = "euclidean", include_self = FALSE, na_comp = TRUE, byrow = TRUE) {
+    .Call(`_infoxtr_RcppNN4Mat`, mat, k, method, include_self, na_comp, byrow)
 }
 
-RcppNN4MatSub <- function(mat, lib, pred, k, method = "euclidean", include_self = FALSE, byrow = TRUE) {
-    .Call(`_infoxtr_RcppNN4MatSub`, mat, lib, pred, k, method, include_self, byrow)
+RcppNN4MatSub <- function(mat, lib, pred, k, method = "euclidean", include_self = FALSE, na_comp = TRUE, byrow = TRUE) {
+    .Call(`_infoxtr_RcppNN4MatSub`, mat, lib, pred, k, method, include_self, na_comp, byrow)
 }
 
 RcppNN4DistMat <- function(distmat, k, include_self = FALSE) {

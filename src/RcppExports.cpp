@@ -32,34 +32,36 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppDist4Vec
-double RcppDist4Vec(const Rcpp::NumericVector& v1, const Rcpp::NumericVector& v2, std::string method, bool na_rm);
-RcppExport SEXP _infoxtr_RcppDist4Vec(SEXP v1SEXP, SEXP v2SEXP, SEXP methodSEXP, SEXP na_rmSEXP) {
+double RcppDist4Vec(const Rcpp::NumericVector& v1, const Rcpp::NumericVector& v2, std::string method, bool na_rm, bool na_comp);
+RcppExport SEXP _infoxtr_RcppDist4Vec(SEXP v1SEXP, SEXP v2SEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP na_compSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type v1(v1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type v2(v2SEXP);
     Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDist4Vec(v1, v2, method, na_rm));
+    Rcpp::traits::input_parameter< bool >::type na_comp(na_compSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDist4Vec(v1, v2, method, na_rm, na_comp));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppDist4Mat
-Rcpp::NumericVector RcppDist4Mat(const Rcpp::NumericMatrix& mat, std::string method, bool na_rm, bool byrow);
-RcppExport SEXP _infoxtr_RcppDist4Mat(SEXP matSEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP byrowSEXP) {
+Rcpp::NumericVector RcppDist4Mat(const Rcpp::NumericMatrix& mat, std::string method, bool na_rm, bool na_comp, bool byrow);
+RcppExport SEXP _infoxtr_RcppDist4Mat(SEXP matSEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP na_compSEXP, SEXP byrowSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_comp(na_compSEXP);
     Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDist4Mat(mat, method, na_rm, byrow));
+    rcpp_result_gen = Rcpp::wrap(RcppDist4Mat(mat, method, na_rm, na_comp, byrow));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppDist4MatSub
-Rcpp::NumericVector RcppDist4MatSub(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, std::string method, bool na_rm, bool byrow);
-RcppExport SEXP _infoxtr_RcppDist4MatSub(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP byrowSEXP) {
+Rcpp::NumericVector RcppDist4MatSub(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, std::string method, bool na_rm, bool na_comp, bool byrow);
+RcppExport SEXP _infoxtr_RcppDist4MatSub(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP na_compSEXP, SEXP byrowSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
@@ -67,8 +69,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_comp(na_compSEXP);
     Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDist4MatSub(mat, lib, pred, method, na_rm, byrow));
+    rcpp_result_gen = Rcpp::wrap(RcppDist4MatSub(mat, lib, pred, method, na_rm, na_comp, byrow));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -386,22 +389,23 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppNN4Mat
-Rcpp::List RcppNN4Mat(const Rcpp::NumericMatrix& mat, int k, std::string method, bool include_self, bool byrow);
-RcppExport SEXP _infoxtr_RcppNN4Mat(SEXP matSEXP, SEXP kSEXP, SEXP methodSEXP, SEXP include_selfSEXP, SEXP byrowSEXP) {
+Rcpp::List RcppNN4Mat(const Rcpp::NumericMatrix& mat, int k, std::string method, bool include_self, bool na_comp, bool byrow);
+RcppExport SEXP _infoxtr_RcppNN4Mat(SEXP matSEXP, SEXP kSEXP, SEXP methodSEXP, SEXP include_selfSEXP, SEXP na_compSEXP, SEXP byrowSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
     Rcpp::traits::input_parameter< bool >::type include_self(include_selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_comp(na_compSEXP);
     Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppNN4Mat(mat, k, method, include_self, byrow));
+    rcpp_result_gen = Rcpp::wrap(RcppNN4Mat(mat, k, method, include_self, na_comp, byrow));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppNN4MatSub
-Rcpp::List RcppNN4MatSub(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int k, std::string method, bool include_self, bool byrow);
-RcppExport SEXP _infoxtr_RcppNN4MatSub(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP methodSEXP, SEXP include_selfSEXP, SEXP byrowSEXP) {
+Rcpp::List RcppNN4MatSub(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int k, std::string method, bool include_self, bool na_comp, bool byrow);
+RcppExport SEXP _infoxtr_RcppNN4MatSub(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP methodSEXP, SEXP include_selfSEXP, SEXP na_compSEXP, SEXP byrowSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
@@ -410,8 +414,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
     Rcpp::traits::input_parameter< bool >::type include_self(include_selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_comp(na_compSEXP);
     Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppNN4MatSub(mat, lib, pred, k, method, include_self, byrow));
+    rcpp_result_gen = Rcpp::wrap(RcppNN4MatSub(mat, lib, pred, k, method, include_self, na_comp, byrow));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -465,9 +470,9 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_infoxtr_RcppDisc", (DL_FUNC) &_infoxtr_RcppDisc, 10},
-    {"_infoxtr_RcppDist4Vec", (DL_FUNC) &_infoxtr_RcppDist4Vec, 4},
-    {"_infoxtr_RcppDist4Mat", (DL_FUNC) &_infoxtr_RcppDist4Mat, 4},
-    {"_infoxtr_RcppDist4MatSub", (DL_FUNC) &_infoxtr_RcppDist4MatSub, 6},
+    {"_infoxtr_RcppDist4Vec", (DL_FUNC) &_infoxtr_RcppDist4Vec, 5},
+    {"_infoxtr_RcppDist4Mat", (DL_FUNC) &_infoxtr_RcppDist4Mat, 5},
+    {"_infoxtr_RcppDist4MatSub", (DL_FUNC) &_infoxtr_RcppDist4MatSub, 7},
     {"_infoxtr_RcppInfoImbalance", (DL_FUNC) &_infoxtr_RcppInfoImbalance, 7},
     {"_infoxtr_RcppImbalanceGain", (DL_FUNC) &_infoxtr_RcppImbalanceGain, 9},
     {"_infoxtr_RcppImbalanceGainCausality", (DL_FUNC) &_infoxtr_RcppImbalanceGainCausality, 15},
@@ -488,8 +493,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_infoxtr_RcppGenLatticeLag", (DL_FUNC) &_infoxtr_RcppGenLatticeLag, 3},
     {"_infoxtr_RcppGenGridLag", (DL_FUNC) &_infoxtr_RcppGenGridLag, 3},
     {"_infoxtr_RcppGenTSLag", (DL_FUNC) &_infoxtr_RcppGenTSLag, 2},
-    {"_infoxtr_RcppNN4Mat", (DL_FUNC) &_infoxtr_RcppNN4Mat, 5},
-    {"_infoxtr_RcppNN4MatSub", (DL_FUNC) &_infoxtr_RcppNN4MatSub, 7},
+    {"_infoxtr_RcppNN4Mat", (DL_FUNC) &_infoxtr_RcppNN4Mat, 6},
+    {"_infoxtr_RcppNN4MatSub", (DL_FUNC) &_infoxtr_RcppNN4MatSub, 8},
     {"_infoxtr_RcppNN4DistMat", (DL_FUNC) &_infoxtr_RcppNN4DistMat, 3},
     {"_infoxtr_RcppNN4DistMatSub", (DL_FUNC) &_infoxtr_RcppNN4DistMatSub, 5},
     {"_infoxtr_RcppSURD", (DL_FUNC) &_infoxtr_RcppSURD, 12},

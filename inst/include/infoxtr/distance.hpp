@@ -246,7 +246,7 @@ namespace distance
             const double scale = static_cast<double>(vec.size()) / static_cast<double>(n_valid);
             if (dist_method == distanceMethod::Euclidean) {
                 sum *= scale;
-            } else if (dist_method == placeManhattan) {
+            } else if (dist_method == distanceMethod::Manhattan) {
                 sum *= scale;
             }
         }    
@@ -359,7 +359,7 @@ namespace distance
             const double scale = static_cast<double>(vec1.size()) / static_cast<double>(n_valid);
             if (dist_method == distanceMethod::Euclidean) {
                 sum *= scale;
-            } else if (dist_method == placeManhattan) {
+            } else if (dist_method == distanceMethod::Manhattan) {
                 sum *= scale;
             }
         }           
@@ -520,7 +520,7 @@ namespace distance
                     const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
                     if (dist_method == distanceMethod::Euclidean) {
                         sum *= scale;
-                    } else if (dist_method == placeManhattan) {
+                    } else if (dist_method == distanceMethod::Manhattan) {
                         sum *= scale;
                     }
                 }                
@@ -677,7 +677,7 @@ namespace distance
                     const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
                     if (dist_method == distanceMethod::Euclidean) {
                         sum *= scale;
-                    } else if (dist_method == placeManhattan) {
+                    } else if (dist_method == distanceMethod::Manhattan) {
                         sum *= scale;
                     }
                 }
