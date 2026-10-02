@@ -345,7 +345,7 @@ namespace infoimbalance
                     }
 
                     distances[il] =
-                        infoxtr::distance::distance(My[p], My[q], method, true);
+                        infoxtr::distance::distance(My[p], My[q], method, true, true);
                 }
 
                 // Sort library indices according to Y-space distance.
@@ -460,7 +460,7 @@ namespace infoimbalance
                     }
 
                     const double d =
-                        infoxtr::distance::distance(Mx[p], Mx[q], method, true);
+                        infoxtr::distance::distance(Mx[p], Mx[q], method, true, true);
 
                     candidates.push_back({il, d});
                 }
@@ -608,7 +608,7 @@ namespace infoimbalance
 
                 distances[il] =
                     infoxtr::distance::distance(
-                        My[p + h], My[q + h], method, true);
+                        My[p + h], My[q + h], method, true, true);
             }
 
             // Sort indices according to Y-space distance.
@@ -747,7 +747,7 @@ namespace infoimbalance
                     for (size_t d = 0; d < dimX; ++d) vec_q[d] = a * Mx[q][d];
                     for (size_t d = 0; d < dimY; ++d) vec_q[dimX + d] = My[q][d];
 
-                    const double d = infoxtr::distance::distance(vec_p, vec_q, method, true);
+                    const double d = infoxtr::distance::distance(vec_p, vec_q, method, true, true);
                     candidates.push_back({il, d});
                 }
 
