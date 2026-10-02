@@ -94,6 +94,7 @@ namespace neighbor
         size_t k,
         const std::string& method = "euclidean",
         bool include_self = false,
+        bool na_comp = true,
         bool byrow = true)
     {
         const infoxtr::distance::distanceMethod dist_method =
@@ -162,6 +163,18 @@ namespace neighbor
 
                 if (n_valid == 0) continue;
 
+                // Pairwise-compensation for dimensions skipped due to NA/NaN
+                // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+                // scale the partial sum by dim / n_valid.
+                if (na_comp && n_valid < dim) {
+                    const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
+                    if (dist_method == infoxtr::distanceMethod::Euclidean) {
+                        sum *= scale;
+                    } else if (dist_method == placeManhattan) {
+                        sum *= scale;
+                    }
+                }  
+
                 double distv;
 
                 if (dist_method == infoxtr::distance::distanceMethod::Euclidean)
@@ -225,6 +238,7 @@ namespace neighbor
         size_t k,
         const std::string& method = "euclidean",
         bool include_self = false,
+        bool na_comp = true,
         bool byrow = true)
     {
         const infoxtr::distance::distanceMethod dist_method =
@@ -298,6 +312,18 @@ namespace neighbor
                 }
 
                 if (n_valid == 0) continue;
+
+                // Pairwise-compensation for dimensions skipped due to NA/NaN
+                // (semantics aligned with R dist() and sklearn nan_euclidean_distances):
+                // scale the partial sum by dim / n_valid.
+                if (na_comp && n_valid < dim) {
+                    const double scale = static_cast<double>(dim) / static_cast<double>(n_valid);
+                    if (dist_method == infoxtr::distanceMethod::Euclidean) {
+                        sum *= scale;
+                    } else if (dist_method == placeManhattan) {
+                        sum *= scale;
+                    }
+                } 
 
                 double distv;
 
