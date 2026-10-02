@@ -239,9 +239,10 @@ namespace distance
         const double scalar,
         const std::vector<double>& vec,
         const std::string& method = "euclidean",
-        bool na_rm = true)
+        bool na_rm = true,
+        bool na_comp = true)
     {
-        return distance(vec, scalar, method, na_rm);
+        return distance(vec, scalar, method, na_rm, na_comp);
     }
 
     /***********************************************************
