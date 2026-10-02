@@ -481,6 +481,7 @@ double RcppContTE(const Rcpp::NumericMatrix& mat,
                   int k = 3, 
                   int alg = 0,
                   double base = 2.0,
+                  bool na_comp = true,
                   bool normalize = false,
                   bool lag_single = false)
 {
@@ -513,7 +514,7 @@ double RcppContTE(const Rcpp::NumericMatrix& mat,
                 static_cast<size_t>(std::abs(lag_q)), 
                 static_cast<size_t>(std::abs(k)), 
                 static_cast<size_t>(std::abs(alg)), 
-                std::abs(base), normalize, lag_single);
+                std::abs(base), na_comp, normalize, lag_single);
 }
 
 // Wrapper function to preform SURD decomposition for discrete data
