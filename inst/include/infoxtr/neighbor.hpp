@@ -17,8 +17,11 @@
  *
  *  Distance methods (for NN4Mat):
  *      "euclidean"  : sqrt(sum((x - y)^2))
- *      "maximum"    : max(|x - y|)
  *      "manhattan"  : sum(|x - y|)
+ *      "maximum"    : max(|x - y|)
+ *      
+ *       When na_comp = true, the sum will be adjusted proportionally
+ *       to account for dimensions skipped due to NA/NaN.
  *
  *  Data layout:
  *      mat         : std::vector<std::vector<double>>
