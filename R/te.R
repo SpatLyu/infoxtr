@@ -26,6 +26,6 @@ te = \(data, target, agent, lag_p = 3, lag_q = 3, base = exp(1),
                       base, TRUE, normalize, lag_single))
   } else {
     return(RcppContTE(mat, abs(target), abs(agent), lag_p, lag_q, 
-                      k, 0, base, normalize, lag_single))
+                      k, 0, base, TRUE, normalize, lag_single))
   }
 }
