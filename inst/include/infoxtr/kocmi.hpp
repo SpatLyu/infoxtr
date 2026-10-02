@@ -315,10 +315,10 @@ namespace kocmi
         ContMat yz = conds;
         yz.push_back(interact);
 
-        auto d_xyz = infoxtr::distance::distance(xyz,"maximum",true,false);
-        auto d_xz  = infoxtr::distance::distance(xz,"maximum",true,false);
-        auto d_yz  = infoxtr::distance::distance(yz,"maximum",true,false);
-        auto d_z   = infoxtr::distance::distance(conds,"maximum",true,false);
+        auto d_xyz = infoxtr::distance::distance(xyz,"maximum",true,true,false);
+        auto d_xz  = infoxtr::distance::distance(xz,"maximum",true,true,false);
+        auto d_yz  = infoxtr::distance::distance(yz,"maximum",true,true,false);
+        auto d_z   = infoxtr::distance::distance(conds,"maximum",true,true,false);
 
         const size_t n = d_xyz.size();
 
