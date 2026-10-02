@@ -282,7 +282,8 @@ namespace infoimbalance
         const std::vector<size_t>& pred,
         size_t k = 1,
         size_t threads = 1,
-        const std::string& method = "euclidean")
+        const std::string& method = "euclidean",
+        bool na_comp = true)
     {
         const size_t Npred = pred.size();
         const size_t Nlib  = lib.size();
@@ -345,7 +346,7 @@ namespace infoimbalance
                     }
 
                     distances[il] =
-                        infoxtr::distance::distance(My[p], My[q], method, true, true);
+                        infoxtr::distance::distance(My[p], My[q], method, true, na_comp);
                 }
 
                 // Sort library indices according to Y-space distance.
@@ -460,7 +461,7 @@ namespace infoimbalance
                     }
 
                     const double d =
-                        infoxtr::distance::distance(Mx[p], Mx[q], method, true, true);
+                        infoxtr::distance::distance(Mx[p], Mx[q], method, true, na_comp);
 
                     candidates.push_back({il, d});
                 }
@@ -546,7 +547,8 @@ namespace infoimbalance
         size_t h = 1,
         size_t k = 1,
         size_t threads = 1,
-        const std::string& method = "euclidean")
+        const std::string& method = "euclidean",
+        bool na_comp = true)
     {
         const size_t Npred = pred.size();
         const size_t Nlib  = lib.size();
@@ -608,7 +610,7 @@ namespace infoimbalance
 
                 distances[il] =
                     infoxtr::distance::distance(
-                        My[p + h], My[q + h], method, true, true);
+                        My[p + h], My[q + h], method, true, na_comp);
             }
 
             // Sort indices according to Y-space distance.
@@ -747,7 +749,7 @@ namespace infoimbalance
                     for (size_t d = 0; d < dimX; ++d) vec_q[d] = a * Mx[q][d];
                     for (size_t d = 0; d < dimY; ++d) vec_q[dimX + d] = My[q][d];
 
-                    const double d = infoxtr::distance::distance(vec_p, vec_q, method, true, true);
+                    const double d = infoxtr::distance::distance(vec_p, vec_q, method, true, na_comp);
                     candidates.push_back({il, d});
                 }
 
@@ -850,7 +852,8 @@ namespace infoimbalance
         size_t h = 1,
         size_t k = 1,
         size_t threads = 1,
-        const std::string& method = "euclidean")
+        const std::string& method = "euclidean",
+        bool na_comp = true)
     {   
         std::vector<double> alpha_ext;
         alpha_ext.reserve(alpha.size() + 1);
@@ -883,7 +886,7 @@ namespace infoimbalance
         }
 
         std::vector<double> ii_vals = imbalanceGain(
-            Mx, My, unique_alpha, lib, pred, h, k, threads, method
+            Mx, My, unique_alpha, lib, pred, h, k, threads, method, na_comp
         );
 
         if (ii_vals.empty()) {
