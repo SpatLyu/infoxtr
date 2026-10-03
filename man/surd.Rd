@@ -52,7 +52,7 @@
 
 \item{target}{Integer vector of column indices for the target variables.}
 
-\item{agent}{Integer vector of column indices for the source (agent) variables.}
+\item{agent}{Integer vector of column indices for the agent variables.}
 
 \item{lag}{(optional) Lag of the agent variables.}
 

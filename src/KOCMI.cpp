@@ -29,7 +29,7 @@ Rcpp::NumericVector RcppKOCMI(
 {   
     if (contain_null && !null_knockoff.isNotNull())
     {
-        Rcpp::stop("[KOCMI] When `contain_null` is true, the `null_knockoff` matrix for the source variable must be supplied.");
+        Rcpp::stop("[KOCMI] When `contain_null` is true, the `null_knockoff` matrix for the agent variable must be supplied.");
     }
 
     if (nboots < 0) 
