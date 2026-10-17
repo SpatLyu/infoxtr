@@ -1,12 +1,12 @@
 ---
-title: "Information Imbalance Gain (IIG)"
+title: "Information Imbalance and Imbalance Gain"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-08-15
+  | Last update: 2026-09-30
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{1. Information Imbalance Gain}
+  %\VignetteIndexEntry{1. Information Imbalance and Imbalance Gain}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
