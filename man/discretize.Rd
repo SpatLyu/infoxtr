@@ -47,14 +47,13 @@ and the input size exceeds \code{large}.}
 A discretized integer vector.
 }
 \description{
-Discretize a numeric vector into categorical classes using several
-commonly used discretization methods. Missing values (\code{NA}/\code{NaN})
-are ignored and returned as class \code{0}.
+Discretization
 }
 \note{
 If \code{x} is not numeric, or if the number of unique non-\code{NA} values
 is less than or equal to \code{n} (except for the \code{"headtail"("headtails")} method),
 the function falls back to integer encoding via \code{as.factor()}.
+In all cases, missing values (\code{NA}/\code{NaN}) are ignored and returned as class \code{0}.
 }
 \examples{
 set.seed(42)
