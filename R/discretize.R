@@ -4,8 +4,9 @@
 #' commonly used discretization methods. Missing values (`NA`/`NaN`) 
 #' are ignored and returned as class `0`.
 #'
-#' @note If `x` is not numeric, it will be converted to
-#' integer categories via `as.factor()`.
+#' @note If `x` is not numeric, or if the number of unique non-`NA` values 
+#' is less than or equal to `n` (except for the `"headtail"("headtails")` method), 
+#' the function falls back to integer encoding via `as.factor()`. 
 #'
 #' @param x A vector.
 #' @param n (optional) Number of classes.
