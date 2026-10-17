@@ -32,8 +32,10 @@
 #' 
 discretize = \(x, n = 5, method = "natural", large = 3000, prop = 0.15,
                seed = 42, thr = 0.4, iter = 100, bps = NULL, right_closed = TRUE){
-  if (!is.numeric(x)){
-    return(as.integer(as.factor(x)))
+  if (!is.numeric(x) || length(unique(x[!is.na(x)])) <= n){
+    strata = rep(0L, length(x))
+    strata[!is.na(x)] = as.integer(as.factor(x[!is.na(x)]))
+    return(strata)
   }
 
   return(RcppDisc(x,n,method,large,prop,seed,thr,iter,bps,right_closed))
