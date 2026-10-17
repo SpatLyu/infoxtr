@@ -52,8 +52,9 @@ commonly used discretization methods. Missing values (\code{NA}/\code{NaN})
 are ignored and returned as class \code{0}.
 }
 \note{
-If \code{x} is not numeric, it will be converted to
-integer categories via \code{as.factor()}.
+If \code{x} is not numeric, or if the number of unique non-\code{NA} values
+is less than or equal to \code{n} (except for the \code{"headtail"("headtails")} method),
+the function falls back to integer encoding via \code{as.factor()}.
 }
 \examples{
 set.seed(42)
