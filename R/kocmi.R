@@ -1,5 +1,3 @@
-#' KOCMI
-#'
 #' Knockoff Conditional Mutual Information
 #' 
 #' @note `kocmi` only support numeric data.
