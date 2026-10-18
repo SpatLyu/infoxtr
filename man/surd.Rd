@@ -5,7 +5,7 @@
 \alias{surd,data.frame-method}
 \alias{surd,sf-method}
 \alias{surd,SpatRaster-method}
-\title{SURD}
+\title{Synergistic-Unique-Redundant Decomposition}
 \usage{
 \S4method{surd}{data.frame}(
   data,

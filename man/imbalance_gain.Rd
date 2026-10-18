@@ -2,7 +2,7 @@
 % Please edit documentation in R/infoimbalance.R
 \name{imbalance_gain}
 \alias{imbalance_gain}
-\title{Information Imbalance Gain}
+\title{Imbalance Gain}
 \usage{
 imbalance_gain(
   mx,
@@ -39,7 +39,7 @@ imbalance_gain(
 A numeric vector.
 }
 \description{
-Information Imbalance Gain
+Imbalance Gain
 }
 \examples{
 set.seed(42)

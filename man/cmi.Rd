@@ -39,8 +39,7 @@ Ignored when \code{type = "disc"}.}
 A numerical value.
 }
 \description{
-Estimate the conditional mutual information between target and interacting
-variables given conditioning variables.
+Conditional Mutual Information
 }
 \examples{
 set.seed(42)
