@@ -738,8 +738,9 @@ namespace infoimbalance
 
                 std::vector<Candidate> candidates;
                 candidates.reserve(Nlib);
-
-                const bool use_Mx = infoxtr::numericutils::doubleNearlyEqual(a, 0.0);
+                
+                // When alpha is 0, Mx information is not needed.
+                const bool use_Mx = !infoxtr::numericutils::doubleNearlyEqual(a, 0.0);
                 const size_t vec_dim = use_Mx ? (dimY + dimX) : dimY;
 
                 std::vector<double> vec_p(vec_dim);
