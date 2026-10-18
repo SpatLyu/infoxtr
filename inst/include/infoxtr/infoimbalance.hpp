@@ -754,8 +754,10 @@ namespace infoimbalance
                     // consistent with the NA diagonal used in the R implementation.
                     if (q == p) continue;
 
-                    for (size_t d = 0; d < dimX; ++d) vec_q[d] = a * Mx[q][d];
-                    for (size_t d = 0; d < dimY; ++d) vec_q[dimX + d] = My[q][d];
+                    for (size_t d = 0; d < dimY; ++d) vec_q[d] = My[q][d];
+                    if (use_Mx) {
+                        for (size_t d = 0; d < dimX; ++d) vec_q[dimY + d] = a * Mx[q][d];
+                    }
 
                     const double d = infoxtr::distance::distance(vec_p, vec_q, method, true, na_comp);
                     candidates.push_back({il, d});
