@@ -23,6 +23,9 @@
  *
  *           A(alpha) = (Y, alpha * X)
  *
+ *           Delta(alpha)
+ *             = Delta(A(alpha) -> Y_future).
+ *
  *       and returns Delta(alpha) for each supplied alpha.
  *
  *   imbalanceGainCausality()
