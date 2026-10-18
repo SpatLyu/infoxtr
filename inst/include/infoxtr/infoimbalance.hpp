@@ -747,12 +747,6 @@ namespace infoimbalance
                     for (size_t d = 0; d < dimX; ++d) vec_p[dimY + d] = a * Mx[p][d];
                 }
 
-                std::vector<double> vec_p(dimX + dimY);
-                std::vector<double> vec_q(dimX + dimY);
-
-                for (size_t d = 0; d < dimX; ++d) vec_p[d] = a * Mx[p][d];
-                for (size_t d = 0; d < dimY; ++d) vec_p[dimX + d] = My[p][d];
-
                 for (size_t il = 0; il < Nlib; ++il) {
                     const size_t q = lib[il];
 
