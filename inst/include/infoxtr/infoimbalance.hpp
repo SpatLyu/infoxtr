@@ -21,7 +21,7 @@
  *       Computes the Information Imbalance for a series of scaling
  *       parameters alpha using the combined space:
  *
- *           A(alpha) = (alpha * X, Y)
+ *           A(alpha) = (Y, alpha * X)
  *
  *       and returns Delta(alpha) for each supplied alpha.
  *
@@ -76,7 +76,7 @@
  * For directional information analysis, the current states of X and Y are
  * combined using a scaling parameter alpha:
  *
- *      A(alpha) = (alpha * X, Y).
+ *      A(alpha) = (Y, alpha * X).
  *
  * The Information Imbalance is then evaluated between this combined current
  * space and the future state of Y:
@@ -224,7 +224,7 @@
  * For imbalanceGain() and imbalanceGainCausality(), h defines the prediction
  * horizon:
  *
- *      A_t(alpha) = (alpha * X_t, Y_t)
+ *      A_t(alpha) = (Y_t, alpha * X_t)
  *
  *      B_{t+h}    = Y_{t+h}.
  *
@@ -722,7 +722,7 @@ namespace infoimbalance
 
             // --------------------------------------------------------------
             // For every prediction point, find its k nearest neighbours
-            // in A = (alpha * X, Y).
+            // in A = (Y, alpha * X).
             // --------------------------------------------------------------
             RcppThread::parallelFor(
                 size_t(0), Npred, [&](size_t ip) {
@@ -735,6 +735,17 @@ namespace infoimbalance
 
                 std::vector<Candidate> candidates;
                 candidates.reserve(Nlib);
+
+                const bool use_Mx = infoxtr::numericutils::doubleNearlyEqual(a, 0.0);
+                const size_t vec_dim = use_Mx ? (dimY + dimX) : dimY;
+
+                std::vector<double> vec_p(vec_dim);
+                std::vector<double> vec_q(vec_dim);
+
+                for (size_t d = 0; d < dimY; ++d) vec_p[d] = My[p][d];  
+                if (use_Mx) {
+                    for (size_t d = 0; d < dimX; ++d) vec_p[dimY + d] = a * Mx[p][d];
+                }
 
                 std::vector<double> vec_p(dimX + dimY);
                 std::vector<double> vec_q(dimX + dimY);
