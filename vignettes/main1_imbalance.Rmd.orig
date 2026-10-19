@@ -90,14 +90,12 @@ The optimal $\alpha_X$ can then be obtained by minimizing the conditional Inform
 We illustrate the Imbalance Gain using the *Paramecium*–*Didinium* abundance data from the convergent cross mapping science paper. The data describe the temporal variation in the abundances of *Paramecium* and *Didinium*, providing a simple example for evaluating causal association between two interacting species.
 
 ```{r load-data}
-abundance <- read.csv(
-  system.file(
-    "case/abundance.csv",
-    package = "pc"
-  )
-)[, c("paramecium", "didinium")]
+abun = readr::read_csv(
+  system.file("case/abundance.csv",package = "pc"
+))[, c("paramecium", "didinium")]
 
-head(abundance)
+head(abun)
+```
 
 ## Coupled logistic map
 
