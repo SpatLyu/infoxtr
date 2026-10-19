@@ -152,10 +152,10 @@ d_self_imb = purrr::map_dbl(
     \(.h) infoxtr::imbalance_gain(md, md, alpha = 0,
                                   h = .h, threads = 10))
 
-ig_x2y = infoxtr::imbalance_gain(mx, my, alpha = seq(0,1,by = 0.05),
+ig_p2d = infoxtr::imbalance_gain(mp, md, alpha = seq(0,1,by = 0.05),
                                  h = 10, threads = 10)
 
-ig_y2x = infoxtr::imbalance_gain(my, mx, alpha = seq(0,1,by = 0.05),
+ig_d2p = infoxtr::imbalance_gain(md, mp, alpha = seq(0,1,by = 0.05),
                                  h = 10, threads = 10)
 
 cat(sprintf("Imbalance Gain x -> y: %.2f %%\n", 100 * 1 - min(ig_x2y) / ig_x2y[1]))
