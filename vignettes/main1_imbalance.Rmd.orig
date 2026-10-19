@@ -149,29 +149,6 @@ fig_sim_ts = ggplot2::ggplot(sim_long, ggplot2::aes(x = time, y = value, color =
                  legend.justification = c("center", "bottom"),
                  legend.background = ggplot2::element_rect(fill = "transparent", color = NA))
 fig_sim_ts + ggview::canvas(6.5,4.5)
-
-
-plot(
-  sim$time,
-  sim$x,
-  type = "l",
-  xlab = "Time",
-  sim$y,
-  lty = 2
-)
-
-legend(
-  "topright",
-  legend = c("X", "Y"),
-  ylab = "Value",
-  ylim = range(sim[, c("x", "y")])
-)
-
-lines(
-  sim$time,
-  lty = c(1, 2),
-  bty = "n"
-)
 ```
 
 The simulated time series are reconstructed using time-delay embedding to obtain the shadow manifolds (measurements). The reconstructed measurements are then used to evaluate the causality between the two variables.
