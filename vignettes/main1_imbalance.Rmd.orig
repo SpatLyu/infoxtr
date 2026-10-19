@@ -161,3 +161,5 @@ ig_d2p = infoxtr::imbalance_gain(md, mp, alpha = seq(0,1,by = 0.05),
 cat(sprintf("Imbalance Gain for paramecium -> didinium: %.2f %%\n", 100 * 1 - min(ig_p2d) / ig_p2d[1]))
 cat(sprintf("Imbalance Gain for didinium -> paramecium: %.2f %%\n", 100 * 1 - min(ig_d2p) / ig_d2p[1]))
 ```
+
+The imbalance gains for $paramecium \rightarrow didinium$ and $didinium \rightarrow paramecium$ are both greater than $0$, which provides evidence of a bidirectional causal relationship between them.
