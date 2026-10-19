@@ -134,7 +134,23 @@ head(sim)
 
 The simulated time series can be visualized as follows.
 
-```{r logistic_map_plot, fig.width=6.5, fig.height=3.5}
+```{r logistic_map_plot, fig.width=6.5, fig.height=4.5}
+sim_long = sim |>
+  tidyr::pivot_longer(cols = -time,
+                      names_to = "variable", values_to = "value")
+
+fig_sim_ts = ggplot2::ggplot(sim_long, ggplot2::aes(x = time, y = value, color = variable)) +
+  ggplot2::geom_line(linewidth = 0.5) +
+  ggplot2::scale_y_continuous(limits = c(0.22,0.92), breaks = seq(0.3,0.9,by=0.2)) +
+  ggplot2::labs(x = NULL, y = NULL, color = NULL) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.direction = "horizontal",
+                 legend.position = "inside",
+                 legend.justification = c("center", "bottom"),
+                 legend.background = ggplot2::element_rect(fill = "transparent", color = NA))
+fig_sim_ts + ggview::canvas(6.5,4.5)
+
+
 plot(
   sim$time,
   sim$x,
