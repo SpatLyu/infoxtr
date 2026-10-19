@@ -159,6 +159,16 @@ my = tEDM::embedded(sim,"y",E=3,tau = 6)[13:105,]
 The Imbalance Gain is subsequently calculated to quantify the additional information provided by one variable about the future state of the other. The analysis is performed in both directions, $X\rightarrow Y$ and $Y\rightarrow X$.
 
 ```{r imbalance_gain}
+x_self_imb = purrr::map_dbl(
+    1:50, 
+    \(.h) infoxtr::imbalance_gain(mx, mx, alpha = 0,
+                                  h = .h, threads = 10))
+
+y_self_imb = purrr::map_dbl(
+    1:50, 
+    \(.h) infoxtr::imbalance_gain(my, my, alpha = 0,
+                                  h = .h, threads = 10))
+
 ig_x2y = infoxtr::imbalance_gain(mx, my, alpha = seq(0,1,by = 0.05),
                                  h = 10, threads = 10)
 
