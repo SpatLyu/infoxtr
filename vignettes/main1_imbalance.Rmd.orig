@@ -142,7 +142,7 @@ head(sim)
 
 The simulated time series can be visualized as follows.
 
-```{r logistic_map_plot, fig.width=7, fig.height=4}
+```{r logistic_map_plot, fig.width=6.5, fig.height=3.5}
 plot(
   sim$time,
   sim$x,
@@ -155,13 +155,13 @@ plot(
 legend(
   "topright",
   legend = c("X", "Y"),
-    ylab = "Value",
+  ylab = "Value",
   ylim = range(sim[, c("x", "y")])
 )
 
 lines(
   sim$time,
- lty = c(1, 2),
+  lty = c(1, 2),
   bty = "n"
 )
 ```
