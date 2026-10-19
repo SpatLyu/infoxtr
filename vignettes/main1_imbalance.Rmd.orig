@@ -158,8 +158,8 @@ ig_p2d = infoxtr::imbalance_gain(mp, md, alpha = seq(0,1,by = 0.05),
 ig_d2p = infoxtr::imbalance_gain(md, mp, alpha = seq(0,1,by = 0.05),
                                  h = 10, threads = 10)
 
-cat(sprintf("Imbalance Gain x -> y: %.2f %%\n", 100 * 1 - min(ig_x2y) / ig_x2y[1]))
-cat(sprintf("Imbalance Gain y -> x: %.2f %%\n", 100 * 1 - min(ig_y2x) / ig_y2x[1]))
+cat(sprintf("Imbalance Gain for paramecium -> didinium: %.2f %%\n", 100 * 1 - min(ig_p2d) / ig_p2d[1]))
+cat(sprintf("Imbalance Gain for didinium -> paramecium: %.2f %%\n", 100 * 1 - min(ig_d2p) / ig_d2p[1]))
 ```
 
 
