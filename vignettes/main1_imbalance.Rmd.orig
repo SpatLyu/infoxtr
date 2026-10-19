@@ -91,7 +91,7 @@ We illustrate the Imbalance Gain using the *Paramecium*–*Didinium* abundance d
 
 ```{r load_data}
 abun = readr::read_csv(
-  system.file("case/abundance.csv",package = "pc"
+  system.file("case/abundance.csv", package = "pc"
 ))[, c("paramecium", "didinium")]
 
 head(abun)
@@ -116,7 +116,6 @@ fig_abun = read.csv((system.file("case/abundance.csv",
   ggplot2::scale_color_manual(name = NULL, 
                               values = c("paramecium" = "#a7b3d9", 
                                          "didinium" = "#38a247")) +
-  # ggplot2::labs(color = "") +
   ggplot2::theme_bw(base_family = "serif") +
   ggplot2::theme(
         legend.direction = "horizontal",
