@@ -109,7 +109,7 @@ $$
 ```{r logistic-map}
 n = 105
 alpha_x = 3.6; alpha_y = 3.72
-beta_xy = 0.2; beta_yx = 0
+beta_xy = 0.35; beta_yx = 0
 
 x = numeric(n); y = numeric(n)
 x[1] = 0.4; y[1] = 0.4
@@ -151,14 +151,14 @@ fig_sim_ts + ggview::canvas(6.5,4.5)
 
 The simulated time series are reconstructed using time-delay embedding to obtain the shadow manifolds (measurements). The reconstructed measurements are then used to evaluate the causality between the two variables.
 
-```{r time-delay-embedding}
-mx = stats::embed(sim$x, 3)
-my = stats::embed(sim$y, 3)
+```{r time_delay_embedding}
+mx = stats::embed(sim$x, 5)
+my = stats::embed(sim$y, 5)
 ```
 
 The Imbalance Gain is subsequently calculated to quantify the additional information provided by one variable about the future state of the other. The analysis is performed in both directions, $X\rightarrow Y$ and $Y\rightarrow X$.
 
-```{r imbalance-gain}
+```{r imbalance_gain}
 ig_x2y = infoxtr::imbalance_gain(mx, my, alpha = seq(0,1,by = 0.05),
                                  h = 10, threads = 10)
 
