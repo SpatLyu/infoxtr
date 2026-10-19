@@ -129,7 +129,7 @@ fig_abun = read.csv((system.file("case/abundance.csv",
         axis.text.y = ggplot2::element_text(size = 15),
         axis.title.x = ggplot2::element_text(size = 15),
         axis.title.y = ggplot2::element_text(size = 15))
-
+fig_abun
 ```
 
 ## Coupled logistic map
