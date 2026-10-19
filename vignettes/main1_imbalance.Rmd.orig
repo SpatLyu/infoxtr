@@ -152,18 +152,18 @@ fig_sim_ts + ggview::canvas(6.5,4.5)
 The simulated time series are reconstructed using time-delay embedding to obtain the shadow manifolds (measurements). The reconstructed measurements are then used to evaluate the causality between the two variables.
 
 ```{r time_delay_embedding}
-mx = stats::embed(sim$x, 5)
-my = stats::embed(sim$y, 5)
+mx = stats::embed(sim$x, 15)
+my = stats::embed(sim$y, 15)
 ```
 
 The Imbalance Gain is subsequently calculated to quantify the additional information provided by one variable about the future state of the other. The analysis is performed in both directions, $X\rightarrow Y$ and $Y\rightarrow X$.
 
 ```{r imbalance_gain}
 ig_x2y = infoxtr::imbalance_gain(mx, my, alpha = seq(0,1,by = 0.05),
-                                 h = 10, threads = 10)
+                                 h = 5, threads = 10)
 
 ig_y2x = infoxtr::imbalance_gain(my, mx, alpha = seq(0,1,by = 0.05),
-                                 h = 10, threads = 10)
+                                 h = 5, threads = 10)
 
 cat(sprintf("Imbalance Gain x -> y: %.2f %%\n", 100 * 1 - min(ig_x2y) / ig_x2y[1]))
 cat(sprintf("Imbalance Gain y -> x: %.2f %%\n", 100 * 1 - min(ig_y2x) / ig_y2x[1]))
