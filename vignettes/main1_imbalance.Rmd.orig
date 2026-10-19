@@ -86,3 +86,82 @@ $$
 The optimal $\alpha_X$ can then be obtained by minimizing the conditional Information Imbalance over the range of $\alpha_X$. The same formulation can be applied in the reverse direction to assess $Y\rightarrow X\mid Z$.
 
 # Example Cases
+
+## Coupled logistic map
+
+We first simulate two coupled logistic maps to illustrate the Imbalance Gain method. The two variables are initialized at $0.4$ and evolved for 150 time steps. The growth parameters are set to $\alpha_x=3.6$ and $\alpha_y=3.72$, and $x$ is coupled to $y$ with $\beta_{xy}=0.1$. No reverse coupling is included.
+
+The coupled logistic map is defined as
+
+$$
+\begin{aligned}
+x_{t+1} &= x_t
+\left(
+\alpha_x(1-x_t)-\beta_{yx}y_t
+\right),\\
+y_{t+1} &= y_t
+\left(
+\alpha_y(1-y_t)-\beta_{xy}x_t
+\right).
+\end{aligned}
+$$
+
+```{r logistic-map}
+set.seed(42)
+
+n = 150
+
+alpha_x = 3.6
+alpha_y = 3.72
+
+beta_xy = 0.1
+beta_yx = 0
+
+x = numeric(n)
+y = numeric(n)
+
+x[1] = 0.4
+y[1] = 0.4
+
+for (t in seq_len(n - 1)) {
+  x[t + 1] = x[t] *
+    (alpha_x * (1 - x[t]) - beta_yx * y[t])
+
+  y[t + 1] = y[t] *
+    (alpha_y * (1 - y[t]) - beta_xy * x[t])
+}
+
+sim = data.frame(
+  time = seq_len(n),
+  x = x,
+  y = y
+)
+
+head(sim)
+```
+
+The simulated time series can be visualized as follows.
+
+```{r logistic_map_plot, fig.width=7, fig.height=4}
+plot(
+  sim$time,
+  sim$x,
+  type = "l",
+  xlab = "Time",
+  sim$y,
+  lty = 2
+)
+
+legend(
+  "topright",
+  legend = c("X", "Y"),
+    ylab = "Value",
+  ylim = range(sim[, c("x", "y")])
+)
+
+lines(
+  sim$time,
+ lty = c(1, 2),
+  bty = "n"
+)
+```
