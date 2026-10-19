@@ -99,7 +99,7 @@ head(abun)
 
 The *Paramecium*–*Didinium* abundance time series can be visualized as follows:
 
-``` {r abun_plot, fig.width=6.5, fig.height=4.5}
+``` {r abun_plot, fig.width=6.5, fig.height=3.95}
 fig_abun = read.csv((system.file("case/abundance.csv", 
                                  package = "pc"))) |>
   tidyr::pivot_longer(cols = -time,
@@ -113,12 +113,15 @@ fig_abun = read.csv((system.file("case/abundance.csv",
                               expand = c(0, 0), name = "Time (days)") +
   ggplot2::scale_y_continuous(breaks = seq(0, 400, 100), limits = c(0, 410),
                               expand = c(0, 0), name = "Abundance (#/mL)") +
-  ggplot2::labs(color = "") +
+  ggplot2::scale_color_manual(name = NULL, 
+                              values = c("paramecium" = "#a7b3d9", 
+                                         "didinium" = "#38a247")) +
+  # ggplot2::labs(color = "") +
   ggplot2::theme_bw(base_family = "serif") +
   ggplot2::theme(
         legend.direction = "horizontal",
         legend.position = "inside",
-        legend.justification = c("left","top"),
+        legend.justification = c("center","top"),
         legend.background = ggplot2::element_rect(fill = "transparent", 
                                                   color = "transparent"),
         legend.text = ggplot2::element_text(size = 15),
