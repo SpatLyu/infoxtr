@@ -177,9 +177,9 @@ The Imbalance Gain is subsequently calculated to quantify the additional informa
 ```{r imbalance-gain}
 ig_x2y = infoxtr::imbalance_gain(mx, my, alpha = seq(0,1,by = 0.05),
                                  h = 10, threads = 10)
-1 - min(x2y) / x2y[1]
+1 - min(ig_x2y) / ig_x2y[1]
 
 ig_y2x = infoxtr::imbalance_gain(my, mx, alpha = seq(0,1,by = 0.05),
                                  h = 10, threads = 10)
-1 - min(y2x) / y2x[1]
+1 - min(ig_y2x) / ig_y2x[1]
 ```
