@@ -132,6 +132,37 @@ fig_abun = read.csv((system.file("case/abundance.csv",
 fig_abun
 ```
 
+The observed time series are reconstructed using time-delay embedding to obtain the shadow manifolds (measurements). The reconstructed measurements are then used to evaluate the causality between the two interacting species.
+
+```{r time_delay_embedding}
+mx = tEDM::embedded(sim,"x",E=3,tau = 6)[13:105,]
+my = tEDM::embedded(sim,"y",E=3,tau = 6)[13:105,]
+```
+
+The Imbalance Gain is subsequently calculated to quantify the additional information provided by one variable about the future state of the other. The analysis is performed in both directions, $X\rightarrow Y$ and $Y\rightarrow X$.
+
+```{r imbalance_gain}
+x_self_imb = purrr::map_dbl(
+    1:50, 
+    \(.h) infoxtr::imbalance_gain(mx, mx, alpha = 0,
+                                  h = .h, threads = 10))
+
+y_self_imb = purrr::map_dbl(
+    1:50, 
+    \(.h) infoxtr::imbalance_gain(my, my, alpha = 0,
+                                  h = .h, threads = 10))
+
+ig_x2y = infoxtr::imbalance_gain(mx, my, alpha = seq(0,1,by = 0.05),
+                                 h = 10, threads = 10)
+
+ig_y2x = infoxtr::imbalance_gain(my, mx, alpha = seq(0,1,by = 0.05),
+                                 h = 10, threads = 10)
+
+cat(sprintf("Imbalance Gain x -> y: %.2f %%\n", 100 * 1 - min(ig_x2y) / ig_x2y[1]))
+cat(sprintf("Imbalance Gain y -> x: %.2f %%\n", 100 * 1 - min(ig_y2x) / ig_y2x[1]))
+```
+
+
 ## Coupled logistic map
 
 We first simulate two coupled logistic maps to illustrate the Imbalance Gain method. The two variables are initialized at $0.4$ and evolved for 150 time steps. The growth parameters are set to $\alpha_x=3.6$ and $\alpha_y=3.72$, and $x$ is coupled to $y$ with $\beta_{xy}=0.1$. No reverse coupling is included.
