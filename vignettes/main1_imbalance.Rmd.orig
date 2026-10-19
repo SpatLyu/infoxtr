@@ -169,7 +169,8 @@ lines(
 The simulated time series are reconstructed using time-delay embedding to obtain the shadow manifolds (measurements). The reconstructed measurements are then used to evaluate the causality between the two variables.
 
 ```{r time-delay-embedding}
-# Code for time-delay embedding
+mx = stats::embed(sim$x, 6)
+my = stats::embed(sim$y, 6)
 ```
 
 The Imbalance Gain is subsequently calculated to quantify the additional information provided by one variable about the future state of the other. The analysis is performed in both directions, $X\rightarrow Y$ and $Y\rightarrow X$.
