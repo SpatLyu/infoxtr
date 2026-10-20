@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r knitr_settings, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   message = FALSE,
@@ -34,7 +34,7 @@ This vignette demonstrates how to perform SURD analysis using the `infoxtr` pack
 
 To simplify visualization, a plotting function is provided below, which produces a SURD decomposition plot — a grouped bar chart of **unique (U)**, **synergistic (S)**, and **redundant (R)** components, along with a side panel showing the **information leak**.
 
-```{r}
+```{r util_funs}
 utils_plot_surd = \(surd_list,threshold = 0,style = "shallow") {
   df = surd_list |> 
     tibble::as_tibble() |> 
@@ -176,7 +176,7 @@ npp
 ```
 
 ```{r surd_npp}
-res_npp = infoxtr::surd(npp,1, 2:5,
+res_npp = infoxtr::surd(npp, 1, 2:5,
                         lag = 2, bin = 10, threads = 6)
 tibble::as_tibble(res_npp)
 ```
