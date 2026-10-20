@@ -99,7 +99,7 @@ head(abun)
 
 The *Paramecium*–*Didinium* abundance time series can be visualized as follows:
 
-``` {r abun_plot, fig.width=6.5, fig.height=3.95}
+``` {r abun_plot, fig.width=6.5, fig.height=3.95, fig.dpi=100, fig.cap=knitr::asis_output("**Figure 1**. Time series of Paramecium and Didinium abundances (#/mL) from an experiment by Veilleux (1979).")}
 fig_abun = read.csv((system.file("case/abundance.csv", 
                                  package = "pc"))) |>
   tidyr::pivot_longer(cols = -time,
