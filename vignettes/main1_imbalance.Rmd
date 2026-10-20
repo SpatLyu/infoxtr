@@ -120,7 +120,6 @@ fig_abun = read.csv((system.file("case/abundance.csv",
   ggplot2::scale_color_manual(name = NULL, 
                               values = c("paramecium" = "#a7b3d9", 
                                          "didinium" = "#38a247")) +
-  # ggplot2::labs(color = "") +
   ggplot2::theme_bw(base_family = "serif") +
   ggplot2::theme(
         legend.direction = "horizontal",
@@ -136,7 +135,7 @@ fig_abun = read.csv((system.file("case/abundance.csv",
 fig_abun
 ```
 
-![plot of chunk abun_plot](man/figures/iig/abun_plot-1.png)
+![plot of chunk abun_plot](../man/figures/iig/abun_plot-1.png)
 
 The observed time series are reconstructed using time-delay embedding to obtain the shadow manifolds (measurements). The reconstructed measurements are then used to evaluate the causality between the two interacting species.
 
