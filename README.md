@@ -62,8 +62,6 @@ Martinez-Sanchez, A., Arranz, G., Lozano-Duran, A., 2024. Decomposing causality 
 
 Zhang, X., Chen, L., 2025. Quantifying interventional causality by knockoff operation. Science Advances 11. [https://doi.org/10.1126/sciadv.adu6464][6].
 
-Varley, T.F., 2025. Information theory for complex systems scientists: What, why, and how. Physics Reports 1148, 1–55. [https://doi.org/10.1016/j.physrep.2025.09.007][7].
-
 &nbsp;
 
 [1]: https://doi.org/10.1103/physrevlett.85.461
@@ -72,4 +70,3 @@ Varley, T.F., 2025. Information theory for complex systems scientists: What, why
 [4]: https://doi.org/10.1073/pnas.2317256121
 [5]: https://doi.org/10.1038/s41467-024-53373-4
 [6]: https://doi.org/10.1126/sciadv.adu6464
-[7]: https://doi.org/10.1016/j.physrep.2025.09.007
