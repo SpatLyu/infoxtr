@@ -26,7 +26,7 @@ kocmi(
 
 \item{target}{Integer vector of column indices for the target variables.}
 
-\item{agent}{Integer vector of column indices for the source (agent) variables.}
+\item{agent}{Integer vector of column indices for the agent variables.}
 
 \item{conds}{Integer vector of column indices for the conditioning variables.}
 
